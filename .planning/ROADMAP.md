@@ -48,13 +48,14 @@ Plans:
   3. Admin can create, view, edit, and delete counseling session records and home visitation records per resident
   4. Admin dashboard displays 4+ metric cards (total residents, active cases, total donations, reintegration rate), a recent donations table, a residents-needing-attention table, and the OKR gauge
   5. All delete operations show a confirmation dialog, and all form inputs are sanitized against injection
-**Plans**: TBD
+**Plans**: 4 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md -- Backend API controllers (6) with DTOs, pagination, input sanitization
+- [ ] 02-02-PLAN.md -- Frontend infrastructure: npm deps, types, API layer, sidebar layout, reusable UI components
+- [ ] 02-03-PLAN.md -- Admin Dashboard page and Residents CRUD page with form, routing
+- [ ] 02-04-PLAN.md -- Supporters/Donations, Process Recordings, Home Visitations CRUD pages with forms, routing
 
 ### Phase 3: Public Pages + Donor Portal
 **Goal**: Visitors can learn about the mission and view anonymized impact data, while authenticated donors can see their own contribution history and impact
@@ -126,7 +127,7 @@ Note: Phase 4 depends only on Phase 1 (not Phase 2/3), enabling potential parall
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Auth | 3/3 | Complete   | 2026-04-06 |
-| 2. Admin CRUD + Dashboard | 0/3 | Not started | - |
+| 2. Admin CRUD + Dashboard | 0/4 | Not started | - |
 | 3. Public Pages + Donor Portal | 0/2 | Not started | - |
 | 4. ML Pipelines + Flask API | 0/2 | Not started | - |
 | 5. Reports + ML Integration | 0/1 | Not started | - |
