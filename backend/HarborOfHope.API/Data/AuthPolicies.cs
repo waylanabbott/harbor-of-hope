@@ -3,4 +3,5 @@ namespace HarborOfHope.API.Data;
 public static class AuthPolicies
 {
     public const string AdminOnly = "AdminOnly";
+    public const string DonorOnly = "DonorOnly";
 }

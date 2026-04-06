@@ -41,6 +41,7 @@ if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientS
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AuthPolicies.AdminOnly, policy => policy.RequireRole(AuthRoles.Admin));
+    options.AddPolicy(AuthPolicies.DonorOnly, policy => policy.RequireRole(AuthRoles.Donor));
 });
 
 // Password policy (IS 414 requirement -- 14 char passphrase, no complexity)
