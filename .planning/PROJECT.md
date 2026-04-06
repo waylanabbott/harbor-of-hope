@@ -24,18 +24,18 @@ Case managers can efficiently track and manage residents across safehouses while
 - ✓ Home visitation page for logging and viewing visit history — Phase 2
 - ✓ Data sanitization on all form inputs — Phase 2
 - ✓ OKR metric: Resident Reintegration Rate displayed prominently — Phase 2
+- ✓ Public landing page with hero, mission, impact stats, and donate CTA — Phase 3
+- ✓ Public impact dashboard with anonymized aggregated data — Phase 3
+- ✓ Privacy policy page with GDPR cookie consent — Phase 3
+- ✓ Dark mode toggle using browser cookie — Phase 3
+- ✓ Donor-facing login showing donation history and impact — Phase 3
 
 ### Active
 
-- [ ] Public landing page with hero, mission, impact stats, and donate CTA
-- [ ] Public impact dashboard with anonymized aggregated data
 - [ ] Reports & analytics page with donation trends and resident outcome charts
-- [ ] Privacy policy page with GDPR cookie consent
-- [ ] Dark mode toggle using browser cookie
 - [ ] Responsive design (desktop + mobile) with Lighthouse accessibility >= 90%
 - [ ] 6-8 ML pipelines deployed and integrated into the app
 - [ ] Deploy to Microsoft Azure (App Service + Azure PostgreSQL)
-- [ ] Donor-facing login showing donation history and impact
 
 ### Out of Scope
 
@@ -108,4 +108,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-06 after Phase 2 completion*
+*Last updated: 2026-04-06 after Phase 3 completion*
