@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-04-06T22:01:26.641Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-04-06T22:06:37.345Z"
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 17
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -59,6 +59,7 @@ Plan: 2 of 2
 | Phase 04 P02 | 16min | 2 tasks | 8 files |
 | Phase 04-03 P03 | 4min | 2 tasks | 7 files |
 | Phase 05 P01 | 2min | 2 tasks | 5 files |
+| Phase 05 P02 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Bulk-load supporters and donations before ML loop to avoid N+1 database queries
 - [Phase 05]: Sequential ML API calls (Flask is single-threaded) with bulk data pre-fetch
 - [Phase 05]: Population std dev for monetary_std matching sklearn default behavior
+- [Phase 05]: Promise.allSettled for concurrent independent API calls with per-result error handling
+- [Phase 05]: Static ML insight bullets from model coefficients rather than dynamic per-prediction analysis
+- [Phase 05]: Churn column dynamically injected via allColumns spread pattern for minimal SupportersPage diff
 
 ### Pending Todos
 
@@ -119,6 +123,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T22:01:26.637Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-04-06T22:06:37.342Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
