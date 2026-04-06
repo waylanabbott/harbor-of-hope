@@ -8,10 +8,10 @@
 ### Public Pages
 
 - [ ] **PUB-01**: Visitor can view landing page with hero, mission cards, impact stats, and "Donate Now" CTA
-- [ ] **PUB-02**: Visitor can view public impact dashboard with anonymized aggregated data (total residents served, donations received, reintegration rate)
+- [x] **PUB-02**: Visitor can view public impact dashboard with anonymized aggregated data (total residents served, donations received, reintegration rate)
 - [ ] **PUB-03**: Visitor can view privacy policy page linked from footer
-- [ ] **PUB-04**: Visitor sees GDPR cookie consent banner that is functional (not just cosmetic)
-- [ ] **PUB-05**: Visitor can toggle dark mode via browser-accessible cookie
+- [x] **PUB-04**: Visitor sees GDPR cookie consent banner that is functional (not just cosmetic)
+- [x] **PUB-05**: Visitor can toggle dark mode via browser-accessible cookie
 
 ### Authentication & Authorization
 
@@ -74,8 +74,8 @@
 
 ### Donor Portal
 
-- [ ] **PORTAL-01**: Donor can log in and view their own donation history
-- [ ] **PORTAL-02**: Donor can view impact summary of their contributions
+- [x] **PORTAL-01**: Donor can log in and view their own donation history
+- [x] **PORTAL-02**: Donor can view impact summary of their contributions
 
 ### Security
 
@@ -187,12 +187,12 @@
 | SEC-04 | Phase 2 | Complete |
 | SEC-05 | Phase 2 | Complete |
 | PUB-01 | Phase 3 | Pending |
-| PUB-02 | Phase 3 | Pending |
+| PUB-02 | Phase 3 | Complete |
 | PUB-03 | Phase 3 | Pending |
-| PUB-04 | Phase 3 | Pending |
-| PUB-05 | Phase 3 | Pending |
-| PORTAL-01 | Phase 3 | Pending |
-| PORTAL-02 | Phase 3 | Pending |
+| PUB-04 | Phase 3 | Complete |
+| PUB-05 | Phase 3 | Complete |
+| PORTAL-01 | Phase 3 | Complete |
+| PORTAL-02 | Phase 3 | Complete |
 | ML-01 | Phase 4 | Pending |
 | ML-02 | Phase 4 | Pending |
 | ML-03 | Phase 4 | Pending |

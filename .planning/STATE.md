@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-04-06T20:00:12.505Z"
+status: Ready to execute
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-04-06T20:27:43.481Z"
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 9
+  completed_plans: 8
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-06)
 
 **Core value:** Case managers can efficiently track residents while donors see their contribution impact -- all secured with proper authentication and RBAC.
-**Current focus:** Phase 02 — Admin CRUD + Dashboard
+**Current focus:** Phase 03 — Public Pages + Donor Portal
 
 ## Current Position
 
-Phase: 3
-Plan: Not started
+Phase: 03 (Public Pages + Donor Portal) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: Not started
 | Phase 02 P02 | 4min | 2 tasks | 24 files |
 | Phase 02-admin-crud-dashboard P03 | 4min | 2 tasks | 4 files |
 | Phase 02 P04 | 5min | 2 tasks | 8 files |
+| Phase 03 P01 | 3min | 2 tasks | 21 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,10 @@ Recent decisions affecting current work:
 - [Phase 02-admin-crud-dashboard]: Expanded rows use lazy-fetch pattern (separate fetchResident call on expand) to keep list queries fast
 - [Phase 02]: Donations managed within expanded supporter rows (nested table pattern) rather than separate page
 - [Phase 02]: Resident ID filter uses simple number text input rather than dropdown for sessions and visits pages
+- [Phase 03]: MetricPayloadJson parsed server-side (single quotes to double quotes) -- no raw Python dicts to frontend
+- [Phase 03]: Dark mode cookie only persists when cookie consent accepted via hasConsent() gate
+- [Phase 03]: ThemeModeProvider replaces static ThemeProvider in main.tsx, wrapping ThemeProvider + CssBaseline internally
+- [Phase 03]: Public API controller has no [Authorize] attribute; Donor API derives SupporterId from UserManager, never from request params
 
 ### Pending Todos
 
@@ -96,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T19:54:58.467Z
-Stopped at: Completed 02-04-PLAN.md
+Last session: 2026-04-06T20:27:43.479Z
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None

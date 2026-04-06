@@ -71,7 +71,7 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01-PLAN.md -- Backend APIs (PublicController + DonorPortalController), frontend infrastructure (theme, dark mode, cookie consent, types, API modules)
+- [x] 03-01-PLAN.md -- Backend APIs (PublicController + DonorPortalController), frontend infrastructure (theme, dark mode, cookie consent, types, API modules)
 - [ ] 03-02-PLAN.md -- Public pages (Landing, Impact, Privacy), donor portal pages (Dashboard, History), AppLayout updates, routing
 
 ### Phase 4: ML Pipelines + Flask API
