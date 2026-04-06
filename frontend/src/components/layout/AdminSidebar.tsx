@@ -41,14 +41,85 @@ const navItems: NavItem[] = [
 interface AdminSidebarProps {
   open: boolean;
   onToggle: () => void;
+  isMobile?: boolean;
 }
 
-export default function AdminSidebar({ open, onToggle }: AdminSidebarProps) {
+export default function AdminSidebar({ open, onToggle, isMobile = false }: AdminSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMediumDown = useMediaQuery(theme.breakpoints.down('md'));
 
+  // On mobile: always use temporary drawer with full expanded width
+  if (isMobile) {
+    return (
+      <Drawer
+        variant="temporary"
+        open={open}
+        onClose={onToggle}
+        aria-label="Admin navigation"
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: EXPANDED_WIDTH,
+            boxSizing: 'border-box',
+          },
+        }}
+        ModalProps={{ keepMounted: true }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+          }}
+        >
+          <List sx={{ flex: 1, pt: 2 }}>
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+
+              return (
+                <ListItemButton
+                  key={item.path}
+                  selected={isActive}
+                  onClick={() => {
+                    navigate(item.path);
+                    onToggle(); // Close drawer on navigation
+                  }}
+                  sx={{
+                    minHeight: 48,
+                    px: 2.5,
+                    borderRadius: 2,
+                    mx: 1,
+                    mb: 0.5,
+                    '&.Mui-selected': {
+                      backgroundColor: theme.palette.primary.main + '14',
+                      color: theme.palette.primary.main,
+                      '& .MuiListItemIcon-root': {
+                        color: theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: 2,
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              );
+            })}
+          </List>
+        </Box>
+      </Drawer>
+    );
+  }
+
+  // Desktop: persistent drawer with collapse/expand
   const drawerWidth = open && !isMediumDown ? EXPANDED_WIDTH : COLLAPSED_WIDTH;
   const isCollapsed = !open || isMediumDown;
 
@@ -56,6 +127,7 @@ export default function AdminSidebar({ open, onToggle }: AdminSidebarProps) {
     <Drawer
       variant="persistent"
       open
+      aria-label="Admin navigation"
       sx={{
         width: drawerWidth,
         flexShrink: 0,
@@ -130,7 +202,7 @@ export default function AdminSidebar({ open, onToggle }: AdminSidebarProps) {
         </List>
 
         <Box sx={{ p: 1, display: 'flex', justifyContent: 'center' }}>
-          <IconButton onClick={onToggle} size="small">
+          <IconButton onClick={onToggle} size="small" aria-label="Toggle sidebar">
             {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </Box>
