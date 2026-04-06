@@ -18,6 +18,11 @@ data.zip
 *.swp
 .idea/
 
+# Planning docs (GSD workflow — not for submission)
+.planning/
+CLAUDE.md
+Intex.md
+
 # OS
 .DS_Store
 Thumbs.db
