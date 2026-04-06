@@ -6,6 +6,8 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ManageMfaPage from './pages/auth/ManageMfaPage';
 import LogoutPage from './pages/auth/LogoutPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ResidentsPage from './pages/admin/ResidentsPage';
 
 function App() {
   return (
@@ -38,21 +40,52 @@ function App() {
         />
         <Route path="/logout" element={<LogoutPage />} />
 
-        {/* Admin-only routes (placeholder for Phase 2) */}
+        {/* Admin-only routes */}
         <Route
           path="/admin/dashboard"
           element={
             <ProtectedRoute role="Admin">
-              <Container sx={{ py: 6 }}>
-                <Typography variant="h3">Admin Dashboard</Typography>
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  sx={{ mt: 2 }}
-                >
-                  Coming in Phase 2
-                </Typography>
-              </Container>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/residents"
+          element={
+            <ProtectedRoute role="Admin">
+              <ResidentsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/donors"
+          element={
+            <ProtectedRoute role="Admin">
+              <Container sx={{ py: 6 }}><Typography variant="h4">Donors</Typography><Typography>Loading...</Typography></Container>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/sessions"
+          element={
+            <ProtectedRoute role="Admin">
+              <Container sx={{ py: 6 }}><Typography variant="h4">Sessions</Typography><Typography>Loading...</Typography></Container>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/visits"
+          element={
+            <ProtectedRoute role="Admin">
+              <Container sx={{ py: 6 }}><Typography variant="h4">Visits</Typography><Typography>Loading...</Typography></Container>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/reports"
+          element={
+            <ProtectedRoute role="Admin">
+              <Container sx={{ py: 6 }}><Typography variant="h4">Reports</Typography><Typography>Coming in Phase 5</Typography></Container>
             </ProtectedRoute>
           }
         />
