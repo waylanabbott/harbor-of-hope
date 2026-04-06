@@ -45,24 +45,24 @@
 
 ### Donors & Contributions
 
-- [ ] **DONR-01**: Admin can view paginated table of all supporters/donors
-- [ ] **DONR-02**: Admin can view donation records for each supporter
-- [ ] **DONR-03**: Admin can create new supporter and donation records
-- [ ] **DONR-04**: Admin can edit supporter and donation records
-- [ ] **DONR-05**: Admin can delete supporter/donation records with confirmation dialog
+- [x] **DONR-01**: Admin can view paginated table of all supporters/donors
+- [x] **DONR-02**: Admin can view donation records for each supporter
+- [x] **DONR-03**: Admin can create new supporter and donation records
+- [x] **DONR-04**: Admin can edit supporter and donation records
+- [x] **DONR-05**: Admin can delete supporter/donation records with confirmation dialog
 - [ ] **DONR-06**: Donor churn risk level (Low/Medium/High) displayed as badge next to each donor (from ML Pipeline 1)
 
 ### Process Recordings
 
-- [ ] **PROC-01**: Admin can create a new counseling session record for a resident
-- [ ] **PROC-02**: Admin can view session history per resident
-- [ ] **PROC-03**: Admin can edit and delete session records with confirmation
+- [x] **PROC-01**: Admin can create a new counseling session record for a resident
+- [x] **PROC-02**: Admin can view session history per resident
+- [x] **PROC-03**: Admin can edit and delete session records with confirmation
 
 ### Home Visitations
 
-- [ ] **VISIT-01**: Admin can log a new home visit for a resident
-- [ ] **VISIT-02**: Admin can view visit history per resident
-- [ ] **VISIT-03**: Admin can edit and delete visit records with confirmation
+- [x] **VISIT-01**: Admin can log a new home visit for a resident
+- [x] **VISIT-02**: Admin can view visit history per resident
+- [x] **VISIT-03**: Admin can edit and delete visit records with confirmation
 
 ### Reports & Analytics
 
@@ -173,17 +173,17 @@
 | CASE-05 | Phase 2 | Complete |
 | CASE-06 | Phase 2 | Complete |
 | CASE-07 | Phase 2 | Complete |
-| DONR-01 | Phase 2 | Pending |
-| DONR-02 | Phase 2 | Pending |
-| DONR-03 | Phase 2 | Pending |
-| DONR-04 | Phase 2 | Pending |
-| DONR-05 | Phase 2 | Pending |
-| PROC-01 | Phase 2 | Pending |
-| PROC-02 | Phase 2 | Pending |
-| PROC-03 | Phase 2 | Pending |
-| VISIT-01 | Phase 2 | Pending |
-| VISIT-02 | Phase 2 | Pending |
-| VISIT-03 | Phase 2 | Pending |
+| DONR-01 | Phase 2 | Complete |
+| DONR-02 | Phase 2 | Complete |
+| DONR-03 | Phase 2 | Complete |
+| DONR-04 | Phase 2 | Complete |
+| DONR-05 | Phase 2 | Complete |
+| PROC-01 | Phase 2 | Complete |
+| PROC-02 | Phase 2 | Complete |
+| PROC-03 | Phase 2 | Complete |
+| VISIT-01 | Phase 2 | Complete |
+| VISIT-02 | Phase 2 | Complete |
+| VISIT-03 | Phase 2 | Complete |
 | SEC-04 | Phase 2 | Complete |
 | SEC-05 | Phase 2 | Complete |
 | PUB-01 | Phase 3 | Pending |
