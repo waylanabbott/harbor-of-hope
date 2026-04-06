@@ -14,6 +14,7 @@ import {
   Paper,
   IconButton,
   LinearProgress,
+  Tooltip as MuiTooltip,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -24,6 +25,7 @@ import SearchFilterBar from '../../components/ui/SearchFilterBar';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import SupporterForm from '../../components/forms/SupporterForm';
 import DonationForm from '../../components/forms/DonationForm';
+import RiskBadge from '../../components/ui/RiskBadge';
 import {
   fetchSupporters,
   fetchSupporter,
@@ -37,9 +39,11 @@ import {
   updateDonation,
   deleteDonation,
 } from '../../lib/donationsApi';
+import { fetchBatchChurnPredictions } from '../../lib/reportsApi';
 import type { PagedResult } from '../../types/Pagination';
 import type { SupporterItem, SupporterFormData } from '../../types/Supporter';
 import type { DonationItem, DonationFormData } from '../../types/Donation';
+import type { ChurnPrediction } from '../../types/Reports';
 
 const columns: Column<SupporterItem>[] = [
   { id: 'displayName', label: 'Display Name', sortable: true, minWidth: 150 },
@@ -68,6 +72,9 @@ export default function SupportersPage() {
   const [supporters, setSupporters] = useState<PagedResult<SupporterItem> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Churn prediction state
+  const [churnPredictions, setChurnPredictions] = useState<Map<number, ChurnPrediction>>(new Map());
 
   // Pagination and sort
   const [page, setPage] = useState(1);
@@ -121,6 +128,46 @@ export default function SupportersPage() {
   useEffect(() => {
     setPage(1);
   }, [search]);
+
+  // Fetch churn predictions when supporters load
+  useEffect(() => {
+    if (!supporters?.items?.length) return;
+    const ids = supporters.items.map((s) => s.supporterId);
+    fetchBatchChurnPredictions(ids)
+      .then((predictions) => {
+        const map = new Map(predictions.map((p) => [p.supporterId, p]));
+        setChurnPredictions(map);
+      })
+      .catch(() => {
+        // Silently fail -- churn badges are non-critical enhancement
+      });
+  }, [supporters]);
+
+  // Build columns with churn risk badge inserted after 'status'
+  const allColumns: Column<SupporterItem>[] = [
+    ...columns.slice(0, 5), // displayName, supporterType, email, region, status
+    {
+      id: 'churnRisk',
+      label: 'Churn Risk',
+      minWidth: 100,
+      align: 'center' as const,
+      render: (row: SupporterItem) => {
+        const prediction = churnPredictions.get(row.supporterId);
+        if (!prediction)
+          return <Chip label="..." size="small" variant="outlined" />;
+        return (
+          <MuiTooltip
+            title={`${(prediction.churnProbability * 100).toFixed(0)}% churn probability`}
+          >
+            <span>
+              <RiskBadge level={prediction.riskLevel} />
+            </span>
+          </MuiTooltip>
+        );
+      },
+    },
+    ...columns.slice(5), // donationCount and beyond
+  ];
 
   const handleSortChange = (column: string) => {
     if (sortBy === column) {
@@ -259,7 +306,7 @@ export default function SupportersPage() {
       />
 
       <DataTable<SupporterItem>
-        columns={columns}
+        columns={allColumns}
         rows={supporters?.items ?? []}
         totalCount={supporters?.totalCount ?? 0}
         page={page}

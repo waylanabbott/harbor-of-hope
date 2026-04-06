@@ -13,9 +13,9 @@ import ResidentsPage from './pages/admin/ResidentsPage';
 import SupportersPage from './pages/admin/SupportersPage';
 import ProcessRecordingsPage from './pages/admin/ProcessRecordingsPage';
 import HomeVisitationsPage from './pages/admin/HomeVisitationsPage';
+import ReportsPage from './pages/admin/ReportsPage';
 import DonorDashboard from './pages/donor/DonorDashboard';
 import DonorHistoryPage from './pages/donor/DonorHistoryPage';
-import { Typography, Container } from '@mui/material';
 
 function App() {
   return (
@@ -84,10 +84,7 @@ function App() {
           path="/admin/reports"
           element={
             <ProtectedRoute role="Admin">
-              <Container sx={{ py: 6 }}>
-                <Typography variant="h4">Reports</Typography>
-                <Typography>Coming in Phase 5</Typography>
-              </Container>
+              <ReportsPage />
             </ProtectedRoute>
           }
         />
