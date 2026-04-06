@@ -67,12 +67,12 @@ Plans:
   3. Visitor can access privacy policy page from footer and sees a functional GDPR cookie consent banner
   4. Visitor can toggle dark mode and the preference persists via browser cookie
   5. Donor can log in and view their own donation history and impact summary (no access to other donors' data)
-**Plans**: TBD
+**Plans**: 2 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md -- Backend APIs (PublicController + DonorPortalController), frontend infrastructure (theme, dark mode, cookie consent, types, API modules)
+- [ ] 03-02-PLAN.md -- Public pages (Landing, Impact, Privacy), donor portal pages (Dashboard, History), AppLayout updates, routing
 
 ### Phase 4: ML Pipelines + Flask API
 **Goal**: All 8 ML models are trained, documented in executable Jupyter notebooks, and served via a Flask API that the .NET backend can call
