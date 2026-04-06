@@ -98,11 +98,12 @@ Plans:
   1. Admin can view donation trends (line/bar chart over time), resident outcomes (reintegration status breakdown), and safehouse comparison metrics on the reports page
   2. Reports page displays social media posting recommendations from ML Pipeline 2 and counseling effectiveness insights from ML Pipeline 4
   3. Donor list in the donors/contributions page shows ML-predicted churn risk level (Low/Medium/High) as a color-coded badge next to each donor
-**Plans**: TBD
+**Plans**: 2 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md -- Backend ReportsController with aggregation endpoints (donation trends, resident outcomes, safehouse comparison, batch churn), DTOs, frontend types and API modules
+- [ ] 05-02-PLAN.md -- ReportsPage with 3 Recharts charts + 2 ML insight cards, churn risk badges on SupportersPage, route wiring
 
 ### Phase 6: Polish + Final Deploy
 **Goal**: The application is responsive, accessible, and fully deployed to Azure with all three services (React, .NET, Flask) connected and test accounts ready for grading
@@ -131,5 +132,5 @@ Note: Phase 4 depends only on Phase 1 (not Phase 2/3), enabling potential parall
 | 2. Admin CRUD + Dashboard | 0/4 | Not started | - |
 | 3. Public Pages + Donor Portal | 2/2 | Complete   | 2026-04-06 |
 | 4. ML Pipelines + Flask API | 0/3 | Not started | - |
-| 5. Reports + ML Integration | 0/1 | Not started | - |
+| 5. Reports + ML Integration | 0/2 | Not started | - |
 | 6. Polish + Final Deploy | 0/2 | Not started | - |
