@@ -10,13 +10,20 @@ import {
 } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from './AdminSidebar';
+import DarkModeToggle from '../ui/DarkModeToggle';
+import Footer from './Footer';
+import CookieConsentBanner from '../ui/CookieConsentBanner';
 
 function AppLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { authSession, isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isDonorRoute = location.pathname.startsWith('/donor');
+
+  const isAdmin = authSession.roles.includes('Admin');
+  const isDonor = authSession.roles.includes('Donor');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -35,10 +42,15 @@ function AppLayout() {
             Harbor of Hope
           </Typography>
 
+          <DarkModeToggle />
+
           {!isLoading && (
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button color="inherit" component={RouterLink} to="/">
                 Home
+              </Button>
+              <Button color="inherit" component={RouterLink} to="/impact">
+                Impact
               </Button>
 
               {!isAuthenticated ? (
@@ -52,13 +64,35 @@ function AppLayout() {
                 </>
               ) : (
                 <>
-                  <Button
-                    color="inherit"
-                    component={RouterLink}
-                    to="/admin/dashboard"
-                  >
-                    Dashboard
-                  </Button>
+                  {isAdmin && (
+                    <Button
+                      color="inherit"
+                      component={RouterLink}
+                      to="/admin/dashboard"
+                    >
+                      Dashboard
+                    </Button>
+                  )}
+
+                  {isDonor && !isAdmin && (
+                    <>
+                      <Button
+                        color="inherit"
+                        component={RouterLink}
+                        to="/donor/dashboard"
+                      >
+                        My Dashboard
+                      </Button>
+                      <Button
+                        color="inherit"
+                        component={RouterLink}
+                        to="/donor/donations"
+                      >
+                        My Donations
+                      </Button>
+                    </>
+                  )}
+
                   <Button
                     color="inherit"
                     component={RouterLink}
@@ -103,6 +137,9 @@ function AppLayout() {
           <Outlet />
         </Container>
       )}
+
+      <Footer />
+      <CookieConsentBanner />
     </Box>
   );
 }

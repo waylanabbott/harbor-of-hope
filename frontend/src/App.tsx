@@ -1,34 +1,30 @@
 import { Routes, Route } from 'react-router-dom';
-import { Typography, Container } from '@mui/material';
 import AppLayout from './components/layout/AppLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ManageMfaPage from './pages/auth/ManageMfaPage';
 import LogoutPage from './pages/auth/LogoutPage';
+import LandingPage from './pages/public/LandingPage';
+import PublicImpactPage from './pages/public/PublicImpactPage';
+import PrivacyPolicyPage from './pages/public/PrivacyPolicyPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ResidentsPage from './pages/admin/ResidentsPage';
 import SupportersPage from './pages/admin/SupportersPage';
 import ProcessRecordingsPage from './pages/admin/ProcessRecordingsPage';
 import HomeVisitationsPage from './pages/admin/HomeVisitationsPage';
+import DonorDashboard from './pages/donor/DonorDashboard';
+import DonorHistoryPage from './pages/donor/DonorHistoryPage';
+import { Typography, Container } from '@mui/material';
 
 function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
         {/* Public routes */}
-        <Route
-          path="/"
-          element={
-            <Container sx={{ py: 6 }}>
-              <Typography variant="h2">Harbor of Hope</Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
-                Safe homes for girls who are survivors of trafficking in Central
-                America.
-              </Typography>
-            </Container>
-          }
-        />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/impact" element={<PublicImpactPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
@@ -88,26 +84,28 @@ function App() {
           path="/admin/reports"
           element={
             <ProtectedRoute role="Admin">
-              <Container sx={{ py: 6 }}><Typography variant="h4">Reports</Typography><Typography>Coming in Phase 5</Typography></Container>
+              <Container sx={{ py: 6 }}>
+                <Typography variant="h4">Reports</Typography>
+                <Typography>Coming in Phase 5</Typography>
+              </Container>
             </ProtectedRoute>
           }
         />
 
-        {/* Donor-only routes (placeholder for Phase 3) */}
+        {/* Donor-only routes */}
         <Route
           path="/donor/dashboard"
           element={
             <ProtectedRoute role="Donor">
-              <Container sx={{ py: 6 }}>
-                <Typography variant="h3">Donor Dashboard</Typography>
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  sx={{ mt: 2 }}
-                >
-                  Coming in Phase 3
-                </Typography>
-              </Container>
+              <DonorDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/donor/donations"
+          element={
+            <ProtectedRoute role="Donor">
+              <DonorHistoryPage />
             </ProtectedRoute>
           }
         />
