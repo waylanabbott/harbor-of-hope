@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-04-06T20:45:35.940Z"
+status: Ready to execute
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-04-06T21:20:25.596Z"
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 12
+  completed_plans: 10
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-06)
 
 **Core value:** Case managers can efficiently track residents while donors see their contribution impact -- all secured with proper authentication and RBAC.
-**Current focus:** Phase 03 — Public Pages + Donor Portal
+**Current focus:** Phase 04 — ML Pipelines + Flask API
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 04 (ML Pipelines + Flask API) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Plan: Not started
 | Phase 02 P04 | 5min | 2 tasks | 8 files |
 | Phase 03 P01 | 3min | 2 tasks | 21 files |
 | Phase 03 P02 | 5min | 3 tasks | 7 files |
+| Phase 04 P01 | 14min | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,9 @@ Recent decisions affecting current work:
 - [Phase 03]: Public API controller has no [Authorize] attribute; Donor API derives SupporterId from UserManager, never from request params
 - [Phase 03]: LandingPage uses linear-gradient overlay on hero.png for readable white text
 - [Phase 03]: AppLayout renders Footer and CookieConsentBanner outside conditional admin/public branch for all pages
+- [Phase 04]: sklearn Pipeline wrapping ColumnTransformer for reproducible preprocessing+classification in single serializable object
+- [Phase 04]: permutation_importance on Pipeline operates on input columns not preprocessed features
+- [Phase 04]: All classifiers use class_weight=balanced for imbalanced datasets
 
 ### Pending Todos
 
@@ -104,6 +108,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T20:40:43.249Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-04-06T21:20:25.593Z
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
