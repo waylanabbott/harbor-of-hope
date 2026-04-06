@@ -114,11 +114,12 @@ Plans:
   2. All pages render correctly at desktop (1440px, 1024px), tablet (768px), and mobile (375px) with hamburger menu and responsive tables
   3. Frontend, .NET backend, Flask ML API, and PostgreSQL are all deployed to Azure and communicating correctly
   4. Site is publicly accessible via URL with three working test accounts: admin (no MFA), donor (no MFA, linked to donations), and one MFA-enabled account
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [ ] 06-01-PLAN.md -- Responsive navigation (hamburger menu), responsive tables, accessibility fixes, Lighthouse compliance
+- [ ] 06-02-PLAN.md -- .NET SPA hosting config, Azure deployment script, production settings, Flask CORS
+- [ ] 06-03-PLAN.md -- Execute Azure deployment, end-to-end verification of deployed site
 
 ## Progress
 
@@ -133,4 +134,4 @@ Note: Phase 4 depends only on Phase 1 (not Phase 2/3), enabling potential parall
 | 3. Public Pages + Donor Portal | 2/2 | Complete   | 2026-04-06 |
 | 4. ML Pipelines + Flask API | 0/3 | Not started | - |
 | 5. Reports + ML Integration | 0/2 | Not started | - |
-| 6. Polish + Final Deploy | 0/2 | Not started | - |
+| 6. Polish + Final Deploy | 0/3 | Not started | - |
