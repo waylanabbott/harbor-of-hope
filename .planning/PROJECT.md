@@ -17,22 +17,22 @@ Case managers can efficiently track and manage residents across safehouses while
 - ✓ Google OAuth third-party authentication — Phase 1
 - ✓ MFA/2FA on at least one account type — Phase 1
 - ✓ HTTPS/TLS with CSP headers and HSTS — Phase 1
+- ✓ Admin dashboard with metric cards, tables, and charts — Phase 2
+- ✓ Caseload inventory page with filters, search, CRUD, pagination — Phase 2
+- ✓ Donors & contributions page with supporter list, donation records, CRUD — Phase 2
+- ✓ Process recording page for counseling session notes per resident — Phase 2
+- ✓ Home visitation page for logging and viewing visit history — Phase 2
+- ✓ Data sanitization on all form inputs — Phase 2
+- ✓ OKR metric: Resident Reintegration Rate displayed prominently — Phase 2
 
 ### Active
 
 - [ ] Public landing page with hero, mission, impact stats, and donate CTA
 - [ ] Public impact dashboard with anonymized aggregated data
-- [ ] Admin dashboard with metric cards, tables, and charts
-- [ ] Caseload inventory page with filters, search, CRUD, pagination
-- [ ] Donors & contributions page with supporter list, donation records, CRUD
-- [ ] Process recording page for counseling session notes per resident
-- [ ] Home visitation page for logging and viewing visit history
 - [ ] Reports & analytics page with donation trends and resident outcome charts
 - [ ] Privacy policy page with GDPR cookie consent
 - [ ] Dark mode toggle using browser cookie
-- [ ] Data sanitization on all form inputs
 - [ ] Responsive design (desktop + mobile) with Lighthouse accessibility >= 90%
-- [ ] OKR metric: Resident Reintegration Rate displayed prominently
 - [ ] 6-8 ML pipelines deployed and integrated into the app
 - [ ] Deploy to Microsoft Azure (App Service + Azure PostgreSQL)
 - [ ] Donor-facing login showing donation history and impact
@@ -108,4 +108,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-06 after Phase 1 completion*
+*Last updated: 2026-04-06 after Phase 2 completion*
