@@ -164,21 +164,17 @@ npm ci
 npm run build
 cd "$PROJECT_ROOT"
 
-# ── 7. Publish and Deploy .NET Backend ─────────────────────────────────────────
+# ── 7. Deploy .NET Backend (from source — let Azure/Oryx build it) ────────────
 echo ""
-echo "=== Publishing .NET backend ==="
+echo "=== Deploying .NET backend from source ==="
 cd "$PROJECT_ROOT/backend/HarborOfHope.API"
-dotnet publish -c Release -o ./publish
-cd publish
-zip -r "$PROJECT_ROOT/azure-deploy/backend.zip" .
-cd "$PROJECT_ROOT"
-
-echo "Deploying .NET backend to Azure"
-az webapp deployment source config-zip \
+az webapp up \
   --resource-group "$RESOURCE_GROUP" \
   --name "$APP_NAME" \
-  --src azure-deploy/backend.zip \
-  --output none
+  --plan "${APP_NAME}-plan" \
+  --runtime "DOTNETCORE:10.0" \
+  --os-type Linux
+cd "$PROJECT_ROOT"
 
 # ── 8. Deploy Flask API ───────────────────────────────────────────────────────
 echo ""
