@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Scaffold backend + frontend, 17 EF Core entities, AppDbContext with indexes, CSV seeder, MUI theme
+- [x] 01-01-PLAN.md -- Scaffold backend + frontend, 17 EF Core entities, AppDbContext with indexes, CSV seeder, MUI theme
 - [ ] 01-02-PLAN.md -- ASP.NET Identity, AuthController, Google OAuth, MFA, security headers, password policy, test accounts
 - [ ] 01-03-PLAN.md -- Frontend auth pages (login/register/MFA/logout), AuthContext, ProtectedRoute, role-gated routing
 

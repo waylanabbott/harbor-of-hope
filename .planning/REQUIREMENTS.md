@@ -95,9 +95,9 @@
 
 ### Database & Data
 
-- [ ] **DATA-01**: PostgreSQL database with all 17 tables matching the schema
-- [ ] **DATA-02**: Database seeded from CSV files (all 17 tables, ~8,100 rows)
-- [ ] **DATA-03**: Proper indexes on frequently queried columns
+- [x] **DATA-01**: PostgreSQL database with all 17 tables matching the schema
+- [x] **DATA-02**: Database seeded from CSV files (all 17 tables, ~8,100 rows)
+- [x] **DATA-03**: Proper indexes on frequently queried columns
 
 ### ML Pipelines
 
@@ -145,9 +145,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |
 | AUTH-03 | Phase 1 | Pending |
