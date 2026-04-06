@@ -88,10 +88,10 @@
 
 ### Responsiveness & Accessibility
 
-- [ ] **A11Y-01**: All pages achieve Lighthouse accessibility score >= 90%
-- [ ] **A11Y-02**: All pages render correctly at desktop (1440px, 1024px), tablet (768px), and mobile (375px)
-- [ ] **A11Y-03**: Navigation uses hamburger menu on mobile
-- [ ] **A11Y-04**: Tables use horizontal scroll or card layout on mobile
+- [x] **A11Y-01**: All pages achieve Lighthouse accessibility score >= 90%
+- [x] **A11Y-02**: All pages render correctly at desktop (1440px, 1024px), tablet (768px), and mobile (375px)
+- [x] **A11Y-03**: Navigation uses hamburger menu on mobile
+- [x] **A11Y-04**: Tables use horizontal scroll or card layout on mobile
 
 ### Database & Data
 
@@ -209,10 +209,10 @@
 | RPT-04 | Phase 5 | Complete |
 | RPT-05 | Phase 5 | Complete |
 | DONR-06 | Phase 5 | Complete |
-| A11Y-01 | Phase 6 | Pending |
-| A11Y-02 | Phase 6 | Pending |
-| A11Y-03 | Phase 6 | Pending |
-| A11Y-04 | Phase 6 | Pending |
+| A11Y-01 | Phase 6 | Complete |
+| A11Y-02 | Phase 6 | Complete |
+| A11Y-03 | Phase 6 | Complete |
+| A11Y-04 | Phase 6 | Complete |
 | DEPLOY-01 | Phase 6 | Complete |
 | DEPLOY-02 | Phase 6 | Complete |
 | DEPLOY-03 | Phase 6 | Complete |

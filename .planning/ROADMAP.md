@@ -117,7 +117,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Responsive navigation (hamburger menu), responsive tables, accessibility fixes, Lighthouse compliance
+- [x] 06-01-PLAN.md -- Responsive navigation (hamburger menu), responsive tables, accessibility fixes, Lighthouse compliance
 - [x] 06-02-PLAN.md -- .NET SPA hosting config, Azure deployment script, production settings, Flask CORS
 - [ ] 06-03-PLAN.md -- Execute Azure deployment, end-to-end verification of deployed site
 
