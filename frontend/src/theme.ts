@@ -27,22 +27,42 @@ export function getDesignTokens(mode: 'light' | 'dark'): ThemeOptions {
       button: { fontWeight: 700, textTransform: 'none' as const },
     },
     shape: {
-      borderRadius: 12,
+      borderRadius: 16,
     },
     components: {
       MuiCard: {
         styleOverrides: {
           root: {
+            borderRadius: 16,
             boxShadow:
               mode === 'light'
-                ? '0 2px 12px rgba(0,0,0,0.08)'
-                : '0 2px 12px rgba(0,0,0,0.3)',
+                ? '0 4px 24px rgba(0,0,0,0.06)'
+                : '0 4px 24px rgba(0,0,0,0.35)',
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            borderRadius: 16,
           },
         },
       },
       MuiButton: {
         styleOverrides: {
           root: { borderRadius: 24 },
+          containedPrimary: {
+            boxShadow:
+              mode === 'light'
+                ? '0 4px 16px rgba(212,96,63,0.25)'
+                : '0 4px 16px rgba(0,0,0,0.3)',
+            '&:hover': {
+              boxShadow:
+                mode === 'light'
+                  ? '0 6px 20px rgba(212,96,63,0.35)'
+                  : '0 6px 20px rgba(0,0,0,0.4)',
+            },
+          },
         },
       },
     },

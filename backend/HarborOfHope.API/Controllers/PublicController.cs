@@ -74,13 +74,17 @@ public class PublicController(AppDbContext db) : ControllerBase
                         if (metrics.TryGetValue("avg_health_score", out var health))
                             dto.AvgHealthScore = health.TryGetDouble(out var hv) ? hv : null;
 
-                        if (metrics.TryGetValue("education_progress", out var edu))
+                        // Support both key names: "avg_education_progress" (CSV) and "education_progress" (legacy)
+                        if (metrics.TryGetValue("avg_education_progress", out var edu)
+                            || metrics.TryGetValue("education_progress", out edu))
                             dto.EducationProgress = edu.TryGetDouble(out var ev) ? ev : null;
 
                         if (metrics.TryGetValue("total_residents", out var residents))
                             dto.TotalResidents = residents.TryGetInt32(out var rv) ? rv : null;
 
-                        if (metrics.TryGetValue("donations_total", out var donations))
+                        // Support both key names: "donations_total_for_month" (CSV) and "donations_total" (legacy)
+                        if (metrics.TryGetValue("donations_total_for_month", out var donations)
+                            || metrics.TryGetValue("donations_total", out donations))
                             dto.DonationsTotal = donations.TryGetDecimal(out var dv) ? dv : null;
                     }
                 }
