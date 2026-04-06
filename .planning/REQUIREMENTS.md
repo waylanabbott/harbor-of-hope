@@ -82,8 +82,8 @@
 - [x] **SEC-01**: HTTPS/TLS enabled with valid certificate (HTTP redirects to HTTPS)
 - [x] **SEC-02**: Content-Security-Policy HTTP header set with appropriate directives
 - [x] **SEC-03**: HSTS enabled in production
-- [ ] **SEC-04**: Data sanitization / input encoding on all form inputs
-- [ ] **SEC-05**: Delete operations require confirmation dialog
+- [x] **SEC-04**: Data sanitization / input encoding on all form inputs
+- [x] **SEC-05**: Delete operations require confirmation dialog
 - [x] **SEC-06**: No passwords, API keys, or connection strings in source code (env vars or secrets manager)
 
 ### Responsiveness & Accessibility
@@ -184,8 +184,8 @@
 | VISIT-01 | Phase 2 | Pending |
 | VISIT-02 | Phase 2 | Pending |
 | VISIT-03 | Phase 2 | Pending |
-| SEC-04 | Phase 2 | Pending |
-| SEC-05 | Phase 2 | Pending |
+| SEC-04 | Phase 2 | Complete |
+| SEC-05 | Phase 2 | Complete |
 | PUB-01 | Phase 3 | Pending |
 | PUB-02 | Phase 3 | Pending |
 | PUB-03 | Phase 3 | Pending |

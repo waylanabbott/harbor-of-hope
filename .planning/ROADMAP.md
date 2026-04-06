@@ -52,7 +52,7 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 02-01-PLAN.md -- Backend API controllers (6) with DTOs, pagination, input sanitization
+- [x] 02-01-PLAN.md -- Backend API controllers (6) with DTOs, pagination, input sanitization
 - [ ] 02-02-PLAN.md -- Frontend infrastructure: npm deps, types, API layer, sidebar layout, reusable UI components
 - [ ] 02-03-PLAN.md -- Admin Dashboard page and Residents CRUD page with form, routing
 - [ ] 02-04-PLAN.md -- Supporters/Donations, Process Recordings, Home Visitations CRUD pages with forms, routing
