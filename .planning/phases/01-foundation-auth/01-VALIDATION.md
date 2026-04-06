@@ -1,9 +1,10 @@
 ---
 phase: 1
 slug: foundation-auth
-status: draft
+status: accepted-tradeoff
 nyquist_compliant: false
 wave_0_complete: false
+tradeoff_note: "4-day deadline. Compile checks (dotnet build, tsc --noEmit) at every task + human-verify checkpoint at end. Behavioral tests deferred to Phase 6 polish."
 created: 2026-04-06
 ---
 
