@@ -31,12 +31,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can log in via Google OAuth as an alternative to email/password
   4. Admin, donor, and visitor roles exist -- unauthenticated users are blocked from protected routes and CUD endpoints return 401/403
   5. CSP, HSTS, and HTTPS are active in the deployed skeleton -- no secrets exist in source code
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md -- Scaffold backend + frontend, 17 EF Core entities, AppDbContext with indexes, CSV seeder, MUI theme
+- [ ] 01-02-PLAN.md -- ASP.NET Identity, AuthController, Google OAuth, MFA, security headers, password policy, test accounts
+- [ ] 01-03-PLAN.md -- Frontend auth pages (login/register/MFA/logout), AuthContext, ProtectedRoute, role-gated routing
 
 ### Phase 2: Admin CRUD + Dashboard
 **Goal**: Case managers can manage all resident and donor data through complete CRUD interfaces, and view an admin dashboard summarizing key metrics
@@ -125,7 +125,7 @@ Note: Phase 4 depends only on Phase 1 (not Phase 2/3), enabling potential parall
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Auth | 0/3 | Not started | - |
+| 1. Foundation + Auth | 0/3 | Planned | - |
 | 2. Admin CRUD + Dashboard | 0/3 | Not started | - |
 | 3. Public Pages + Donor Portal | 0/2 | Not started | - |
 | 4. ML Pipelines + Flask API | 0/2 | Not started | - |
