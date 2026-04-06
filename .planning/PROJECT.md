@@ -31,11 +31,11 @@ Case managers can efficiently track and manage residents across safehouses while
 - ✓ Donor-facing login showing donation history and impact — Phase 3
 
 - ✓ 8 ML pipelines trained and served via Flask API — Phase 4
+- ✓ Reports & analytics page with donation trends and resident outcome charts — Phase 5
+- ✓ ML predictions surfaced in admin UI (churn badges, recommendations) — Phase 5
 
 ### Active
 
-- [ ] Reports & analytics page with donation trends and resident outcome charts
-- [ ] ML predictions surfaced in admin UI (churn badges, recommendations)
 - [ ] Responsive design (desktop + mobile) with Lighthouse accessibility >= 90%
 - [ ] Deploy to Microsoft Azure (App Service + Azure PostgreSQL)
 
@@ -110,4 +110,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-06 after Phase 4 completion*
+*Last updated: 2026-04-06 after Phase 5 completion*
