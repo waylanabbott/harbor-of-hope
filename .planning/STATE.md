@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-04-06T18:34:53.124Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 01-03-PLAN.md (Phase 1 complete)
+last_updated: "2026-04-06T18:46:52.380Z"
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -48,6 +48,7 @@ Plan: 3 of 3
 *Updated after each plan completion*
 | Phase 01-foundation-auth P01 | 10min | 2 tasks | 47 files |
 | Phase 01-foundation-auth P02 | 5min | 2 tasks | 16 files |
+| Phase 01-foundation-auth P03 | 8min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation-auth]: Cookie auth returns 401/403 instead of redirect for SPA API calls
 - [Phase 01-foundation-auth]: Connection string stored in dotnet user-secrets, removed from source (SEC-06)
 - [Phase 01-foundation-auth]: External OAuth and self-registered users default to Donor role
+- [Phase 01-foundation-auth]: Auth API uses native fetch with credentials:include (not axios) for cookie transport consistency
+- [Phase 01-foundation-auth]: Auth forms use useState (not react-hook-form) -- react-hook-form reserved for complex CRUD forms in Phase 2
+- [Phase 01-foundation-auth]: AppLayout is minimal AppBar shell -- full admin sidebar deferred to Phase 2
 
 ### Pending Todos
 
@@ -79,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T18:34:53.120Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-04-06T18:46:52.378Z
+Stopped at: Completed 01-03-PLAN.md (Phase 1 complete)
 Resume file: None

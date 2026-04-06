@@ -12,7 +12,7 @@ Harbor of Hope delivers a full-stack nonprofit platform in 6 phases across 4 day
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation + Auth** - Database schema, CSV seeding, ASP.NET Identity with RBAC, security headers, and skeleton Azure deploy
+- [x] **Phase 1: Foundation + Auth** - Database schema, CSV seeding, ASP.NET Identity with RBAC, security headers, and skeleton Azure deploy (completed 2026-04-06)
 - [ ] **Phase 2: Admin CRUD + Dashboard** - Caseload inventory, donors/contributions, process recordings, home visitations, admin dashboard, and input security
 - [ ] **Phase 3: Public Pages + Donor Portal** - Landing page, public impact dashboard, donor portal, privacy policy, cookie consent, and dark mode
 - [ ] **Phase 4: ML Pipelines + Flask API** - Train 8 ML models in Jupyter notebooks, deploy Flask prediction API
@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md -- Scaffold backend + frontend, 17 EF Core entities, AppDbContext with indexes, CSV seeder, MUI theme
 - [x] 01-02-PLAN.md -- ASP.NET Identity, AuthController, Google OAuth, MFA, security headers, password policy, test accounts
-- [ ] 01-03-PLAN.md -- Frontend auth pages (login/register/MFA/logout), AuthContext, ProtectedRoute, role-gated routing
+- [x] 01-03-PLAN.md -- Frontend auth pages (login/register/MFA/logout), AuthContext, ProtectedRoute, role-gated routing
 
 ### Phase 2: Admin CRUD + Dashboard
 **Goal**: Case managers can manage all resident and donor data through complete CRUD interfaces, and view an admin dashboard summarizing key metrics
@@ -125,7 +125,7 @@ Note: Phase 4 depends only on Phase 1 (not Phase 2/3), enabling potential parall
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Auth | 0/3 | Planned | - |
+| 1. Foundation + Auth | 3/3 | Complete   | 2026-04-06 |
 | 2. Admin CRUD + Dashboard | 0/3 | Not started | - |
 | 3. Public Pages + Donor Portal | 0/2 | Not started | - |
 | 4. ML Pipelines + Flask API | 0/2 | Not started | - |

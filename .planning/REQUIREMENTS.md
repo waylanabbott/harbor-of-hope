@@ -19,9 +19,9 @@
 - [x] **AUTH-02**: User can log in with email/password and session persists across browser refresh
 - [x] **AUTH-03**: User can log in with Google OAuth (third-party auth)
 - [x] **AUTH-04**: At least one account type has MFA/2FA enabled
-- [ ] **AUTH-05**: Admin role can Create, Update, Delete data on all admin pages
-- [ ] **AUTH-06**: Donor role can view own donation history and impact only
-- [ ] **AUTH-07**: Unauthenticated users can only access public pages (home, impact, privacy, login)
+- [x] **AUTH-05**: Admin role can Create, Update, Delete data on all admin pages
+- [x] **AUTH-06**: Donor role can view own donation history and impact only
+- [x] **AUTH-07**: Unauthenticated users can only access public pages (home, impact, privacy, login)
 - [x] **AUTH-08**: All CUD API endpoints require authentication and return 401/403 for unauthorized access
 - [x] **AUTH-09**: Login/auth-check endpoints do NOT require authentication
 - [x] **AUTH-10**: Three test accounts created: admin (no MFA), donor (no MFA, linked to donations), MFA-enabled account
@@ -152,9 +152,9 @@
 | AUTH-02 | Phase 1 | Complete |
 | AUTH-03 | Phase 1 | Complete |
 | AUTH-04 | Phase 1 | Complete |
-| AUTH-05 | Phase 1 | Pending |
-| AUTH-06 | Phase 1 | Pending |
-| AUTH-07 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Complete |
+| AUTH-06 | Phase 1 | Complete |
+| AUTH-07 | Phase 1 | Complete |
 | AUTH-08 | Phase 1 | Complete |
 | AUTH-09 | Phase 1 | Complete |
 | AUTH-10 | Phase 1 | Complete |
