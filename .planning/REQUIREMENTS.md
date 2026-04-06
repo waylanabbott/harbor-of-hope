@@ -1,7 +1,7 @@
 # Requirements: Harbor of Hope
 
 **Defined:** 2026-04-06
-**Core Value:** Case managers can efficiently track residents while donors see their contribution impact — all secured with proper authentication and RBAC.
+**Core Value:** Case managers can efficiently track residents while donors see their contribution impact -- all secured with proper authentication and RBAC.
 
 ## v1 Requirements
 
@@ -101,14 +101,14 @@
 
 ### ML Pipelines
 
-- [ ] **ML-01**: Donor Churn Prediction pipeline (predictive) — classify donors as at-risk or retained, display risk badges in app
-- [ ] **ML-02**: Social Media Post Effectiveness pipeline (explanatory) — OLS regression on post factors, display posting recommendations in app
-- [ ] **ML-03**: Resident Reintegration Readiness pipeline (predictive) — classify residents by reintegration likelihood, display readiness score in caseload
-- [ ] **ML-04**: Counseling Session Effectiveness pipeline (explanatory) — which session types/interventions drive emotional improvement
-- [ ] **ML-05**: Incident Risk Prediction pipeline (predictive) — predict which residents are at higher risk of incidents
-- [ ] **ML-06**: Education Outcome Prediction pipeline (predictive) — predict education completion/GPA from attendance and engagement
-- [ ] **ML-07**: Donation Forecasting pipeline (predictive) — forecast future donation amounts by period
-- [ ] **ML-08**: Safehouse Capacity/Outcomes pipeline (explanatory) — which safehouse factors drive better resident outcomes
+- [ ] **ML-01**: Donor Churn Prediction pipeline (predictive) -- classify donors as at-risk or retained, display risk badges in app
+- [ ] **ML-02**: Social Media Post Effectiveness pipeline (explanatory) -- OLS regression on post factors, display posting recommendations in app
+- [ ] **ML-03**: Resident Reintegration Readiness pipeline (predictive) -- classify residents by reintegration likelihood, display readiness score in caseload
+- [ ] **ML-04**: Counseling Session Effectiveness pipeline (explanatory) -- which session types/interventions drive emotional improvement
+- [ ] **ML-05**: Incident Risk Prediction pipeline (predictive) -- predict which residents are at higher risk of incidents
+- [ ] **ML-06**: Education Outcome Prediction pipeline (predictive) -- predict education completion/GPA from attendance and engagement
+- [ ] **ML-07**: Donation Forecasting pipeline (predictive) -- forecast future donation amounts by period
+- [ ] **ML-08**: Safehouse Capacity/Outcomes pipeline (explanatory) -- which safehouse factors drive better resident outcomes
 - [ ] **ML-09**: All notebooks fully executable top-to-bottom in Jupyter
 - [ ] **ML-10**: ML models served via Flask API endpoints called from .NET backend
 
@@ -143,16 +143,86 @@
 
 ## Traceability
 
-(Populated during roadmap creation)
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| AUTH-06 | Phase 1 | Pending |
+| AUTH-07 | Phase 1 | Pending |
+| AUTH-08 | Phase 1 | Pending |
+| AUTH-09 | Phase 1 | Pending |
+| AUTH-10 | Phase 1 | Pending |
+| SEC-01 | Phase 1 | Pending |
+| SEC-02 | Phase 1 | Pending |
+| SEC-03 | Phase 1 | Pending |
+| SEC-06 | Phase 1 | Pending |
+| DASH-01 | Phase 2 | Pending |
+| DASH-02 | Phase 2 | Pending |
+| DASH-03 | Phase 2 | Pending |
+| DASH-04 | Phase 2 | Pending |
+| CASE-01 | Phase 2 | Pending |
+| CASE-02 | Phase 2 | Pending |
+| CASE-03 | Phase 2 | Pending |
+| CASE-04 | Phase 2 | Pending |
+| CASE-05 | Phase 2 | Pending |
+| CASE-06 | Phase 2 | Pending |
+| CASE-07 | Phase 2 | Pending |
+| DONR-01 | Phase 2 | Pending |
+| DONR-02 | Phase 2 | Pending |
+| DONR-03 | Phase 2 | Pending |
+| DONR-04 | Phase 2 | Pending |
+| DONR-05 | Phase 2 | Pending |
+| PROC-01 | Phase 2 | Pending |
+| PROC-02 | Phase 2 | Pending |
+| PROC-03 | Phase 2 | Pending |
+| VISIT-01 | Phase 2 | Pending |
+| VISIT-02 | Phase 2 | Pending |
+| VISIT-03 | Phase 2 | Pending |
+| SEC-04 | Phase 2 | Pending |
+| SEC-05 | Phase 2 | Pending |
+| PUB-01 | Phase 3 | Pending |
+| PUB-02 | Phase 3 | Pending |
+| PUB-03 | Phase 3 | Pending |
+| PUB-04 | Phase 3 | Pending |
+| PUB-05 | Phase 3 | Pending |
+| PORTAL-01 | Phase 3 | Pending |
+| PORTAL-02 | Phase 3 | Pending |
+| ML-01 | Phase 4 | Pending |
+| ML-02 | Phase 4 | Pending |
+| ML-03 | Phase 4 | Pending |
+| ML-04 | Phase 4 | Pending |
+| ML-05 | Phase 4 | Pending |
+| ML-06 | Phase 4 | Pending |
+| ML-07 | Phase 4 | Pending |
+| ML-08 | Phase 4 | Pending |
+| ML-09 | Phase 4 | Pending |
+| ML-10 | Phase 4 | Pending |
+| RPT-01 | Phase 5 | Pending |
+| RPT-02 | Phase 5 | Pending |
+| RPT-03 | Phase 5 | Pending |
+| RPT-04 | Phase 5 | Pending |
+| RPT-05 | Phase 5 | Pending |
+| DONR-06 | Phase 5 | Pending |
+| A11Y-01 | Phase 6 | Pending |
+| A11Y-02 | Phase 6 | Pending |
+| A11Y-03 | Phase 6 | Pending |
+| A11Y-04 | Phase 6 | Pending |
+| DEPLOY-01 | Phase 6 | Pending |
+| DEPLOY-02 | Phase 6 | Pending |
+| DEPLOY-03 | Phase 6 | Pending |
+| DEPLOY-04 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 60 total
-- Mapped to phases: 0
-- Unmapped: 60
+- v1 requirements: 72 total
+- Mapped to phases: 72
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-06*
-*Last updated: 2026-04-06 after initial definition*
+*Last updated: 2026-04-06 after roadmap creation (traceability populated)*
