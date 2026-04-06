@@ -50,7 +50,7 @@
 - [x] **DONR-03**: Admin can create new supporter and donation records
 - [x] **DONR-04**: Admin can edit supporter and donation records
 - [x] **DONR-05**: Admin can delete supporter/donation records with confirmation dialog
-- [ ] **DONR-06**: Donor churn risk level (Low/Medium/High) displayed as badge next to each donor (from ML Pipeline 1)
+- [x] **DONR-06**: Donor churn risk level (Low/Medium/High) displayed as badge next to each donor (from ML Pipeline 1)
 
 ### Process Recordings
 
@@ -66,11 +66,11 @@
 
 ### Reports & Analytics
 
-- [ ] **RPT-01**: Admin can view donation trends chart (line/bar chart over time)
-- [ ] **RPT-02**: Admin can view resident outcomes chart (reintegration status breakdown)
-- [ ] **RPT-03**: Admin can view safehouse comparison metrics
-- [ ] **RPT-04**: Admin can view social media posting recommendations card (from ML Pipeline 2)
-- [ ] **RPT-05**: Reports page displays counseling effectiveness insights (from ML Pipeline 4)
+- [x] **RPT-01**: Admin can view donation trends chart (line/bar chart over time)
+- [x] **RPT-02**: Admin can view resident outcomes chart (reintegration status breakdown)
+- [x] **RPT-03**: Admin can view safehouse comparison metrics
+- [x] **RPT-04**: Admin can view social media posting recommendations card (from ML Pipeline 2)
+- [x] **RPT-05**: Reports page displays counseling effectiveness insights (from ML Pipeline 4)
 
 ### Donor Portal
 
@@ -203,12 +203,12 @@
 | ML-08 | Phase 4 | Complete |
 | ML-09 | Phase 4 | Complete |
 | ML-10 | Phase 4 | Complete |
-| RPT-01 | Phase 5 | Pending |
-| RPT-02 | Phase 5 | Pending |
-| RPT-03 | Phase 5 | Pending |
-| RPT-04 | Phase 5 | Pending |
-| RPT-05 | Phase 5 | Pending |
-| DONR-06 | Phase 5 | Pending |
+| RPT-01 | Phase 5 | Complete |
+| RPT-02 | Phase 5 | Complete |
+| RPT-03 | Phase 5 | Complete |
+| RPT-04 | Phase 5 | Complete |
+| RPT-05 | Phase 5 | Complete |
+| DONR-06 | Phase 5 | Complete |
 | A11Y-01 | Phase 6 | Pending |
 | A11Y-02 | Phase 6 | Pending |
 | A11Y-03 | Phase 6 | Pending |

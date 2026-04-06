@@ -102,7 +102,7 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 05-01-PLAN.md -- Backend ReportsController with aggregation endpoints (donation trends, resident outcomes, safehouse comparison, batch churn), DTOs, frontend types and API modules
+- [x] 05-01-PLAN.md -- Backend ReportsController with aggregation endpoints (donation trends, resident outcomes, safehouse comparison, batch churn), DTOs, frontend types and API modules
 - [ ] 05-02-PLAN.md -- ReportsPage with 3 Recharts charts + 2 ML insight cards, churn risk badges on SupportersPage, route wiring
 
 ### Phase 6: Polish + Final Deploy
