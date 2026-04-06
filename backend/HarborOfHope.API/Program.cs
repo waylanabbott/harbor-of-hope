@@ -1,23 +1,86 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using HarborOfHope.API.Data;
+using HarborOfHope.API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+const string FrontendCorsPolicy = "FrontendClient";
+var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:3000";
 
 // Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// PostgreSQL
+// PostgreSQL -- BOTH contexts on same connection string
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connString));
+builder.Services.AddDbContext<AuthIdentityDbContext>(options => options.UseNpgsql(connString));
 
-// CORS for frontend dev
+// Identity
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AuthIdentityDbContext>();
+
+// Google OAuth (conditional -- only if credentials configured)
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
+{
+    builder.Services.AddAuthentication()
+        .AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+            options.CallbackPath = "/signin-google";
+        });
+}
+
+// Authorization policies
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthPolicies.AdminOnly, policy => policy.RequireRole(AuthRoles.Admin));
+});
+
+// Password policy (IS 414 requirement -- 14 char passphrase, no complexity)
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequiredLength = 14;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredUniqueChars = 1;
+});
+
+// Cookie config (httpOnly, SameSite Lax, Secure always, 7-day sliding)
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.SlidingExpiration = true;
+    // Return 401/403 instead of redirect for API calls
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
+
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontendClient", policy =>
+    options.AddPolicy(FrontendCorsPolicy, policy =>
     {
-        policy.WithOrigins(builder.Configuration["FrontendUrl"] ?? "http://localhost:3000")
+        policy.WithOrigins(frontendUrl)
             .AllowCredentials()
             .AllowAnyMethod()
             .AllowAnyHeader();
@@ -26,23 +89,34 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Startup: migrations + seeding
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-// Apply migrations + seed
 using (var scope = app.Services.CreateScope())
 {
+    var identityDb = scope.ServiceProvider.GetRequiredService<AuthIdentityDbContext>();
     var appDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await identityDb.Database.MigrateAsync();
     await appDb.Database.MigrateAsync();
+    await AuthIdentityGenerator.GenerateDefaultIdentityAsync(scope.ServiceProvider, app.Configuration);
     await SeedData.SeedAsync(appDb);
 }
 
+// Middleware pipeline (ORDER MATTERS)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseCors("FrontendClient");
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+app.UseSecurityHeaders();
+app.UseCors(FrontendCorsPolicy);
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
+app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
 app.Run();
