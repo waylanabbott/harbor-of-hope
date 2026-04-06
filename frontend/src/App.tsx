@@ -8,6 +8,9 @@ import ManageMfaPage from './pages/auth/ManageMfaPage';
 import LogoutPage from './pages/auth/LogoutPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ResidentsPage from './pages/admin/ResidentsPage';
+import SupportersPage from './pages/admin/SupportersPage';
+import ProcessRecordingsPage from './pages/admin/ProcessRecordingsPage';
+import HomeVisitationsPage from './pages/admin/HomeVisitationsPage';
 
 function App() {
   return (
@@ -61,7 +64,7 @@ function App() {
           path="/admin/donors"
           element={
             <ProtectedRoute role="Admin">
-              <Container sx={{ py: 6 }}><Typography variant="h4">Donors</Typography><Typography>Loading...</Typography></Container>
+              <SupportersPage />
             </ProtectedRoute>
           }
         />
@@ -69,7 +72,7 @@ function App() {
           path="/admin/sessions"
           element={
             <ProtectedRoute role="Admin">
-              <Container sx={{ py: 6 }}><Typography variant="h4">Sessions</Typography><Typography>Loading...</Typography></Container>
+              <ProcessRecordingsPage />
             </ProtectedRoute>
           }
         />
@@ -77,7 +80,7 @@ function App() {
           path="/admin/visits"
           element={
             <ProtectedRoute role="Admin">
-              <Container sx={{ py: 6 }}><Typography variant="h4">Visits</Typography><Typography>Loading...</Typography></Container>
+              <HomeVisitationsPage />
             </ProtectedRoute>
           }
         />
