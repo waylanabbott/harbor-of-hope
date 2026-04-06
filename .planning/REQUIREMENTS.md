@@ -110,7 +110,7 @@
 - [x] **ML-07**: Donation Forecasting pipeline (predictive) -- forecast future donation amounts by period
 - [x] **ML-08**: Safehouse Capacity/Outcomes pipeline (explanatory) -- which safehouse factors drive better resident outcomes
 - [x] **ML-09**: All notebooks fully executable top-to-bottom in Jupyter
-- [ ] **ML-10**: ML models served via Flask API endpoints called from .NET backend
+- [x] **ML-10**: ML models served via Flask API endpoints called from .NET backend
 
 ### Deployment
 
@@ -202,7 +202,7 @@
 | ML-07 | Phase 4 | Complete |
 | ML-08 | Phase 4 | Complete |
 | ML-09 | Phase 4 | Complete |
-| ML-10 | Phase 4 | Pending |
+| ML-10 | Phase 4 | Complete |
 | RPT-01 | Phase 5 | Pending |
 | RPT-02 | Phase 5 | Pending |
 | RPT-03 | Phase 5 | Pending |
