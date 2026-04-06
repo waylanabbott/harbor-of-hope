@@ -19,6 +19,8 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: '../backend/HarborOfHope.API/wwwroot',
+    emptyOutDir: true,
     assetsInlineLimit: 0,
   },
 });

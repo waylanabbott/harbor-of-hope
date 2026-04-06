@@ -6,10 +6,16 @@ import numpy as np
 import os
 
 app = Flask(__name__)
-CORS(app)  # Will restrict origins in production
+
+# Production CORS: restrict origins via environment variable
+allowed_origins = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
+if allowed_origins == ['*']:
+    CORS(app)
+else:
+    CORS(app, origins=allowed_origins)
 
 # Load all models at startup
-MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'models')
+MODEL_DIR = os.environ.get('MODEL_DIR', os.path.join(os.path.dirname(__file__), '..', 'models'))
 models = {}
 model_files = {
     'donor-churn': 'donor_churn.pkl',

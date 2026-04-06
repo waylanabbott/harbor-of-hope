@@ -127,6 +127,14 @@ app.UseCors(FrontendCorsPolicy);
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Serve React SPA static files from wwwroot/
+app.UseStaticFiles();
+
 app.MapControllers();
 app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
+
+// SPA fallback: any non-API, non-file request returns index.html
+app.MapFallbackToFile("index.html");
+
 app.Run();
