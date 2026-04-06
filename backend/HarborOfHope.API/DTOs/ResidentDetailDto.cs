@@ -1,0 +1,62 @@
+namespace HarborOfHope.API.DTOs;
+
+public class ResidentDetailDto
+{
+    public int ResidentId { get; set; }
+    public string? CaseControlNo { get; set; }
+    public string? InternalCode { get; set; }
+    public int SafehouseId { get; set; }
+    public string? SafehouseName { get; set; }
+    public string? CaseStatus { get; set; }
+    public string? Sex { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public string? BirthStatus { get; set; }
+    public string? PlaceOfBirth { get; set; }
+    public string? Religion { get; set; }
+    public string? CaseCategory { get; set; }
+
+    // Sub-categories
+    public bool SubCatOrphaned { get; set; }
+    public bool SubCatTrafficked { get; set; }
+    public bool SubCatChildLabor { get; set; }
+    public bool SubCatPhysicalAbuse { get; set; }
+    public bool SubCatSexualAbuse { get; set; }
+    public bool SubCatOsaec { get; set; }
+    public bool SubCatCicl { get; set; }
+    public bool SubCatAtRisk { get; set; }
+    public bool SubCatStreetChild { get; set; }
+    public bool SubCatChildWithHiv { get; set; }
+
+    // Disability and special needs
+    public bool IsPwd { get; set; }
+    public string? PwdType { get; set; }
+    public bool HasSpecialNeeds { get; set; }
+    public string? SpecialNeedsDiagnosis { get; set; }
+
+    // Family background
+    public bool FamilyIs4ps { get; set; }
+    public bool FamilySoloParent { get; set; }
+    public bool FamilyIndigenous { get; set; }
+    public bool FamilyParentPwd { get; set; }
+    public bool FamilyInformalSettler { get; set; }
+
+    // Dates and case details
+    public DateTime? DateOfAdmission { get; set; }
+    public string? AgeUponAdmission { get; set; }
+    public string? PresentAge { get; set; }
+    public string? LengthOfStay { get; set; }
+    public string? ReferralSource { get; set; }
+    public string? ReferringAgencyPerson { get; set; }
+    public DateTime? DateColbRegistered { get; set; }
+    public DateTime? DateColbObtained { get; set; }
+    public string? AssignedSocialWorker { get; set; }
+    public string? InitialCaseAssessment { get; set; }
+    public DateTime? DateCaseStudyPrepared { get; set; }
+    public string? ReintegrationType { get; set; }
+    public string? ReintegrationStatus { get; set; }
+    public string? InitialRiskLevel { get; set; }
+    public string? CurrentRiskLevel { get; set; }
+    public DateTime? DateEnrolled { get; set; }
+    public DateTime? DateClosed { get; set; }
+    public DateTime? CreatedAt { get; set; }
+}
