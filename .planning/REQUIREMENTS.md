@@ -102,13 +102,13 @@
 ### ML Pipelines
 
 - [x] **ML-01**: Donor Churn Prediction pipeline (predictive) -- classify donors as at-risk or retained, display risk badges in app
-- [ ] **ML-02**: Social Media Post Effectiveness pipeline (explanatory) -- OLS regression on post factors, display posting recommendations in app
+- [x] **ML-02**: Social Media Post Effectiveness pipeline (explanatory) -- OLS regression on post factors, display posting recommendations in app
 - [x] **ML-03**: Resident Reintegration Readiness pipeline (predictive) -- classify residents by reintegration likelihood, display readiness score in caseload
-- [ ] **ML-04**: Counseling Session Effectiveness pipeline (explanatory) -- which session types/interventions drive emotional improvement
+- [x] **ML-04**: Counseling Session Effectiveness pipeline (explanatory) -- which session types/interventions drive emotional improvement
 - [x] **ML-05**: Incident Risk Prediction pipeline (predictive) -- predict which residents are at higher risk of incidents
 - [x] **ML-06**: Education Outcome Prediction pipeline (predictive) -- predict education completion/GPA from attendance and engagement
-- [ ] **ML-07**: Donation Forecasting pipeline (predictive) -- forecast future donation amounts by period
-- [ ] **ML-08**: Safehouse Capacity/Outcomes pipeline (explanatory) -- which safehouse factors drive better resident outcomes
+- [x] **ML-07**: Donation Forecasting pipeline (predictive) -- forecast future donation amounts by period
+- [x] **ML-08**: Safehouse Capacity/Outcomes pipeline (explanatory) -- which safehouse factors drive better resident outcomes
 - [x] **ML-09**: All notebooks fully executable top-to-bottom in Jupyter
 - [ ] **ML-10**: ML models served via Flask API endpoints called from .NET backend
 
@@ -194,13 +194,13 @@
 | PORTAL-01 | Phase 3 | Complete |
 | PORTAL-02 | Phase 3 | Complete |
 | ML-01 | Phase 4 | Complete |
-| ML-02 | Phase 4 | Pending |
+| ML-02 | Phase 4 | Complete |
 | ML-03 | Phase 4 | Complete |
-| ML-04 | Phase 4 | Pending |
+| ML-04 | Phase 4 | Complete |
 | ML-05 | Phase 4 | Complete |
 | ML-06 | Phase 4 | Complete |
-| ML-07 | Phase 4 | Pending |
-| ML-08 | Phase 4 | Pending |
+| ML-07 | Phase 4 | Complete |
+| ML-08 | Phase 4 | Complete |
 | ML-09 | Phase 4 | Complete |
 | ML-10 | Phase 4 | Pending |
 | RPT-01 | Phase 5 | Pending |

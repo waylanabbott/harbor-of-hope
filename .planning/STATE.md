@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-04-06T21:20:25.596Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-04-06T21:23:00.776Z"
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-04-06)
 ## Current Position
 
 Phase: 04 (ML Pipelines + Flask API) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Plan: 2 of 3
 | Phase 03 P01 | 3min | 2 tasks | 21 files |
 | Phase 03 P02 | 5min | 3 tasks | 7 files |
 | Phase 04 P01 | 14min | 2 tasks | 13 files |
+| Phase 04 P02 | 16min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,9 @@ Recent decisions affecting current work:
 - [Phase 04]: sklearn Pipeline wrapping ColumnTransformer for reproducible preprocessing+classification in single serializable object
 - [Phase 04]: permutation_importance on Pipeline operates on input columns not preprocessed features
 - [Phase 04]: All classifiers use class_weight=balanced for imbalanced datasets
+- [Phase 04]: Social media model uses controllable post factors only (not engagement outcomes) to avoid endogeneity
+- [Phase 04]: Donation forecasting uses GradientBoostingRegressor (best CV RMSE) with temporal split and lag/rolling features
+- [Phase 04]: OLS explanatory pattern: statsmodels for analysis + sklearn Pipeline for deployment serialization
 
 ### Pending Todos
 
@@ -108,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T21:20:25.593Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-04-06T21:23:00.773Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
