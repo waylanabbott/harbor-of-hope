@@ -15,16 +15,16 @@
 
 ### Authentication & Authorization
 
-- [ ] **AUTH-01**: User can create account with email and password (14+ char passphrase policy)
-- [ ] **AUTH-02**: User can log in with email/password and session persists across browser refresh
-- [ ] **AUTH-03**: User can log in with Google OAuth (third-party auth)
-- [ ] **AUTH-04**: At least one account type has MFA/2FA enabled
+- [x] **AUTH-01**: User can create account with email and password (14+ char passphrase policy)
+- [x] **AUTH-02**: User can log in with email/password and session persists across browser refresh
+- [x] **AUTH-03**: User can log in with Google OAuth (third-party auth)
+- [x] **AUTH-04**: At least one account type has MFA/2FA enabled
 - [ ] **AUTH-05**: Admin role can Create, Update, Delete data on all admin pages
 - [ ] **AUTH-06**: Donor role can view own donation history and impact only
 - [ ] **AUTH-07**: Unauthenticated users can only access public pages (home, impact, privacy, login)
-- [ ] **AUTH-08**: All CUD API endpoints require authentication and return 401/403 for unauthorized access
-- [ ] **AUTH-09**: Login/auth-check endpoints do NOT require authentication
-- [ ] **AUTH-10**: Three test accounts created: admin (no MFA), donor (no MFA, linked to donations), MFA-enabled account
+- [x] **AUTH-08**: All CUD API endpoints require authentication and return 401/403 for unauthorized access
+- [x] **AUTH-09**: Login/auth-check endpoints do NOT require authentication
+- [x] **AUTH-10**: Three test accounts created: admin (no MFA), donor (no MFA, linked to donations), MFA-enabled account
 
 ### Admin Dashboard
 
@@ -79,12 +79,12 @@
 
 ### Security
 
-- [ ] **SEC-01**: HTTPS/TLS enabled with valid certificate (HTTP redirects to HTTPS)
-- [ ] **SEC-02**: Content-Security-Policy HTTP header set with appropriate directives
-- [ ] **SEC-03**: HSTS enabled in production
+- [x] **SEC-01**: HTTPS/TLS enabled with valid certificate (HTTP redirects to HTTPS)
+- [x] **SEC-02**: Content-Security-Policy HTTP header set with appropriate directives
+- [x] **SEC-03**: HSTS enabled in production
 - [ ] **SEC-04**: Data sanitization / input encoding on all form inputs
 - [ ] **SEC-05**: Delete operations require confirmation dialog
-- [ ] **SEC-06**: No passwords, API keys, or connection strings in source code (env vars or secrets manager)
+- [x] **SEC-06**: No passwords, API keys, or connection strings in source code (env vars or secrets manager)
 
 ### Responsiveness & Accessibility
 
@@ -148,20 +148,20 @@
 | DATA-01 | Phase 1 | Complete |
 | DATA-02 | Phase 1 | Complete |
 | DATA-03 | Phase 1 | Complete |
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
+| AUTH-04 | Phase 1 | Complete |
 | AUTH-05 | Phase 1 | Pending |
 | AUTH-06 | Phase 1 | Pending |
 | AUTH-07 | Phase 1 | Pending |
-| AUTH-08 | Phase 1 | Pending |
-| AUTH-09 | Phase 1 | Pending |
-| AUTH-10 | Phase 1 | Pending |
-| SEC-01 | Phase 1 | Pending |
-| SEC-02 | Phase 1 | Pending |
-| SEC-03 | Phase 1 | Pending |
-| SEC-06 | Phase 1 | Pending |
+| AUTH-08 | Phase 1 | Complete |
+| AUTH-09 | Phase 1 | Complete |
+| AUTH-10 | Phase 1 | Complete |
+| SEC-01 | Phase 1 | Complete |
+| SEC-02 | Phase 1 | Complete |
+| SEC-03 | Phase 1 | Complete |
+| SEC-06 | Phase 1 | Complete |
 | DASH-01 | Phase 2 | Pending |
 | DASH-02 | Phase 2 | Pending |
 | DASH-03 | Phase 2 | Pending |

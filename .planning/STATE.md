@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-04-06T18:26:17.509Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-04-06T18:34:53.124Z"
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-04-06)
 ## Current Position
 
 Phase: 01 (Foundation + Auth) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: 2 of 3
 
 *Updated after each plan completion*
 | Phase 01-foundation-auth P01 | 10min | 2 tasks | 47 files |
+| Phase 01-foundation-auth P02 | 5min | 2 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation-auth]: Swashbuckle 10.1.7 required for .NET 10 (6.6.2 incompatible)
 - [Phase 01-foundation-auth]: Design-time DbContext factory decouples EF migrations from runtime startup
 - [Phase 01-foundation-auth]: Vite 6.4.2 (downgraded from scaffolded Vite 8) per stack constraints
+- [Phase 01-foundation-auth]: Cookie auth returns 401/403 instead of redirect for SPA API calls
+- [Phase 01-foundation-auth]: Connection string stored in dotnet user-secrets, removed from source (SEC-06)
+- [Phase 01-foundation-auth]: External OAuth and self-registered users default to Donor role
 
 ### Pending Todos
 
@@ -75,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T18:26:17.506Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-04-06T18:34:53.120Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
