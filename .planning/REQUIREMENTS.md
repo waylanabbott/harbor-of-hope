@@ -28,20 +28,20 @@
 
 ### Admin Dashboard
 
-- [ ] **DASH-01**: Admin can view dashboard with 4+ metric cards (total residents, active cases, total donations, reintegration rate)
-- [ ] **DASH-02**: Admin can view recent donations table on dashboard
-- [ ] **DASH-03**: Admin can view residents needing attention table on dashboard
-- [ ] **DASH-04**: Admin dashboard displays OKR metric (Resident Reintegration Rate) prominently as gauge/number + trend
+- [x] **DASH-01**: Admin can view dashboard with 4+ metric cards (total residents, active cases, total donations, reintegration rate)
+- [x] **DASH-02**: Admin can view recent donations table on dashboard
+- [x] **DASH-03**: Admin can view residents needing attention table on dashboard
+- [x] **DASH-04**: Admin dashboard displays OKR metric (Resident Reintegration Rate) prominently as gauge/number + trend
 
 ### Caseload Inventory
 
-- [ ] **CASE-01**: Admin can view paginated table of all residents with sortable columns
-- [ ] **CASE-02**: Admin can filter residents by safehouse, status, category, and risk level
-- [ ] **CASE-03**: Admin can search residents by name/case number
-- [ ] **CASE-04**: Admin can create a new resident record
-- [ ] **CASE-05**: Admin can edit an existing resident record
-- [ ] **CASE-06**: Admin can delete a resident record with confirmation dialog
-- [ ] **CASE-07**: Resident records display risk level with color-coded badges (Critical=red, High=orange, Medium=yellow, Low=green)
+- [x] **CASE-01**: Admin can view paginated table of all residents with sortable columns
+- [x] **CASE-02**: Admin can filter residents by safehouse, status, category, and risk level
+- [x] **CASE-03**: Admin can search residents by name/case number
+- [x] **CASE-04**: Admin can create a new resident record
+- [x] **CASE-05**: Admin can edit an existing resident record
+- [x] **CASE-06**: Admin can delete a resident record with confirmation dialog
+- [x] **CASE-07**: Resident records display risk level with color-coded badges (Critical=red, High=orange, Medium=yellow, Low=green)
 
 ### Donors & Contributions
 
@@ -162,17 +162,17 @@
 | SEC-02 | Phase 1 | Complete |
 | SEC-03 | Phase 1 | Complete |
 | SEC-06 | Phase 1 | Complete |
-| DASH-01 | Phase 2 | Pending |
-| DASH-02 | Phase 2 | Pending |
-| DASH-03 | Phase 2 | Pending |
-| DASH-04 | Phase 2 | Pending |
-| CASE-01 | Phase 2 | Pending |
-| CASE-02 | Phase 2 | Pending |
-| CASE-03 | Phase 2 | Pending |
-| CASE-04 | Phase 2 | Pending |
-| CASE-05 | Phase 2 | Pending |
-| CASE-06 | Phase 2 | Pending |
-| CASE-07 | Phase 2 | Pending |
+| DASH-01 | Phase 2 | Complete |
+| DASH-02 | Phase 2 | Complete |
+| DASH-03 | Phase 2 | Complete |
+| DASH-04 | Phase 2 | Complete |
+| CASE-01 | Phase 2 | Complete |
+| CASE-02 | Phase 2 | Complete |
+| CASE-03 | Phase 2 | Complete |
+| CASE-04 | Phase 2 | Complete |
+| CASE-05 | Phase 2 | Complete |
+| CASE-06 | Phase 2 | Complete |
+| CASE-07 | Phase 2 | Complete |
 | DONR-01 | Phase 2 | Pending |
 | DONR-02 | Phase 2 | Pending |
 | DONR-03 | Phase 2 | Pending |
