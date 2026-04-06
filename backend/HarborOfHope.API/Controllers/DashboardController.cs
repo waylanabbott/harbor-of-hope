@@ -21,7 +21,7 @@ public class DashboardController(AppDbContext db) : ControllerBase
         decimal totalDonations;
         try
         {
-            totalDonations = await db.Donations.SumAsync(d => d.Amount);
+            totalDonations = await db.Donations.SumAsync(d => d.Amount ?? 0);
         }
         catch
         {
@@ -44,7 +44,7 @@ public class DashboardController(AppDbContext db) : ControllerBase
             {
                 DonationId = d.DonationId,
                 SupporterName = d.Supporter != null ? d.Supporter.DisplayName : null,
-                Amount = d.Amount,
+                Amount = d.Amount ?? 0,
                 DonationType = d.DonationType,
                 DonationDate = d.DonationDate
             })

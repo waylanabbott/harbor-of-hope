@@ -24,7 +24,7 @@ public class ReportsController(AppDbContext db, MlPredictionService mlService) :
             .GroupBy(d => new { d.DonationDate!.Value.Year, d.DonationDate!.Value.Month })
             .Select(g => new DonationTrendDto(
                 $"{g.Key.Year}-{g.Key.Month:D2}",
-                g.Sum(d => d.Amount),
+                g.Sum(d => d.Amount ?? 0),
                 g.Count()
             ))
             .OrderBy(t => t.Month)
@@ -133,11 +133,11 @@ public class ReportsController(AppDbContext db, MlPredictionService mlService) :
                 ? (referenceDate - datesPresent.Max(d => d.DonationDate!.Value)).TotalDays
                 : 9999;
             int frequency = monetaryDonations.Count;
-            double monetaryTotal = (double)monetaryDonations.Sum(d => d.Amount);
+            double monetaryTotal = (double)monetaryDonations.Sum(d => d.Amount ?? 0);
             double monetaryAvg = monetaryDonations.Count > 0
-                ? (double)monetaryDonations.Average(d => d.Amount)
+                ? (double)monetaryDonations.Average(d => d.Amount ?? 0)
                 : 0;
-            double monetaryStd = ComputeStdDev(monetaryDonations.Select(d => (double)d.Amount).ToList());
+            double monetaryStd = ComputeStdDev(monetaryDonations.Select(d => (double)(d.Amount ?? 0)).ToList());
             double tenureDays = datesPresent.Count > 0
                 ? (referenceDate - datesPresent.Min(d => d.DonationDate!.Value)).TotalDays
                 : 0;

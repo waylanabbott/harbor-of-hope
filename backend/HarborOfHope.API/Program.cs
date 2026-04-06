@@ -15,8 +15,12 @@ builder.Services.AddSwaggerGen();
 
 // PostgreSQL -- BOTH contexts on same connection string
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connString));
-builder.Services.AddDbContext<AuthIdentityDbContext>(options => options.UseNpgsql(connString));
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connString)
+           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
+builder.Services.AddDbContext<AuthIdentityDbContext>(options =>
+    options.UseNpgsql(connString)
+           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 // Identity
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()

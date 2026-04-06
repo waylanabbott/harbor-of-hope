@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HarborOfHope.API.Migrations.Harbor
 {
     /// <inheritdoc />
-    public partial class InitApp : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -292,7 +292,7 @@ namespace HarborOfHope.API.Migrations.Harbor
                     campaign_name = table.Column<string>(type: "text", nullable: true),
                     channel_source = table.Column<string>(type: "text", nullable: true),
                     currency_code = table.Column<string>(type: "text", nullable: true),
-                    amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
                     estimated_value = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
                     impact_unit = table.Column<string>(type: "text", nullable: true),
                     notes = table.Column<string>(type: "text", nullable: true),

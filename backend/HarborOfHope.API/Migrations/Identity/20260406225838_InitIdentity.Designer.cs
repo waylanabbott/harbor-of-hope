@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HarborOfHope.API.Migrations.Identity
 {
     [DbContext(typeof(AuthIdentityDbContext))]
-    [Migration("20260406183144_InitIdentity")]
+    [Migration("20260406225838_InitIdentity")]
     partial class InitIdentity
     {
         /// <inheritdoc />

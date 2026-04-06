@@ -75,6 +75,15 @@ public static class SeedData
         };
     }
 
+    /// <summary>
+    /// Register global type converters that handle CSV quirks (e.g., "3313.0" for int columns)
+    /// </summary>
+    private static void RegisterGlobalConverters(CsvReader csv)
+    {
+        csv.Context.TypeConverterCache.AddConverter<int>(new FlexibleIntConverter());
+        csv.Context.TypeConverterCache.AddConverter<int?>(new FlexibleNullableIntConverter());
+    }
+
     private static async Task SeedTable<T>(AppDbContext context, string csvPath, string fileName, DbSet<T> dbSet) where T : class
     {
         var filePath = Path.Combine(csvPath, fileName);
@@ -86,9 +95,37 @@ public static class SeedData
 
         using var reader = new StreamReader(filePath);
         using var csv = new CsvReader(reader, CreateCsvConfig());
+        RegisterGlobalConverters(csv);
         var records = csv.GetRecords<T>().ToList();
-        await dbSet.AddRangeAsync(records);
+
+        // Get table name for identity insert
+        var entityType = context.Model.FindEntityType(typeof(T));
+        var tableName = entityType?.GetTableName() ?? typeof(T).Name + "s";
+        var schema = entityType?.GetSchema() ?? "public";
+        var fullTable = string.IsNullOrEmpty(schema) ? $"\"{tableName}\"" : $"\"{schema}\".\"{tableName}\"";
+
+        // Enable explicit ID insertion for PostgreSQL SERIAL columns
+        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER ALL;");
+
+        foreach (var record in records)
+        {
+            context.Entry(record).State = EntityState.Added;
+        }
         await context.SaveChangesAsync();
+
+        // Reset sequence to max ID + 1
+        var pk = entityType?.FindPrimaryKey()?.Properties.FirstOrDefault()?.GetColumnName();
+        if (pk != null)
+        {
+            await context.Database.ExecuteSqlRawAsync(
+                $"SELECT setval(pg_get_serial_sequence('{schema}.{tableName}', '{pk}'), COALESCE(MAX(\"{pk}\"), 0) + 1, false) FROM {fullTable};");
+        }
+
+        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER ALL;");
+
+        // Detach all tracked entities to avoid conflicts with next table
+        context.ChangeTracker.Clear();
+
         Console.WriteLine($"Seeded {records.Count} {typeof(T).Name} records from {fileName}");
     }
 
@@ -108,8 +145,24 @@ public static class SeedData
         using var csv = new CsvReader(reader, CreateCsvConfig());
         csv.Context.RegisterClassMap<PartnerAssignmentMap>();
         var records = csv.GetRecords<PartnerAssignment>().ToList();
-        await context.PartnerAssignments.AddRangeAsync(records);
+
+        var entityType = context.Model.FindEntityType(typeof(PartnerAssignment));
+        var tableName = entityType?.GetTableName() ?? "partner_assignments";
+        var schema = entityType?.GetSchema() ?? "public";
+        var fullTable = $"\"{schema}\".\"{tableName}\"";
+
+        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER ALL;");
+        foreach (var record in records)
+            context.Entry(record).State = EntityState.Added;
         await context.SaveChangesAsync();
+
+        var pk = entityType?.FindPrimaryKey()?.Properties.FirstOrDefault()?.GetColumnName();
+        if (pk != null)
+            await context.Database.ExecuteSqlRawAsync(
+                $"SELECT setval(pg_get_serial_sequence('{schema}.{tableName}', '{pk}'), COALESCE(MAX(\"{pk}\"), 0) + 1, false) FROM {fullTable};");
+
+        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER ALL;");
+        context.ChangeTracker.Clear();
         Console.WriteLine($"Seeded {records.Count} PartnerAssignment records from partner_assignments.csv");
     }
 }
@@ -121,10 +174,39 @@ public class PartnerAssignmentMap : ClassMap<PartnerAssignment>
 {
     public PartnerAssignmentMap()
     {
-        AutoMap(CultureInfo.InvariantCulture);
-        Map(m => m.SafehouseId).TypeConverter<DoubleToIntConverter>();
+        Map(m => m.AssignmentId).Name("assignment_id");
+        Map(m => m.PartnerId).Name("partner_id");
+        Map(m => m.SafehouseId).Name("safehouse_id").TypeConverter<DoubleToIntConverter>();
+        Map(m => m.ProgramArea).Name("program_area");
+        Map(m => m.AssignmentStart).Name("assignment_start");
+        Map(m => m.AssignmentEnd).Name("assignment_end");
+        Map(m => m.ResponsibilityNotes).Name("responsibility_notes");
+        Map(m => m.IsPrimary).Name("is_primary");
+        Map(m => m.Status).Name("status");
         Map(m => m.Safehouse).Ignore();
         Map(m => m.Partner).Ignore();
+    }
+}
+
+public class FlexibleIntConverter : DefaultTypeConverter
+{
+    public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return 0;
+        if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
+            return (int)d;
+        return 0;
+    }
+}
+
+public class FlexibleNullableIntConverter : DefaultTypeConverter
+{
+    public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return null;
+        if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
+            return (int)d;
+        return null;
     }
 }
 

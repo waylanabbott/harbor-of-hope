@@ -25,7 +25,7 @@ public class DonorPortalController(AppDbContext db, UserManager<ApplicationUser>
             .Select(d => new DonorDonationDto
             {
                 DonationId = d.DonationId,
-                Amount = d.Amount,
+                Amount = d.Amount ?? 0,
                 DonationType = d.DonationType,
                 DonationDate = d.DonationDate,
                 CampaignName = d.CampaignName,

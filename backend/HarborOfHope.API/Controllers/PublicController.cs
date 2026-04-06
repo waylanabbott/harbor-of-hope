@@ -18,7 +18,7 @@ public class PublicController(AppDbContext db) : ControllerBase
         decimal totalDonations;
         try
         {
-            totalDonations = await db.Donations.SumAsync(d => d.Amount);
+            totalDonations = await db.Donations.SumAsync(d => d.Amount ?? 0);
         }
         catch
         {
