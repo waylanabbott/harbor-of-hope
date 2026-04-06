@@ -83,11 +83,12 @@ Plans:
   2. Flask API is running with 8 prediction endpoints (one per pipeline) that accept input and return predictions
   3. .NET backend can call Flask API endpoints and receive valid prediction responses (donor churn, post effectiveness, reintegration readiness, counseling effectiveness, incident risk, education outcome, donation forecast, safehouse capacity)
   4. Each notebook contains clear documentation of feature engineering, model selection rationale, and performance metrics
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md -- Setup + 4 predictive notebooks (donor churn, reintegration readiness, incident risk, education outcome)
+- [ ] 04-02-PLAN.md -- 3 explanatory OLS notebooks (social media, counseling, safehouse) + donation forecasting regression
+- [ ] 04-03-PLAN.md -- Flask API serving 8 models, .NET HttpClient proxy service and controller, notebook validation
 
 ### Phase 5: Reports + ML Integration
 **Goal**: Admin can view reports with data-driven charts and ML-powered insights are surfaced directly in the admin CRUD pages where they are actionable
@@ -129,6 +130,6 @@ Note: Phase 4 depends only on Phase 1 (not Phase 2/3), enabling potential parall
 | 1. Foundation + Auth | 3/3 | Complete   | 2026-04-06 |
 | 2. Admin CRUD + Dashboard | 0/4 | Not started | - |
 | 3. Public Pages + Donor Portal | 2/2 | Complete   | 2026-04-06 |
-| 4. ML Pipelines + Flask API | 0/2 | Not started | - |
+| 4. ML Pipelines + Flask API | 0/3 | Not started | - |
 | 5. Reports + ML Integration | 0/1 | Not started | - |
 | 6. Polish + Final Deploy | 0/2 | Not started | - |
