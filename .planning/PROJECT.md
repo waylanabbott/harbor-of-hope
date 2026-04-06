@@ -12,7 +12,11 @@ Case managers can efficiently track and manage residents across safehouses while
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Database seeded with all 17 tables from CSV data — Phase 1
+- ✓ ASP.NET Identity with RBAC (admin, donor, visitor roles) — Phase 1
+- ✓ Google OAuth third-party authentication — Phase 1
+- ✓ MFA/2FA on at least one account type — Phase 1
+- ✓ HTTPS/TLS with CSP headers and HSTS — Phase 1
 
 ### Active
 
@@ -24,16 +28,11 @@ Case managers can efficiently track and manage residents across safehouses while
 - [ ] Process recording page for counseling session notes per resident
 - [ ] Home visitation page for logging and viewing visit history
 - [ ] Reports & analytics page with donation trends and resident outcome charts
-- [ ] ASP.NET Identity with RBAC (admin, donor, visitor roles)
-- [ ] Google OAuth third-party authentication
-- [ ] MFA/2FA on at least one account type
 - [ ] Privacy policy page with GDPR cookie consent
-- [ ] HTTPS/TLS with CSP headers and HSTS
 - [ ] Dark mode toggle using browser cookie
 - [ ] Data sanitization on all form inputs
 - [ ] Responsive design (desktop + mobile) with Lighthouse accessibility >= 90%
 - [ ] OKR metric: Resident Reintegration Rate displayed prominently
-- [ ] Database seeded with all 17 tables from CSV data
 - [ ] 6-8 ML pipelines deployed and integrated into the app
 - [ ] Deploy to Microsoft Azure (App Service + Azure PostgreSQL)
 - [ ] Donor-facing login showing donation history and impact
@@ -109,4 +108,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-06 after initialization*
+*Last updated: 2026-04-06 after Phase 1 completion*
