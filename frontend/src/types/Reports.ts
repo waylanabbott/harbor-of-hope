@@ -23,11 +23,3 @@ export interface ChurnPrediction {
   riskLevel: string; // "Low", "Medium", "High", "Unknown"
   churnProbability: number;
 }
-
-// ML prediction response (matches MlPredictionResponse from backend proxy)
-export interface MlPredictionResponse {
-  model: string;
-  prediction: number[];
-  probabilities?: number[][];
-  riskLevel?: string;
-}

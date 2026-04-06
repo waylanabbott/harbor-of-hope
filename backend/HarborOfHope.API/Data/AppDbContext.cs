@@ -26,6 +26,16 @@ public class AppDbContext : DbContext
     public DbSet<SafehouseMonthlyMetric> SafehouseMonthlyMetrics => Set<SafehouseMonthlyMetric>();
     public DbSet<PublicImpactSnapshot> PublicImpactSnapshots => Set<PublicImpactSnapshot>();
 
+    // ML prediction tables (pre-computed by Python jobs/)
+    public DbSet<DonorChurnPrediction> DonorChurnPredictions => Set<DonorChurnPrediction>();
+    public DbSet<SocialMediaPrediction> SocialMediaPredictions => Set<SocialMediaPrediction>();
+    public DbSet<ReintegrationPrediction> ReintegrationPredictions => Set<ReintegrationPrediction>();
+    public DbSet<CounselingPrediction> CounselingPredictions => Set<CounselingPrediction>();
+    public DbSet<IncidentRiskPrediction> IncidentRiskPredictions => Set<IncidentRiskPrediction>();
+    public DbSet<EducationPrediction> EducationPredictions => Set<EducationPrediction>();
+    public DbSet<DonationForecastPrediction> DonationForecastPredictions => Set<DonationForecastPrediction>();
+    public DbSet<SafehousePrediction> SafehousePredictions => Set<SafehousePrediction>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

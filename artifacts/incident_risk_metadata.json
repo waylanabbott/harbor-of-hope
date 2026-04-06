@@ -1,0 +1,26 @@
+{
+  "model_name": "incident_risk",
+  "model_type": "GradientBoostingClassifier",
+  "approach": "predictive",
+  "numeric_features": [
+    "is_pwd",
+    "has_special_needs",
+    "sub_cat_physical_abuse",
+    "sub_cat_sexual_abuse",
+    "sub_cat_trafficked",
+    "sub_cat_at_risk",
+    "avg_health_score",
+    "avg_sleep",
+    "session_count",
+    "concerns_flagged_total",
+    "length_of_stay_days"
+  ],
+  "categorical_features": [
+    "case_status",
+    "sex",
+    "case_category",
+    "initial_risk_level",
+    "current_risk_level"
+  ],
+  "target": "has_incident"
+}

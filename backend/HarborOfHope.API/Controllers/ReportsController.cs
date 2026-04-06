@@ -1,6 +1,5 @@
 using HarborOfHope.API.Data;
 using HarborOfHope.API.DTOs;
-using HarborOfHope.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,7 @@ namespace HarborOfHope.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = AuthPolicies.AdminOnly)]
-public class ReportsController(AppDbContext db, MlPredictionService mlService) : ControllerBase
+public class ReportsController(AppDbContext db) : ControllerBase
 {
     /// <summary>
     /// GET /api/reports/donation-trends
@@ -82,7 +81,7 @@ public class ReportsController(AppDbContext db, MlPredictionService mlService) :
 
     /// <summary>
     /// POST /api/reports/batch-churn
-    /// Accepts supporter IDs and returns churn risk levels from ML API (DONR-06).
+    /// Returns pre-computed churn predictions from the predictions table (DONR-06).
     /// Max 100 supporters per request.
     /// </summary>
     [HttpPost("batch-churn")]
@@ -95,94 +94,22 @@ public class ReportsController(AppDbContext db, MlPredictionService mlService) :
         if (request.SupporterIds.Count > 100)
             return BadRequest("Maximum 100 supporter IDs per request.");
 
-        // Bulk-load all supporters and their monetary donations to avoid N+1
-        var supporterIds = request.SupporterIds;
-
-        var supporters = await db.Supporters
-            .Where(s => supporterIds.Contains(s.SupporterId))
-            .ToDictionaryAsync(s => s.SupporterId);
-
-        var allDonations = await db.Donations
-            .Where(d => supporterIds.Contains(d.SupporterId) && d.DonationType == "Monetary")
+        var predictions = await db.DonorChurnPredictions
+            .Where(p => request.SupporterIds.Contains(p.SupporterId))
+            .Select(p => new ChurnPredictionDto(
+                p.SupporterId,
+                p.ChurnRiskLevel ?? "Unknown",
+                p.ChurnProbability
+            ))
             .ToListAsync();
 
-        var donationsBySupporter = allDonations
-            .GroupBy(d => d.SupporterId)
-            .ToDictionary(g => g.Key, g => g.ToList());
-
-        // Compute reference date from all monetary donations
-        var referenceDate = allDonations
-            .Where(d => d.DonationDate != null)
-            .Select(d => d.DonationDate!.Value)
-            .DefaultIfEmpty(DateTime.UtcNow)
-            .Max();
-
-        var predictions = new List<ChurnPredictionDto>();
-
-        // Call ML API sequentially (Flask is single-threaded)
-        foreach (var id in supporterIds)
+        // For supporters without predictions, return "Unknown"
+        var foundIds = predictions.Select(p => p.SupporterId).ToHashSet();
+        foreach (var id in request.SupporterIds.Where(id => !foundIds.Contains(id)))
         {
-            supporters.TryGetValue(id, out var supporter);
-            donationsBySupporter.TryGetValue(id, out var donations);
-
-            var monetaryDonations = donations ?? new List<Data.Entities.Donation>();
-            var datesPresent = monetaryDonations.Where(d => d.DonationDate != null).ToList();
-
-            // Compute RFM features
-            double recency = datesPresent.Count > 0
-                ? (referenceDate - datesPresent.Max(d => d.DonationDate!.Value)).TotalDays
-                : 9999;
-            int frequency = monetaryDonations.Count;
-            double monetaryTotal = (double)monetaryDonations.Sum(d => d.Amount ?? 0);
-            double monetaryAvg = monetaryDonations.Count > 0
-                ? (double)monetaryDonations.Average(d => d.Amount ?? 0)
-                : 0;
-            double monetaryStd = ComputeStdDev(monetaryDonations.Select(d => (double)(d.Amount ?? 0)).ToList());
-            double tenureDays = datesPresent.Count > 0
-                ? (referenceDate - datesPresent.Min(d => d.DonationDate!.Value)).TotalDays
-                : 0;
-
-            var features = new Dictionary<string, object>
-            {
-                ["recency"] = recency,
-                ["frequency"] = frequency,
-                ["monetary_total"] = monetaryTotal,
-                ["monetary_avg"] = monetaryAvg,
-                ["monetary_std"] = monetaryStd,
-                ["tenure_days"] = tenureDays,
-                ["supporter_type"] = (object)(supporter?.SupporterType ?? "Unknown"),
-                ["acquisition_channel"] = (object)(supporter?.AcquisitionChannel ?? "Unknown"),
-                ["region"] = (object)(supporter?.Region ?? "Unknown")
-            };
-
-            var result = await mlService.PredictAsync("donor-churn", features);
-
-            if (result == null)
-            {
-                predictions.Add(new ChurnPredictionDto(id, "Unknown", 0));
-            }
-            else
-            {
-                var riskLevel = result.RiskLevel ?? "Unknown";
-                var churnProb = result.Probabilities is { Count: > 0 } && result.Probabilities[0].Count > 1
-                    ? result.Probabilities[0][1]
-                    : 0;
-                predictions.Add(new ChurnPredictionDto(id, riskLevel, churnProb));
-            }
+            predictions.Add(new ChurnPredictionDto(id, "Unknown", 0));
         }
 
         return Ok(predictions);
-    }
-
-    /// <summary>
-    /// Compute population standard deviation for a list of values.
-    /// Returns 0 if fewer than 2 values.
-    /// </summary>
-    private static double ComputeStdDev(List<double> values)
-    {
-        if (values.Count < 2) return 0;
-        var avg = values.Average();
-        var sumSquares = values.Sum(v => (v - avg) * (v - avg));
-        return Math.Sqrt(sumSquares / values.Count);
     }
 }

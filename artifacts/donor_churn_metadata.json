@@ -1,0 +1,19 @@
+{
+  "model_name": "donor_churn",
+  "model_type": "DecisionTreeClassifier",
+  "approach": "predictive",
+  "numeric_features": [
+    "recency",
+    "frequency",
+    "monetary_total",
+    "monetary_avg",
+    "monetary_std",
+    "tenure_days"
+  ],
+  "categorical_features": [
+    "supporter_type",
+    "acquisition_channel",
+    "region"
+  ],
+  "target": "churned"
+}

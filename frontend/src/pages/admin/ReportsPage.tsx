@@ -9,7 +9,6 @@ import {
   CardContent,
   CircularProgress,
   Alert,
-  Skeleton,
   List,
   ListItem,
   ListItemIcon,
@@ -38,13 +37,19 @@ import {
   fetchResidentOutcomes,
   fetchSafehouseComparison,
 } from '../../lib/reportsApi';
-import { fetchMlPrediction } from '../../lib/mlApi';
+import {
+  fetchSocialMediaPredictions,
+  fetchCounselingPredictions,
+} from '../../lib/mlApi';
 import type {
   DonationTrend,
   ResidentOutcome,
   SafehouseComparison,
-  MlPredictionResponse,
 } from '../../types/Reports';
+import type {
+  SocialMediaPredictionRow,
+  CounselingPredictionRow,
+} from '../../lib/mlApi';
 
 const PIE_COLORS = ['#5B8C7A', '#E8735A', '#5B9BD5', '#E6A817', '#9B59B6'];
 
@@ -56,10 +61,12 @@ export default function ReportsPage() {
   const [safehouseComparison, setSafehouseComparison] = useState<
     SafehouseComparison[]
   >([]);
-  const [socialMediaPrediction, setSocialMediaPrediction] =
-    useState<MlPredictionResponse | null>(null);
-  const [counselingPrediction, setCounselingPrediction] =
-    useState<MlPredictionResponse | null>(null);
+  const [socialMediaPredictions, setSocialMediaPredictions] = useState<
+    SocialMediaPredictionRow[] | null
+  >(null);
+  const [counselingPredictions, setCounselingPredictions] = useState<
+    CounselingPredictionRow[] | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mlSocialError, setMlSocialError] = useState(false);
@@ -77,26 +84,12 @@ export default function ReportsPage() {
           fetchDonationTrends(),
           fetchResidentOutcomes(),
           fetchSafehouseComparison(),
-          fetchMlPrediction('social-media', {
-            platform: 'Facebook',
-            post_type: 'Photo',
-            media_type: 'Image',
-            has_cta: 1,
-            day_of_week: 3,
-            hour_posted: 14,
-          }),
-          fetchMlPrediction('counseling', {
-            session_type: 'Individual',
-            intervention_used: 1,
-            session_duration_minutes: 60,
-            emotional_state_start: 3,
-            topics_discussed_count: 4,
-          }),
+          fetchSocialMediaPredictions(),
+          fetchCounselingPredictions(),
         ]);
 
         if (cancelled) return;
 
-        // Handle each result individually
         if (results[0].status === 'fulfilled') {
           setDonationTrends(results[0].value);
         }
@@ -107,17 +100,16 @@ export default function ReportsPage() {
           setSafehouseComparison(results[2].value);
         }
         if (results[3].status === 'fulfilled') {
-          setSocialMediaPrediction(results[3].value);
+          setSocialMediaPredictions(results[3].value);
         } else {
           setMlSocialError(true);
         }
         if (results[4].status === 'fulfilled') {
-          setCounselingPrediction(results[4].value);
+          setCounselingPredictions(results[4].value);
         } else {
           setMlCounselingError(true);
         }
 
-        // Set top-level error only if all 3 report APIs failed
         const reportsFailed = [results[0], results[1], results[2]].every(
           (r) => r.status === 'rejected'
         );
@@ -143,6 +135,23 @@ export default function ReportsPage() {
     };
   }, []);
 
+  // Compute summary stats from pre-computed predictions
+  const avgPredictedEngagement =
+    socialMediaPredictions && socialMediaPredictions.length > 0
+      ? socialMediaPredictions.reduce(
+          (sum, p) => sum + p.predictedEngagementRate,
+          0
+        ) / socialMediaPredictions.length
+      : 0;
+
+  const avgPredictedImprovement =
+    counselingPredictions && counselingPredictions.length > 0
+      ? counselingPredictions.reduce(
+          (sum, p) => sum + p.predictedImprovement,
+          0
+        ) / counselingPredictions.length
+      : 0;
+
   if (loading) {
     return (
       <Box
@@ -164,7 +173,7 @@ export default function ReportsPage() {
         Reports and Analytics
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        Data-driven insights and ML-powered recommendations
+        Data-driven insights and ML-powered recommendations (pre-computed)
       </Typography>
 
       {error && (
@@ -307,27 +316,22 @@ export default function ReportsPage() {
                 color="text.secondary"
                 sx={{ mb: 2 }}
               >
-                ML-powered insights from post effectiveness analysis
+                Pre-computed insights from post effectiveness analysis
               </Typography>
 
               {mlSocialError ? (
                 <Alert severity="info" sx={{ mb: 2 }}>
-                  ML predictions unavailable -- ensure Flask API is running on
-                  port 5050
+                  ML predictions unavailable -- run the inference pipeline to
+                  populate prediction tables
                 </Alert>
-              ) : socialMediaPrediction === null ? (
-                <>
-                  <Skeleton variant="text" width="60%" height={32} />
-                  <Skeleton variant="rectangular" height={120} sx={{ mt: 1 }} />
-                </>
               ) : (
                 <>
                   <Typography
                     variant="h5"
                     sx={{ fontWeight: 600, mb: 2, color: '#5B8C7A' }}
                   >
-                    Predicted Engagement Score:{' '}
-                    {socialMediaPrediction.prediction[0].toFixed(1)}
+                    Avg Predicted Engagement:{' '}
+                    {avgPredictedEngagement.toFixed(4)}
                   </Typography>
                   <List dense>
                     <ListItem>
@@ -377,27 +381,22 @@ export default function ReportsPage() {
                 color="text.secondary"
                 sx={{ mb: 2 }}
               >
-                ML-powered analysis of session outcomes
+                Pre-computed analysis of session outcomes
               </Typography>
 
               {mlCounselingError ? (
                 <Alert severity="info" sx={{ mb: 2 }}>
-                  ML predictions unavailable -- ensure Flask API is running on
-                  port 5050
+                  ML predictions unavailable -- run the inference pipeline to
+                  populate prediction tables
                 </Alert>
-              ) : counselingPrediction === null ? (
-                <>
-                  <Skeleton variant="text" width="60%" height={32} />
-                  <Skeleton variant="rectangular" height={120} sx={{ mt: 1 }} />
-                </>
               ) : (
                 <>
                   <Typography
                     variant="h5"
                     sx={{ fontWeight: 600, mb: 2, color: '#5B8C7A' }}
                   >
-                    Predicted Emotional Improvement:{' '}
-                    {counselingPrediction.prediction[0].toFixed(2)} points
+                    Avg Predicted Improvement:{' '}
+                    {avgPredictedImprovement.toFixed(2)} points
                   </Typography>
                   <List dense>
                     <ListItem>

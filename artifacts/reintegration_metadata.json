@@ -1,0 +1,28 @@
+{
+  "model_name": "reintegration",
+  "model_type": "RandomForestClassifier",
+  "approach": "predictive",
+  "numeric_features": [
+    "avg_attendance",
+    "avg_progress",
+    "education_record_count",
+    "avg_health_score",
+    "avg_nutrition",
+    "avg_sleep",
+    "health_record_count",
+    "session_count",
+    "progress_noted_count",
+    "home_visit_count",
+    "length_of_stay_days",
+    "is_pwd",
+    "has_special_needs"
+  ],
+  "categorical_features": [
+    "case_status",
+    "sex",
+    "case_category",
+    "initial_risk_level",
+    "current_risk_level"
+  ],
+  "target": "reintegration_success"
+}

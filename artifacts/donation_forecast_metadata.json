@@ -1,0 +1,17 @@
+{
+  "model_name": "donation_forecast",
+  "model_type": "GradientBoostingRegressor",
+  "approach": "predictive",
+  "numeric_features": [
+    "donation_count",
+    "avg_amount",
+    "unique_donors",
+    "recurring_count",
+    "prev_month_amount",
+    "prev_month_count",
+    "rolling_3m_avg",
+    "month_index"
+  ],
+  "categorical_features": [],
+  "target": "total_amount"
+}

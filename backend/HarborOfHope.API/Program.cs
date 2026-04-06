@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using HarborOfHope.API.Data;
 using HarborOfHope.API.Infrastructure;
-using HarborOfHope.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 const string FrontendCorsPolicy = "FrontendClient";
@@ -65,7 +64,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
     // Return 401/403 instead of redirect for API calls
@@ -92,14 +93,6 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
-
-// ML API HttpClient
-builder.Services.AddHttpClient("MlApi", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["MlApiUrl"] ?? "http://localhost:5050");
-    client.Timeout = TimeSpan.FromSeconds(10);
-});
-builder.Services.AddScoped<MlPredictionService>();
 
 var app = builder.Build();
 
@@ -136,7 +129,6 @@ app.UseAuthorization();
 app.UseStaticFiles();
 
 app.MapControllers();
-app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
 
 // SPA fallback: any non-API, non-file request returns index.html
 app.MapFallbackToFile("index.html");

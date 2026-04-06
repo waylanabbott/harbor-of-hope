@@ -1,0 +1,17 @@
+{
+  "model_name": "counseling",
+  "model_type": "LinearRegression (OLS)",
+  "approach": "explanatory",
+  "numeric_features": [
+    "session_duration_minutes",
+    "emotional_start_score",
+    "intervention_count",
+    "progress_noted_int",
+    "concerns_flagged_int",
+    "referral_made_int"
+  ],
+  "categorical_features": [
+    "session_type"
+  ],
+  "target": "emotional_improvement"
+}

@@ -1,0 +1,21 @@
+{
+  "model_name": "safehouse_outcomes",
+  "model_type": "LinearRegression (OLS)",
+  "approach": "explanatory",
+  "numeric_features": [
+    "capacity_girls",
+    "current_occupancy",
+    "occupancy_rate",
+    "total_residents",
+    "pwd_count",
+    "special_needs_count",
+    "avg_education_progress",
+    "process_recording_count",
+    "home_visitation_count",
+    "incident_count"
+  ],
+  "categorical_features": [
+    "region"
+  ],
+  "target": "avg_health_score"
+}
