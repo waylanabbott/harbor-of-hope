@@ -1,4 +1,5 @@
-import { Link as RouterLink, Outlet } from 'react-router-dom';
+import { useState } from 'react';
+import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -8,9 +9,14 @@ import {
   Container,
 } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
+import AdminSidebar from './AdminSidebar';
 
 function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -70,14 +76,33 @@ function AppLayout() {
         </Toolbar>
       </AppBar>
 
-      <Container
-        component="main"
-        maxWidth={false}
-        disableGutters
-        sx={{ flex: 1 }}
-      >
-        <Outlet />
-      </Container>
+      {isAdminRoute ? (
+        <Box sx={{ display: 'flex', flex: 1 }}>
+          <AdminSidebar
+            open={sidebarOpen}
+            onToggle={() => setSidebarOpen((prev) => !prev)}
+          />
+          <Box
+            component="main"
+            sx={{
+              flex: 1,
+              p: 3,
+              overflow: 'auto',
+            }}
+          >
+            <Outlet />
+          </Box>
+        </Box>
+      ) : (
+        <Container
+          component="main"
+          maxWidth={false}
+          disableGutters
+          sx={{ flex: 1 }}
+        >
+          <Outlet />
+        </Container>
+      )}
     </Box>
   );
 }

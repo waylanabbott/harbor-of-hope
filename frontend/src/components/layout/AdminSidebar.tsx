@@ -1,0 +1,140 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Box,
+  IconButton,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import HomeIcon from '@mui/icons-material/Home';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
+const EXPANDED_WIDTH = 240;
+const COLLAPSED_WIDTH = 64;
+
+interface NavItem {
+  label: string;
+  icon: React.ReactNode;
+  path: string;
+}
+
+const navItems: NavItem[] = [
+  { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
+  { label: 'Residents', icon: <PeopleIcon />, path: '/admin/residents' },
+  { label: 'Donors', icon: <VolunteerActivismIcon />, path: '/admin/donors' },
+  { label: 'Sessions', icon: <PsychologyIcon />, path: '/admin/sessions' },
+  { label: 'Visits', icon: <HomeIcon />, path: '/admin/visits' },
+  { label: 'Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
+];
+
+interface AdminSidebarProps {
+  open: boolean;
+  onToggle: () => void;
+}
+
+export default function AdminSidebar({ open, onToggle }: AdminSidebarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const isMediumDown = useMediaQuery(theme.breakpoints.down('md'));
+
+  const drawerWidth = open && !isMediumDown ? EXPANDED_WIDTH : COLLAPSED_WIDTH;
+  const isCollapsed = !open || isMediumDown;
+
+  return (
+    <Drawer
+      variant="persistent"
+      open
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: drawerWidth,
+          boxSizing: 'border-box',
+          position: 'relative',
+          height: '100%',
+          transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
+          overflowX: 'hidden',
+          borderRight: `1px solid ${theme.palette.divider}`,
+          backgroundColor: theme.palette.background.paper,
+        },
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
+        <List sx={{ flex: 1, pt: 2 }}>
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            const button = (
+              <ListItemButton
+                key={item.path}
+                selected={isActive}
+                onClick={() => navigate(item.path)}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: isCollapsed ? 'center' : 'initial',
+                  px: 2.5,
+                  borderRadius: 2,
+                  mx: 1,
+                  mb: 0.5,
+                  '&.Mui-selected': {
+                    backgroundColor: theme.palette.primary.main + '14',
+                    color: theme.palette.primary.main,
+                    '& .MuiListItemIcon-root': {
+                      color: theme.palette.primary.main,
+                    },
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: isCollapsed ? 0 : 2,
+                    justifyContent: 'center',
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                {!isCollapsed && <ListItemText primary={item.label} />}
+              </ListItemButton>
+            );
+
+            return isCollapsed ? (
+              <Tooltip key={item.path} title={item.label} placement="right">
+                {button}
+              </Tooltip>
+            ) : (
+              button
+            );
+          })}
+        </List>
+
+        <Box sx={{ p: 1, display: 'flex', justifyContent: 'center' }}>
+          <IconButton onClick={onToggle} size="small">
+            {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </Box>
+      </Box>
+    </Drawer>
+  );
+}
