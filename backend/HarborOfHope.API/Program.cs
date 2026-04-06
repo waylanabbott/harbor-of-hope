@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using HarborOfHope.API.Data;
 using HarborOfHope.API.Infrastructure;
+using HarborOfHope.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 const string FrontendCorsPolicy = "FrontendClient";
@@ -87,6 +88,14 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
+
+// ML API HttpClient
+builder.Services.AddHttpClient("MlApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["MlApiUrl"] ?? "http://localhost:5050");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+builder.Services.AddScoped<MlPredictionService>();
 
 var app = builder.Build();
 
