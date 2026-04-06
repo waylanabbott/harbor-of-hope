@@ -167,7 +167,7 @@ export default function ProcessRecordingsPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Session Recordings</Typography>
+        <Typography variant="h4" component="h1">Session Recordings</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

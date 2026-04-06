@@ -52,10 +52,10 @@ export default function LandingPage() {
         }}
       >
         <Container maxWidth="md">
-          <Typography variant="h2" sx={{ fontWeight: 800, mb: 2 }}>
+          <Typography variant="h2" component="h1" sx={{ fontWeight: 800, mb: 2 }}>
             Harbor of Hope
           </Typography>
-          <Typography variant="h5" sx={{ opacity: 0.9, mb: 4 }}>
+          <Typography variant="h5" component="p" sx={{ opacity: 0.9, mb: 4 }}>
             Safe homes for girls who are survivors of trafficking in Central
             America
           </Typography>
@@ -63,6 +63,7 @@ export default function LandingPage() {
             variant="contained"
             size="large"
             href="#donate"
+            aria-label="Donate now - scroll to donation section"
             sx={{ px: 6, py: 1.5, fontSize: '1.1rem' }}
           >
             Donate Now
@@ -72,7 +73,7 @@ export default function LandingPage() {
 
       {/* Mission Cards Section */}
       <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Typography variant="h4" sx={{ textAlign: 'center', mb: 4 }}>
+        <Typography variant="h4" component="h2" sx={{ textAlign: 'center', mb: 4 }}>
           Our Mission
         </Typography>
         <Grid container spacing={4}>
@@ -184,7 +185,7 @@ export default function LandingPage() {
 
       {/* Donate CTA Section */}
       <Container maxWidth="sm" sx={{ py: 8, textAlign: 'center' }} id="donate">
-        <Typography variant="h4" sx={{ mb: 2 }}>
+        <Typography variant="h4" component="h2" sx={{ mb: 2 }}>
           Make a Difference Today
         </Typography>
         <Typography variant="body1" sx={{ mb: 4 }}>

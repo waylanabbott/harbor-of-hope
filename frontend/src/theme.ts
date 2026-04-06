@@ -5,7 +5,7 @@ export function getDesignTokens(mode: 'light' | 'dark'): ThemeOptions {
   return {
     palette: {
       mode,
-      primary: { main: '#E8735A' },
+      primary: { main: '#D4603F' },
       secondary: { main: '#5B8C7A' },
       background: {
         default: mode === 'light' ? '#FFF8F0' : '#121212',

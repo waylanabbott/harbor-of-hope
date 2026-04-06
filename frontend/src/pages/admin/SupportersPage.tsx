@@ -284,7 +284,7 @@ export default function SupportersPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Supporters</Typography>
+        <Typography variant="h4" component="h1">Supporters</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
@@ -427,16 +427,16 @@ function ExpandedDonationsRow({
       )}
 
       {donations.length > 0 && (
-        <TableContainer component={Paper} variant="outlined">
-          <Table size="small">
+        <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
+          <Table size="small" aria-label="Supporter donations">
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell>Campaign</TableCell>
-                <TableCell align="center">Recurring</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell scope="col">Date</TableCell>
+                <TableCell scope="col">Type</TableCell>
+                <TableCell scope="col" align="right">Amount</TableCell>
+                <TableCell scope="col">Campaign</TableCell>
+                <TableCell scope="col" align="center">Recurring</TableCell>
+                <TableCell scope="col" align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -460,6 +460,7 @@ function ExpandedDonationsRow({
                       size="small"
                       onClick={() => onEditDonation(donation)}
                       color="primary"
+                      aria-label="Edit donation"
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -467,6 +468,7 @@ function ExpandedDonationsRow({
                       size="small"
                       onClick={() => onDeleteDonation(donation)}
                       color="error"
+                      aria-label="Delete donation"
                     >
                       <DeleteIcon fontSize="small" />
                     </IconButton>

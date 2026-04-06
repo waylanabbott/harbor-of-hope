@@ -66,7 +66,7 @@ export default function DonorHistoryPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
+      <Typography variant="h4" component="h1" sx={{ mb: 3 }}>
         Your Donation History
       </Typography>
 
@@ -83,15 +83,15 @@ export default function DonorHistoryPage() {
           </Typography>
         </Box>
       ) : (
-        <TableContainer component={Paper} variant="outlined" sx={{ mb: 4 }}>
-          <Table>
+        <TableContainer component={Paper} variant="outlined" sx={{ mb: 4, overflowX: 'auto' }}>
+          <Table aria-label="Donation history">
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Campaign</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell>Recurring</TableCell>
+                <TableCell scope="col">Date</TableCell>
+                <TableCell scope="col">Type</TableCell>
+                <TableCell scope="col">Campaign</TableCell>
+                <TableCell scope="col" align="right">Amount</TableCell>
+                <TableCell scope="col">Recurring</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

@@ -20,10 +20,11 @@ export default function Footer() {
         maxWidth="lg"
         sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: { xs: 'center', sm: 'space-between' },
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 2,
+          textAlign: { xs: 'center', sm: 'left' },
         }}
       >
         <Typography variant="body2" color="text.secondary">

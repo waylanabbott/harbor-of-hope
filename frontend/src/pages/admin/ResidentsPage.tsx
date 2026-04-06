@@ -223,7 +223,7 @@ export default function ResidentsPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Residents</Typography>
+        <Typography variant="h4" component="h1">Residents</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

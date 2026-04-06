@@ -68,7 +68,7 @@ export default function DonorDashboard() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 1 }}>
+      <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
         Your Impact
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
@@ -141,17 +141,17 @@ export default function DonorDashboard() {
       </Grid>
 
       {/* Allocation Breakdown */}
-      <Typography variant="h5" sx={{ mb: 2 }}>
+      <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
         Where Your Donations Go
       </Typography>
       {impact && impact.allocations.length > 0 ? (
-        <TableContainer component={Paper} variant="outlined" sx={{ mb: 4 }}>
-          <Table>
+        <TableContainer component={Paper} variant="outlined" sx={{ mb: 4, overflowX: 'auto' }}>
+          <Table aria-label="Donation allocations">
             <TableHead>
               <TableRow>
-                <TableCell>Safehouse</TableCell>
-                <TableCell>Program Area</TableCell>
-                <TableCell align="right">Amount Allocated</TableCell>
+                <TableCell scope="col">Safehouse</TableCell>
+                <TableCell scope="col">Program Area</TableCell>
+                <TableCell scope="col" align="right">Amount Allocated</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

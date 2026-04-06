@@ -33,7 +33,6 @@ function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isAdminRoute = location.pathname.startsWith('/admin');
-  const isDonorRoute = location.pathname.startsWith('/donor');
 
   const isAdmin = authSession.roles.includes('Admin');
   const isDonor = authSession.roles.includes('Donor');

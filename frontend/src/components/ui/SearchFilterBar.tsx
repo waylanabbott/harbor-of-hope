@@ -76,6 +76,7 @@ export default function SearchFilterBar({
         placeholder="Search..."
         value={localSearch}
         onChange={(e) => handleSearchChange(e.target.value)}
+        aria-label="Search"
         slotProps={{
           input: {
             startAdornment: (
@@ -95,6 +96,7 @@ export default function SearchFilterBar({
             value={filter.value}
             label={filter.label}
             onChange={(e) => filter.onChange(e.target.value)}
+            aria-label={`Filter by ${filter.label}`}
           >
             <MenuItem value="">All</MenuItem>
             {filter.options.map((opt) => (

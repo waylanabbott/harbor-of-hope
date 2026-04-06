@@ -16,6 +16,8 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -141,6 +143,8 @@ export default function ResidentForm({
   onSubmit,
   initialData,
 }: ResidentFormProps) {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -207,7 +211,8 @@ export default function ResidentForm({
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{ sx: { maxHeight: '90vh' } }}
+      fullScreen={fullScreen}
+      PaperProps={{ sx: { maxHeight: fullScreen ? undefined : '90vh' } }}
     >
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogTitle>{isEdit ? 'Edit Resident' : 'Add Resident'}</DialogTitle>

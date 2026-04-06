@@ -165,7 +165,7 @@ export default function HomeVisitationsPage() {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4">Home Visitations</Typography>
+        <Typography variant="h4" component="h1">Home Visitations</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

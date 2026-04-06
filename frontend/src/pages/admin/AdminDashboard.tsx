@@ -56,7 +56,7 @@ export default function AdminDashboard() {
 
   return (
     <Box>
-      <Typography variant="h4" sx={{ mb: 3 }}>
+      <Typography variant="h4" component="h1" sx={{ mb: 3 }}>
         Dashboard
       </Typography>
 
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
 
       {/* Metric Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           {loading ? (
             <Skeleton variant="rounded" height={120} />
           ) : (
@@ -79,7 +79,7 @@ export default function AdminDashboard() {
             />
           )}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           {loading ? (
             <Skeleton variant="rounded" height={120} />
           ) : (
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
             />
           )}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           {loading ? (
             <Skeleton variant="rounded" height={120} />
           ) : (
@@ -101,7 +101,7 @@ export default function AdminDashboard() {
             />
           )}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           {loading ? (
             <Skeleton variant="rounded" height={120} />
           ) : (
@@ -129,17 +129,17 @@ export default function AdminDashboard() {
       <Grid container spacing={3}>
         {/* Recent Donations */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
             Recent Donations
           </Typography>
-          <TableContainer component={Paper} variant="outlined">
-            <Table size="small">
+          <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
+            <Table size="small" aria-label="Recent donations">
               <TableHead>
                 <TableRow>
-                  <TableCell>Supporter</TableCell>
-                  <TableCell align="right">Amount</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Date</TableCell>
+                  <TableCell scope="col">Supporter</TableCell>
+                  <TableCell scope="col" align="right">Amount</TableCell>
+                  <TableCell scope="col">Type</TableCell>
+                  <TableCell scope="col">Date</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -183,17 +183,17 @@ export default function AdminDashboard() {
 
         {/* Residents Needing Attention */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
             Residents Needing Attention
           </Typography>
-          <TableContainer component={Paper} variant="outlined">
-            <Table size="small">
+          <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
+            <Table size="small" aria-label="Residents needing attention">
               <TableHead>
                 <TableRow>
-                  <TableCell>Case #</TableCell>
-                  <TableCell>Safehouse</TableCell>
-                  <TableCell>Risk Level</TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell scope="col">Case #</TableCell>
+                  <TableCell scope="col">Safehouse</TableCell>
+                  <TableCell scope="col">Risk Level</TableCell>
+                  <TableCell scope="col">Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

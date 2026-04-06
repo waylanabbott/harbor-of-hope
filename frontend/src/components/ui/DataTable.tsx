@@ -86,16 +86,17 @@ export default function DataTable<T>({
     columns.length + (hasExpand ? 1 : 0) + (hasActions ? 1 : 0);
 
   return (
-    <Paper variant="outlined" sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer>
+    <Paper variant="outlined" sx={{ width: '100%', overflowX: 'auto' }}>
+      <TableContainer sx={{ overflowX: 'auto' }}>
         {loading && <LinearProgress />}
-        <Table>
+        <Table aria-label="Data table">
           <TableHead>
             <TableRow>
-              {hasExpand && <TableCell sx={{ width: 48 }} />}
+              {hasExpand && <TableCell scope="col" sx={{ width: 48 }} />}
               {columns.map((col) => (
                 <TableCell
                   key={col.id}
+                  scope="col"
                   align={col.align ?? 'left'}
                   sx={{ minWidth: col.minWidth }}
                 >
@@ -113,7 +114,7 @@ export default function DataTable<T>({
                 </TableCell>
               ))}
               {hasActions && (
-                <TableCell align="right" sx={{ minWidth: 100 }}>
+                <TableCell scope="col" align="right" sx={{ minWidth: 100 }}>
                   Actions
                 </TableCell>
               )}
@@ -146,6 +147,7 @@ export default function DataTable<T>({
                         <IconButton
                           size="small"
                           onClick={() => toggleExpand(rowId)}
+                          aria-label={isExpanded ? 'Collapse row' : 'Expand row'}
                         >
                           {isExpanded ? (
                             <KeyboardArrowUpIcon />
@@ -171,6 +173,7 @@ export default function DataTable<T>({
                             size="small"
                             onClick={() => onEdit(row)}
                             color="primary"
+                            aria-label="Edit record"
                           >
                             <EditIcon fontSize="small" />
                           </IconButton>
@@ -180,6 +183,7 @@ export default function DataTable<T>({
                             size="small"
                             onClick={() => onDelete(row)}
                             color="error"
+                            aria-label="Delete record"
                           >
                             <DeleteIcon fontSize="small" />
                           </IconButton>

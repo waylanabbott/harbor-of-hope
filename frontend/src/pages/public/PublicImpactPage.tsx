@@ -84,7 +84,7 @@ export default function PublicImpactPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 1 }}>
+      <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
         Public Impact Dashboard
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
@@ -101,7 +101,7 @@ export default function PublicImpactPage() {
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
               Average Health Score Over Time
             </Typography>
             <ResponsiveContainer width="100%" height={300}>
@@ -131,7 +131,7 @@ export default function PublicImpactPage() {
 
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
               Monthly Donations
             </Typography>
             <ResponsiveContainer width="100%" height={300}>
@@ -158,7 +158,7 @@ export default function PublicImpactPage() {
 
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
               Total Residents Over Time
             </Typography>
             <ResponsiveContainer width="100%" height={300}>
@@ -188,7 +188,7 @@ export default function PublicImpactPage() {
 
         <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
               Education Progress
             </Typography>
             <ResponsiveContainer width="100%" height={300}>
@@ -220,7 +220,7 @@ export default function PublicImpactPage() {
       {/* Recent Snapshots Section */}
       {recentSnapshots.length > 0 && (
         <Box>
-          <Typography variant="h5" sx={{ mb: 2 }}>
+          <Typography variant="h5" component="h2" sx={{ mb: 2 }}>
             Recent Updates
           </Typography>
           <Grid container spacing={2}>
@@ -228,7 +228,7 @@ export default function PublicImpactPage() {
               <Grid size={{ xs: 12 }} key={index}>
                 <Card variant="outlined">
                   <CardContent>
-                    <Typography variant="h6">
+                    <Typography variant="h6" component="h3">
                       {snapshot.headline ?? 'Update'}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">

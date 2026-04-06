@@ -3,14 +3,14 @@ import { Box, Container, Typography } from '@mui/material';
 export default function PrivacyPolicyPage() {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 1 }}>
+      <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
         Privacy Policy
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
         Last updated: April 2026
       </Typography>
 
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+      <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Who We Are
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
         our website.
       </Typography>
 
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+      <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Information We Collect
       </Typography>
       <Box component="ul" sx={{ pl: 3, mb: 2 }}>
@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
         </li>
       </Box>
 
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+      <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         How We Use Your Information
       </Typography>
       <Box component="ul" sx={{ pl: 3, mb: 2 }}>
@@ -74,7 +74,7 @@ export default function PrivacyPolicyPage() {
         </li>
       </Box>
 
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+      <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Cookies
       </Typography>
       <Box component="ul" sx={{ pl: 3, mb: 2 }}>
@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
         </li>
       </Box>
 
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+      <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Data Security
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
@@ -107,7 +107,7 @@ export default function PrivacyPolicyPage() {
         data.
       </Typography>
 
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+      <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Your Rights
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
@@ -115,7 +115,7 @@ export default function PrivacyPolicyPage() {
         data by contacting us.
       </Typography>
 
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+      <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Contact Us
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
