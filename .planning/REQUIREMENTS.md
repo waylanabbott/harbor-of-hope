@@ -7,9 +7,9 @@
 
 ### Public Pages
 
-- [ ] **PUB-01**: Visitor can view landing page with hero, mission cards, impact stats, and "Donate Now" CTA
+- [x] **PUB-01**: Visitor can view landing page with hero, mission cards, impact stats, and "Donate Now" CTA
 - [x] **PUB-02**: Visitor can view public impact dashboard with anonymized aggregated data (total residents served, donations received, reintegration rate)
-- [ ] **PUB-03**: Visitor can view privacy policy page linked from footer
+- [x] **PUB-03**: Visitor can view privacy policy page linked from footer
 - [x] **PUB-04**: Visitor sees GDPR cookie consent banner that is functional (not just cosmetic)
 - [x] **PUB-05**: Visitor can toggle dark mode via browser-accessible cookie
 
@@ -186,9 +186,9 @@
 | VISIT-03 | Phase 2 | Complete |
 | SEC-04 | Phase 2 | Complete |
 | SEC-05 | Phase 2 | Complete |
-| PUB-01 | Phase 3 | Pending |
+| PUB-01 | Phase 3 | Complete |
 | PUB-02 | Phase 3 | Complete |
-| PUB-03 | Phase 3 | Pending |
+| PUB-03 | Phase 3 | Complete |
 | PUB-04 | Phase 3 | Complete |
 | PUB-05 | Phase 3 | Complete |
 | PORTAL-01 | Phase 3 | Complete |

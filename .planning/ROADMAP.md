@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + Auth** - Database schema, CSV seeding, ASP.NET Identity with RBAC, security headers, and skeleton Azure deploy (completed 2026-04-06)
 - [ ] **Phase 2: Admin CRUD + Dashboard** - Caseload inventory, donors/contributions, process recordings, home visitations, admin dashboard, and input security
-- [ ] **Phase 3: Public Pages + Donor Portal** - Landing page, public impact dashboard, donor portal, privacy policy, cookie consent, and dark mode
+- [x] **Phase 3: Public Pages + Donor Portal** - Landing page, public impact dashboard, donor portal, privacy policy, cookie consent, and dark mode (completed 2026-04-06)
 - [ ] **Phase 4: ML Pipelines + Flask API** - Train 8 ML models in Jupyter notebooks, deploy Flask prediction API
 - [ ] **Phase 5: Reports + ML Integration** - Reports/analytics page with charts, ML predictions surfaced in admin UI (churn badges, readiness scores, recommendations)
 - [ ] **Phase 6: Polish + Final Deploy** - Responsive design, Lighthouse accessibility, full Azure deployment with all services connected
@@ -72,7 +72,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md -- Backend APIs (PublicController + DonorPortalController), frontend infrastructure (theme, dark mode, cookie consent, types, API modules)
-- [ ] 03-02-PLAN.md -- Public pages (Landing, Impact, Privacy), donor portal pages (Dashboard, History), AppLayout updates, routing
+- [x] 03-02-PLAN.md -- Public pages (Landing, Impact, Privacy), donor portal pages (Dashboard, History), AppLayout updates, routing
 
 ### Phase 4: ML Pipelines + Flask API
 **Goal**: All 8 ML models are trained, documented in executable Jupyter notebooks, and served via a Flask API that the .NET backend can call
@@ -128,7 +128,7 @@ Note: Phase 4 depends only on Phase 1 (not Phase 2/3), enabling potential parall
 |-------|----------------|--------|-----------|
 | 1. Foundation + Auth | 3/3 | Complete   | 2026-04-06 |
 | 2. Admin CRUD + Dashboard | 0/4 | Not started | - |
-| 3. Public Pages + Donor Portal | 0/2 | Not started | - |
+| 3. Public Pages + Donor Portal | 2/2 | Complete   | 2026-04-06 |
 | 4. ML Pipelines + Flask API | 0/2 | Not started | - |
 | 5. Reports + ML Integration | 0/1 | Not started | - |
 | 6. Polish + Final Deploy | 0/2 | Not started | - |

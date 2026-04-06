@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-04-06T20:27:43.481Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-04-06T20:40:43.252Z"
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -54,6 +54,7 @@ Plan: 2 of 2
 | Phase 02-admin-crud-dashboard P03 | 4min | 2 tasks | 4 files |
 | Phase 02 P04 | 5min | 2 tasks | 8 files |
 | Phase 03 P01 | 3min | 2 tasks | 21 files |
+| Phase 03 P02 | 5min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,8 @@ Recent decisions affecting current work:
 - [Phase 03]: Dark mode cookie only persists when cookie consent accepted via hasConsent() gate
 - [Phase 03]: ThemeModeProvider replaces static ThemeProvider in main.tsx, wrapping ThemeProvider + CssBaseline internally
 - [Phase 03]: Public API controller has no [Authorize] attribute; Donor API derives SupporterId from UserManager, never from request params
+- [Phase 03]: LandingPage uses linear-gradient overlay on hero.png for readable white text
+- [Phase 03]: AppLayout renders Footer and CookieConsentBanner outside conditional admin/public branch for all pages
 
 ### Pending Todos
 
@@ -101,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-06T20:27:43.479Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-04-06T20:40:43.249Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
