@@ -114,10 +114,10 @@
 
 ### Deployment
 
-- [ ] **DEPLOY-01**: Frontend and backend deployed to Microsoft Azure
-- [ ] **DEPLOY-02**: PostgreSQL database deployed to Azure Database for PostgreSQL
-- [ ] **DEPLOY-03**: Flask ML API deployed and accessible from .NET backend
-- [ ] **DEPLOY-04**: Site publicly accessible via URL
+- [x] **DEPLOY-01**: Frontend and backend deployed to Microsoft Azure
+- [x] **DEPLOY-02**: PostgreSQL database deployed to Azure Database for PostgreSQL
+- [x] **DEPLOY-03**: Flask ML API deployed and accessible from .NET backend
+- [x] **DEPLOY-04**: Site publicly accessible via URL
 
 ## v2 Requirements
 
@@ -213,10 +213,10 @@
 | A11Y-02 | Phase 6 | Pending |
 | A11Y-03 | Phase 6 | Pending |
 | A11Y-04 | Phase 6 | Pending |
-| DEPLOY-01 | Phase 6 | Pending |
-| DEPLOY-02 | Phase 6 | Pending |
-| DEPLOY-03 | Phase 6 | Pending |
-| DEPLOY-04 | Phase 6 | Pending |
+| DEPLOY-01 | Phase 6 | Complete |
+| DEPLOY-02 | Phase 6 | Complete |
+| DEPLOY-03 | Phase 6 | Complete |
+| DEPLOY-04 | Phase 6 | Complete |
 
 **Coverage:**
 - v1 requirements: 72 total
