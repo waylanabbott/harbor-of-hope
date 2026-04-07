@@ -3,6 +3,7 @@ import {
   Box,
   Typography,
   Paper,
+  Container,
   CircularProgress,
   Alert,
   Chip,
@@ -28,13 +29,16 @@ import {
   DialogContent,
   Button,
 } from '@mui/material';
-import ScienceIcon from '@mui/icons-material/Science';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import SchoolIcon from '@mui/icons-material/School';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import {
   ResponsiveContainer,
   BarChart,
@@ -43,6 +47,7 @@ import {
   YAxis,
   Tooltip as RechartsTooltip,
   CartesianGrid,
+  Cell,
 } from 'recharts';
 import {
   fetchExplanatoryInsights,
@@ -51,131 +56,167 @@ import {
 
 const PIPELINE_COLORS = ['#E8735A', '#5B8C7A', '#9B59B6', '#26A69A'];
 
+const PIPELINE_ICONS = [
+  <WarningAmberIcon key="risk" />,
+  <SchoolIcon key="edu" />,
+  <CampaignIcon key="social" />,
+  <AccountBalanceIcon key="fund" />,
+];
+
+// Friendly names for tab labels
+const PIPELINE_FRIENDLY_NAMES: Record<string, string> = {
+  'Risk Factors': 'What Drives Risk',
+  'Education & Reintegration': 'Path to Reintegration',
+  'Social Media & Donations': 'What Drives Donations',
+  'Funding & Outcomes': 'How Funding Creates Impact',
+};
+
+// Plain-English labels for feature names
+const FEATURE_LABELS: Record<string, string> = {
+  avg_severity: 'Incident Severity',
+  total_incidents: 'Number of Incidents',
+  safety_concern_rate: 'Safety Concerns in Visits',
+  avg_family_coop: 'Family Cooperation',
+  avg_attendance: 'School Attendance',
+  progress_rate: 'Counseling Progress',
+  attendance_slope: 'Attendance Trend',
+  avg_progress: 'Education Progress',
+  stay_months: 'Length of Stay',
+  total_sessions: 'Counseling Sessions',
+  family_risk_count: 'Family Risk Factors',
+  has_call_to_action: 'Has Call-to-Action',
+  features_resident_story: 'Resident Story Featured',
+  is_boosted: 'Boosted Post',
+  boost_budget_php: 'Boost Budget',
+  Wellbeing: 'Wellbeing Spending',
+  Education: 'Education Spending',
+  Operations: 'Operations Spending',
+  Transport: 'Transport Spending',
+  capacity_girls: 'Safehouse Capacity',
+  active_residents: 'Active Residents',
+};
+
 const FEATURE_GLOSSARY: Record<string, { title: string; description: string }> = {
-  // Pipeline 1 (Risk)
   avg_severity: {
-    title: 'Average incident severity',
+    title: 'Average Incident Severity',
     description:
-      'The average seriousness level of incidents reported for a resident (low/medium/high converted to numbers). Higher means more severe incidents overall.',
+      'The average seriousness level of incidents reported for a resident. Higher means more severe incidents overall.',
   },
   total_incidents: {
-    title: 'Total incidents',
+    title: 'Total Incidents',
     description:
-      'The number of incident reports associated with a resident. Higher means more incidents occurred.',
+      'The number of incident reports associated with a resident. More incidents indicate higher risk.',
   },
   safety_concern_rate: {
-    title: 'Safety concern rate (home visits)',
+    title: 'Safety Concerns in Home Visits',
     description:
-      'The share of home visits where safety concerns were noted. Higher means concerns were flagged more often.',
+      'The percentage of home visits where safety concerns were noted. Higher means concerns were flagged more often.',
   },
   avg_family_coop: {
-    title: 'Average family cooperation',
+    title: 'Family Cooperation Score',
     description:
-      'A score summarizing how cooperative the family is during home visits (cooperative/neutral/uncooperative). Higher means more cooperative.',
+      'How cooperative the family is during home visits. Higher means more cooperative families, which supports better outcomes.',
   },
   avg_attendance: {
-    title: 'Average school attendance',
+    title: 'School Attendance Rate',
     description:
-      'The average attendance rate across education records for a resident. Higher means the resident attends more consistently.',
+      'The average attendance rate across education records. Higher means the resident attends school more consistently.',
   },
   progress_rate: {
-    title: 'Counseling progress rate',
+    title: 'Counseling Progress Rate',
     description:
-      'The share of counseling sessions where staff noted progress. Higher means progress was noted more often.',
+      'The share of counseling sessions where staff noted progress. Higher means more frequent progress.',
   },
-
-  // Pipeline 2 (Reintegration)
   attendance_slope: {
-    title: 'Attendance trend (momentum)',
+    title: 'Attendance Trend',
     description:
-      'Whether attendance is improving or declining over time. Positive means attendance is trending up month-to-month; negative means it’s trending down.',
+      'Whether school attendance is improving or declining over time. Positive means attendance is trending upward.',
   },
   avg_progress: {
-    title: 'Average education progress',
+    title: 'Average Education Progress',
     description:
-      'The average progress percentage recorded in education records. Higher means more educational progress on average.',
+      'The average progress percentage in education records. Higher means stronger educational growth.',
   },
   stay_months: {
-    title: 'Length of stay (months)',
+    title: 'Length of Stay',
     description:
-      'How long the resident has been in the program (converted to months). Longer stays can give more time for services and reintegration steps.',
+      'How long the resident has been in the program (in months). Longer stays provide more time for services and recovery.',
   },
   total_sessions: {
-    title: 'Total counseling sessions',
+    title: 'Total Counseling Sessions',
     description:
-      'The total number of counseling/process sessions recorded for the resident. Higher means the resident received more sessions.',
+      'The total number of counseling sessions a resident has received. More sessions generally support better outcomes.',
   },
   family_risk_count: {
-    title: 'Family risk factors count',
+    title: 'Family Risk Factors',
     description:
-      'A simple count of family risk indicators (e.g., solo parent, indigenous, parent PWD, informal settler). Higher means more risk flags.',
+      'A count of family risk indicators (solo parent, indigenous, parent with disability, informal settler, etc.).',
   },
-
-  // Pipeline 3 (Social media -> donations)
   has_call_to_action: {
-    title: 'Has a call-to-action (CTA)',
+    title: 'Has a Call-to-Action',
     description:
-      'Whether the post clearly asks the audience to do something (donate, share, sign up, etc.).',
+      'Whether the social media post clearly asks the audience to take action (donate, share, sign up, etc.).',
   },
   features_resident_story: {
-    title: 'Features a resident story',
+    title: 'Features a Resident Story',
     description:
-      'Whether the post includes a story about a resident (anonymized), which can increase empathy and giving.',
+      'Whether the post includes an anonymized story about a resident, which increases empathy and giving.',
   },
   is_boosted: {
-    title: 'Boosted post',
-    description:
-      'Whether the post was paid/boosted to reach more people.',
+    title: 'Boosted Post',
+    description: 'Whether the post was paid/boosted to reach more people.',
   },
   boost_budget_php: {
-    title: 'Boost budget (PHP)',
+    title: 'Boost Budget (PHP)',
     description:
-      'The amount spent to boost/promote the post. Higher means more paid reach.',
+      'The amount spent to promote the post. Higher investment means more paid reach.',
   },
-
-  // Pipeline 4 (Funding -> outcomes)
   Wellbeing: {
-    title: 'Wellbeing allocation',
+    title: 'Wellbeing Allocation',
     description:
-      'Amount allocated to wellbeing-related spending (health, nutrition, psychological support, etc.) for a safehouse-month.',
+      'Amount allocated to wellbeing spending (health, nutrition, psychological support) for a safehouse each month.',
   },
   Education: {
-    title: 'Education allocation',
+    title: 'Education Allocation',
     description:
-      'Amount allocated to education-related spending for a safehouse-month.',
+      'Amount allocated to education spending for a safehouse each month.',
   },
   Operations: {
-    title: 'Operations allocation',
+    title: 'Operations Allocation',
     description:
-      'Amount allocated to operations/overhead for a safehouse-month.',
+      'Amount allocated to operations/overhead for a safehouse each month.',
   },
   Transport: {
-    title: 'Transport allocation',
+    title: 'Transport Allocation',
     description:
-      'Amount allocated to transport-related spending for a safehouse-month.',
+      'Amount allocated to transport spending for a safehouse each month.',
   },
   capacity_girls: {
-    title: 'Safehouse capacity',
+    title: 'Safehouse Capacity',
     description:
-      'The designed capacity of the safehouse (number of girls it can serve).',
+      'The designed capacity of the safehouse (how many girls it can serve).',
   },
   active_residents: {
-    title: 'Active residents',
+    title: 'Active Residents',
     description:
-      'How many residents are active in a safehouse-month. Higher can create capacity strain on average outcomes.',
+      'How many residents are active in a safehouse during a given month.',
   },
 };
 
+function getFeatureLabel(name: string): string {
+  return FEATURE_LABELS[name] ?? name;
+}
+
 export default function ExplanatoryInsightsPage() {
   useEffect(() => {
-    document.title = 'Explanatory Insights | Harbor of Hope';
+    document.title = 'Insights | Harbor of Hope';
   }, []);
 
   const [pipelines, setPipelines] = useState<ExplanatoryPipeline[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [expandedRecs, setExpandedRecs] = useState<Record<number, boolean>>({});
+  const [showTechnical, setShowTechnical] = useState(false);
   const [featureInfoOpen, setFeatureInfoOpen] = useState(false);
   const [featureInfoKey, setFeatureInfoKey] = useState<string>('');
 
@@ -229,18 +270,21 @@ export default function ExplanatoryInsightsPage() {
 
   const driversChartData =
     current?.topFeatures?.slice(0, 6).map((f) => ({
-      name: f.name,
+      name: getFeatureLabel(f.name),
+      rawName: f.name,
       coefficient: Number(f.coefficient.toFixed(3)),
       isSignificant: f.isSignificant,
+      interpretation: f.interpretation,
+      direction: f.direction,
     })) ?? [];
 
   const featureInfo =
     FEATURE_GLOSSARY[featureInfoKey] ??
     (featureInfoKey
       ? {
-          title: featureInfoKey,
+          title: getFeatureLabel(featureInfoKey),
           description:
-            'This is a feature name used in the model. If it’s unfamiliar, check the “Interpretation” column in the Feature Coefficients table below for the plain-English meaning.',
+            'Click any bar or label in the chart to learn what this factor means.',
         }
       : null);
 
@@ -249,472 +293,561 @@ export default function ExplanatoryInsightsPage() {
     setFeatureInfoOpen(true);
   }
 
+  // Strength label for R²
+  function modelStrength(r2: number): { label: string; color: string } {
+    if (r2 >= 0.7) return { label: 'Strong', color: '#5B8C7A' };
+    if (r2 >= 0.4) return { label: 'Moderate', color: '#E8935A' };
+    return { label: 'Weak', color: '#E8735A' };
+  }
+
+  const strength = modelStrength(current?.adjRSquared ?? 0);
+
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 } }}>
-      {/* Header */}
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Box
-          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.5, mb: 1 }}
-        >
-          <ScienceIcon sx={{ fontSize: 32, color: '#5B8C7A' }} />
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
-            Explanatory Model Insights
+    <Box>
+      {/* Hero */}
+      <Box
+        sx={{
+          background:
+            'linear-gradient(135deg, #D4603F 0%, #E8935A 50%, #F5C89A 100%)',
+          color: 'white',
+          py: { xs: 5, md: 7 },
+          px: 3,
+          textAlign: 'center',
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{
+              fontWeight: 800,
+              mb: 1.5,
+              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            }}
+          >
+            What Drives Our Impact
           </Typography>
-        </Box>
-        <Typography variant="body1" color="text.secondary">
-          Simple takeaways first, with the detailed coefficient table below
-        </Typography>
+          <Typography
+            variant="h6"
+            sx={{ opacity: 0.95, maxWidth: 600, mx: 'auto', fontWeight: 400 }}
+          >
+            We analyzed our data to understand what factors matter most for the
+            outcomes we care about. Here are the findings.
+          </Typography>
+        </Container>
       </Box>
 
-      {/* Pipeline Tabs */}
-      <Paper
-        sx={{ borderRadius: 3, mb: 4, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
-      >
-        <Tabs
-          value={activeTab}
-          onChange={(_, v) => setActiveTab(v)}
-          variant="scrollable"
-          scrollButtons="auto"
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+        {/* Topic Tabs */}
+        <Paper
           sx={{
-            '& .MuiTab-root': { textTransform: 'none', fontWeight: 600 },
+            borderRadius: 3,
+            mb: 5,
+            boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
           }}
         >
-          {pipelines.map((p, i) => (
-            <Tab
-              key={p.pipelineId}
-              label={p.pipelineName}
-              sx={{
-                borderBottom: activeTab === i ? `3px solid ${PIPELINE_COLORS[i]}` : 'none',
-              }}
-            />
-          ))}
-        </Tabs>
-      </Paper>
-
-      {current && (
-        <>
-          {/* What am I looking at? */}
-          <Paper
+          <Tabs
+            value={activeTab}
+            onChange={(_, v) => {
+              setActiveTab(v);
+              setShowTechnical(false);
+            }}
+            variant="scrollable"
+            scrollButtons="auto"
             sx={{
-              p: 3,
-              mb: 4,
-              borderRadius: 3,
-              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                py: 2,
+              },
             }}
           >
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-              What you’re looking at
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Each tab answers one question (risk, reintegration, donations, or funding).
-              The goal is to explain what factors move the outcome — not to “predict perfectly.”
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Read it in this order: <strong>Key Insight</strong> → <strong>Top Drivers</strong> →
-              <strong> Recommendations</strong> → (optional) <strong>Feature Coefficients</strong>.
-            </Typography>
-          </Paper>
+            {pipelines.map((p, i) => (
+              <Tab
+                key={p.pipelineId}
+                icon={PIPELINE_ICONS[i]}
+                iconPosition="start"
+                label={
+                  PIPELINE_FRIENDLY_NAMES[p.pipelineName] ?? p.pipelineName
+                }
+                sx={{
+                  borderBottom:
+                    activeTab === i
+                      ? `3px solid ${PIPELINE_COLORS[i]}`
+                      : 'none',
+                }}
+              />
+            ))}
+          </Tabs>
+        </Paper>
 
-          {/* Summary Cards Row */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
-              gap: 3,
-              mb: 4,
-            }}
-          >
-            <Card
+        {current && (
+          <>
+            {/* Key Finding — hero card */}
+            <Paper
               sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                borderTop: `4px solid ${color}`,
+                p: { xs: 3, md: 4 },
+                mb: 5,
+                borderRadius: 4,
+                backgroundColor: `${color}08`,
+                border: `2px solid ${color}25`,
+                boxShadow: 'none',
               }}
             >
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="overline" color="text.secondary">
-                  Model Type
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                  {current.modelType}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Target: {current.targetVariable}
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                borderTop: `4px solid ${color}`,
-              }}
-            >
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 0.75 }}>
-                  <Typography variant="overline" color="text.secondary">
-                    Adj. R²
-                  </Typography>
-                  <Tooltip
-                    title={
-                      <Box sx={{ maxWidth: 320 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
-                          What does Adj. R² mean?
-                        </Typography>
-                        <Typography variant="body2">
-                          It’s a 0–1 score that summarizes how much of the outcome this model can explain using the features shown.
-                          Higher means the model fits the data better. “Adjusted” means it penalizes adding extra variables.
-                        </Typography>
-                      </Box>
-                    }
-                    placement="top"
-                    arrow
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 2,
+                }}
+              >
+                <LightbulbIcon sx={{ color, fontSize: 36, mt: 0.3 }} />
+                <Box>
+                  <Typography
+                    variant="overline"
+                    sx={{ color, fontWeight: 700, letterSpacing: 1 }}
                   >
-                    <InfoOutlinedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                  </Tooltip>
+                    Key Finding
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{ fontWeight: 700, mb: 1, lineHeight: 1.4 }}
+                  >
+                    {current.keyInsight}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: 2,
+                      flexWrap: 'wrap',
+                      mt: 1.5,
+                    }}
+                  >
+                    <Chip
+                      label={`Evidence strength: ${strength.label}`}
+                      sx={{
+                        fontWeight: 600,
+                        backgroundColor: strength.color + '18',
+                        color: strength.color,
+                        border: `1px solid ${strength.color}40`,
+                      }}
+                    />
+                    <Chip
+                      label={`Based on ${current.sampleSize} observations`}
+                      variant="outlined"
+                      sx={{ fontWeight: 500 }}
+                    />
+                  </Box>
                 </Box>
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: 700, color }}
-                >
-                  {current.adjRSquared.toFixed(2)}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  R² = {current.rSquared.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
+              </Box>
+            </Paper>
 
-            <Card
+            {/* What Matters Most — bar chart with friendly labels */}
+            <Paper
               sx={{
+                p: { xs: 2, md: 4 },
+                mb: 5,
                 borderRadius: 3,
                 boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                borderTop: `4px solid ${color}`,
               }}
             >
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="overline" color="text.secondary">
-                  Sample Size
-                </Typography>
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: 700, color }}
-                >
-                  {current.sampleSize}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  observations
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-
-          {/* Key Insight */}
-          <Paper
-            sx={{
-              p: 3,
-              mb: 4,
-              borderRadius: 3,
-              backgroundColor: `${color}0A`,
-              border: `1px solid ${color}30`,
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-              <LightbulbIcon sx={{ color, mt: 0.3 }} />
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>
-                  Key Insight
-                </Typography>
-                <Typography variant="body1">{current.keyInsight}</Typography>
-              </Box>
-            </Box>
-          </Paper>
-
-          {/* Visual: Top Drivers */}
-          <Paper
-            sx={{
-              p: 3,
-              mb: 4,
-              borderRadius: 3,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
-              Top Drivers (simple view)
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Longer bars matter more. Right = increases the outcome, left = decreases. (This is a summary; the full detail is in the table.)
-            </Typography>
-            <Box sx={{ height: 320 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={driversChartData}
-                  layout="vertical"
-                  margin={{ top: 8, right: 24, left: 24, bottom: 8 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-                  <XAxis
-                    type="number"
-                    domain={['auto', 'auto']}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={160}
-                    tick={({ x, y, payload }: any) => (
-                      <g
-                        transform={`translate(${x},${y})`}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          const name = payload?.value;
-                          if (typeof name === 'string' && name.length > 0) openFeatureInfo(name);
-                        }}
-                      >
-                        <text x={0} y={0} dy={4} textAnchor="end" fill="#666" fontSize={12}>
-                          {payload?.value}
-                        </text>
-                      </g>
-                    )}
-                  />
-                  <RechartsTooltip
-                    content={({ active, payload }) => {
-                      if (!active || !payload || payload.length === 0) return null;
-                      const row = payload[0]?.payload as
-                        | { name: string; coefficient: number; isSignificant: boolean }
-                        | undefined;
-                      if (!row) return null;
-
-                      return (
-                        <Paper
-                          sx={{
-                            p: 1.25,
-                            borderRadius: 2,
-                            boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
-                            border: '1px solid rgba(0,0,0,0.06)',
-                          }}
-                        >
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
+                What Matters Most
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: 3 }}
+              >
+                Longer bars = stronger influence. Green bars increase the
+                outcome, coral bars decrease it. Click any bar to learn more.
+              </Typography>
+              <Box sx={{ height: 340 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={driversChartData}
+                    layout="vertical"
+                    margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#E0D6CC"
+                    />
+                    <XAxis type="number" domain={['auto', 'auto']} hide />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      width={180}
+                      tick={{ fontSize: 13, fill: '#333', fontWeight: 500 }}
+                    />
+                    <RechartsTooltip
+                      content={({ active, payload }) => {
+                        if (!active || !payload || payload.length === 0)
+                          return null;
+                        const row = payload[0]?.payload as
+                          | {
+                              name: string;
+                              rawName: string;
+                              interpretation: string;
+                              direction: string;
+                            }
+                          | undefined;
+                        if (!row) return null;
+                        return (
+                          <Paper
+                            sx={{
+                              p: 2,
+                              borderRadius: 2,
+                              maxWidth: 300,
+                              boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
+                            }}
+                          >
+                            <Typography
+                              variant="subtitle2"
+                              sx={{ fontWeight: 700, mb: 0.5 }}
+                            >
                               {row.name}
                             </Typography>
-                            <Tooltip title="What is this?" placement="top" arrow>
-                              <IconButton
-                                size="small"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  openFeatureInfo(row.name);
-                                }}
-                                aria-label={`Explain ${row.name}`}
-                                sx={{ p: 0.25 }}
-                              >
-                                <InfoOutlinedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
-                          <Typography variant="body2" sx={{ mt: 0.5, color: 'text.secondary' }}>
-                            Coefficient (significant: {row.isSignificant ? 'Yes' : 'No'}):{' '}
-                            <strong>{row.coefficient}</strong>
-                          </Typography>
-                          <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: 'text.secondary' }}>
-                            Tip: click the bar (or label) to open the explanation.
-                          </Typography>
-                        </Paper>
-                      );
-                    }}
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: 'none',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    }}
-                  />
-                  <Bar
-                    dataKey="coefficient"
-                    fill={color}
-                    radius={[6, 6, 6, 6]}
-                    onClick={(data: any) => {
-                      const name = data?.payload?.name;
-                      if (typeof name === 'string' && name.length > 0) openFeatureInfo(name);
-                    }}
-                    cursor="pointer"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
-
-          {/* Feature Coefficients Table */}
-          <Paper
-            sx={{
-              borderRadius: 3,
-              mb: 4,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
-            }}
-          >
-            <Box sx={{ p: 3, pb: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                Feature Coefficients
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Standardized coefficients from the explanatory model — blue
-                indicates statistical significance (p &lt; 0.05)
-              </Typography>
-            </Box>
-            <TableContainer>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Feature</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>
-                      Coefficient
-                    </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>
-                      p-value
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Direction</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Interpretation</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {current.topFeatures.map((f) => (
-                    <TableRow
-                      key={f.name}
-                      sx={{
-                        backgroundColor: f.isSignificant
-                          ? `${PIPELINE_COLORS[activeTab]}08`
-                          : 'transparent',
+                            <Typography variant="body2" color="text.secondary">
+                              {row.interpretation}
+                            </Typography>
+                          </Paper>
+                        );
+                      }}
+                    />
+                    <Bar
+                      dataKey="coefficient"
+                      radius={[6, 6, 6, 6]}
+                      cursor="pointer"
+                      onClick={(data: any) => {
+                        const name = data?.payload?.rawName;
+                        if (typeof name === 'string' && name.length > 0)
+                          openFeatureInfo(name);
                       }}
                     >
-                      <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {f.name}
-                          </Typography>
-                          {f.isSignificant && (
-                            <Chip
-                              label="sig"
-                              size="small"
-                              sx={{
-                                height: 20,
-                                fontSize: '0.7rem',
-                                backgroundColor: color,
-                                color: '#fff',
-                              }}
-                            />
-                          )}
-                        </Box>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                            fontFamily: 'monospace',
-                            color:
-                              f.coefficient > 0 ? '#E8735A' : '#5B8C7A',
-                          }}
-                        >
-                          {f.coefficient > 0 ? '+' : ''}
-                          {f.coefficient.toFixed(3)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontFamily: 'monospace',
-                            color: f.pValue < 0.05 ? '#333' : '#999',
-                          }}
-                        >
-                          {f.pValue < 0.001
-                            ? '<0.001'
-                            : f.pValue.toFixed(3)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          {f.coefficient > 0 ? (
-                            <TrendingUpIcon
-                              sx={{ fontSize: 18, color: '#E8735A' }}
-                            />
-                          ) : (
-                            <TrendingDownIcon
-                              sx={{ fontSize: 18, color: '#5B8C7A' }}
-                            />
-                          )}
-                          <Typography variant="body2">{f.direction}</Typography>
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
-                          {f.interpretation}
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                      {driversChartData.map((entry, index) => (
+                        <Cell
+                          key={index}
+                          fill={entry.coefficient > 0 ? '#5B8C7A' : '#E8735A'}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
+            </Paper>
 
-          {/* Recommendations */}
-          <Paper
-            sx={{
-              borderRadius: 3,
-              boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
-            }}
-          >
-            <Box
+            {/* Recommendations — open by default, prominent */}
+            <Paper
               sx={{
-                p: 3,
-                pb: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
+                p: { xs: 3, md: 4 },
+                mb: 5,
+                borderRadius: 3,
+                boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
               }}
-              onClick={() =>
-                setExpandedRecs((prev) => ({
-                  ...prev,
-                  [activeTab]: !prev[activeTab],
-                }))
-              }
             >
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                Actionable Recommendations
+              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+                What We Can Do About It
               </Typography>
-              <IconButton size="small">
-                <ExpandMoreIcon
-                  sx={{
-                    transform: expandedRecs[activeTab]
-                      ? 'rotate(180deg)'
-                      : 'none',
-                    transition: 'transform 0.2s',
-                  }}
-                />
-              </IconButton>
-            </Box>
-            <Collapse in={expandedRecs[activeTab] !== false}>
-              <List sx={{ px: 2, pb: 2 }}>
+              <List disablePadding>
                 {current.recommendations.map((rec, i) => (
-                  <ListItem key={i} sx={{ py: 0.75 }}>
-                    <ListItemIcon sx={{ minWidth: 36 }}>
-                      <CheckCircleOutlineIcon
-                        sx={{ color }}
-                      />
+                  <ListItem
+                    key={i}
+                    sx={{
+                      py: 1.5,
+                      px: 2,
+                      mb: 1,
+                      borderRadius: 2,
+                      backgroundColor: `${color}06`,
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      <CheckCircleOutlineIcon sx={{ color }} />
                     </ListItemIcon>
-                    <ListItemText primary={rec} />
+                    <ListItemText
+                      primary={rec}
+                      primaryTypographyProps={{
+                        variant: 'body1',
+                        fontWeight: 500,
+                      }}
+                    />
                   </ListItem>
                 ))}
               </List>
-            </Collapse>
-          </Paper>
-        </>
-      )}
+            </Paper>
 
+            {/* Technical Details — collapsed by default */}
+            <Paper
+              sx={{
+                borderRadius: 3,
+                boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+                overflow: 'hidden',
+              }}
+            >
+              <Box
+                sx={{
+                  p: 3,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
+                }}
+                onClick={() => setShowTechnical((v) => !v)}
+              >
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    Technical Details
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Model statistics and coefficient table for detailed review
+                  </Typography>
+                </Box>
+                <IconButton size="small">
+                  <ExpandMoreIcon
+                    sx={{
+                      transform: showTechnical
+                        ? 'rotate(180deg)'
+                        : 'none',
+                      transition: 'transform 0.2s',
+                    }}
+                  />
+                </IconButton>
+              </Box>
+              <Collapse in={showTechnical}>
+                <Box sx={{ px: 3, pb: 3 }}>
+                  {/* Stats row */}
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: {
+                        xs: '1fr',
+                        sm: '1fr 1fr 1fr 1fr',
+                      },
+                      gap: 2,
+                      mb: 3,
+                    }}
+                  >
+                    <Card variant="outlined" sx={{ borderRadius: 2 }}>
+                      <CardContent sx={{ textAlign: 'center', py: 2 }}>
+                        <Typography
+                          variant="overline"
+                          color="text.secondary"
+                        >
+                          Model Type
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          {current.modelType}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                    <Card variant="outlined" sx={{ borderRadius: 2 }}>
+                      <CardContent sx={{ textAlign: 'center', py: 2 }}>
+                        <Typography
+                          variant="overline"
+                          color="text.secondary"
+                        >
+                          Target Variable
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{ fontWeight: 600 }}
+                        >
+                          {current.targetVariable}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                    <Card variant="outlined" sx={{ borderRadius: 2 }}>
+                      <CardContent sx={{ textAlign: 'center', py: 2 }}>
+                        <Typography
+                          variant="overline"
+                          color="text.secondary"
+                        >
+                          Adj. R²
+                        </Typography>
+                        <Typography
+                          variant="h5"
+                          sx={{ fontWeight: 700, color }}
+                        >
+                          {current.adjRSquared.toFixed(2)}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                    <Card variant="outlined" sx={{ borderRadius: 2 }}>
+                      <CardContent sx={{ textAlign: 'center', py: 2 }}>
+                        <Typography
+                          variant="overline"
+                          color="text.secondary"
+                        >
+                          Sample Size
+                        </Typography>
+                        <Typography
+                          variant="h5"
+                          sx={{ fontWeight: 700, color }}
+                        >
+                          {current.sampleSize}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Box>
+
+                  {/* Coefficients table */}
+                  <TableContainer>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: 700 }}>
+                            Factor
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 700 }}>
+                            Coefficient
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 700 }}>
+                            p-value
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>
+                            Direction
+                          </TableCell>
+                          <TableCell sx={{ fontWeight: 700 }}>
+                            What It Means
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {current.topFeatures.map((f) => (
+                          <TableRow
+                            key={f.name}
+                            sx={{
+                              backgroundColor: f.isSignificant
+                                ? `${color}08`
+                                : 'transparent',
+                            }}
+                          >
+                            <TableCell>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 1,
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  sx={{ fontWeight: 600 }}
+                                >
+                                  {getFeatureLabel(f.name)}
+                                </Typography>
+                                {f.isSignificant && (
+                                  <Chip
+                                    label="significant"
+                                    size="small"
+                                    sx={{
+                                      height: 20,
+                                      fontSize: '0.7rem',
+                                      backgroundColor: color,
+                                      color: '#fff',
+                                    }}
+                                  />
+                                )}
+                                <Tooltip title="Learn more" arrow>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => openFeatureInfo(f.name)}
+                                    sx={{ p: 0.25 }}
+                                  >
+                                    <InfoOutlinedIcon
+                                      sx={{
+                                        fontSize: 16,
+                                        color: 'text.secondary',
+                                      }}
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                              </Box>
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  fontWeight: 600,
+                                  fontFamily: 'monospace',
+                                  color:
+                                    f.coefficient > 0
+                                      ? '#5B8C7A'
+                                      : '#E8735A',
+                                }}
+                              >
+                                {f.coefficient > 0 ? '+' : ''}
+                                {f.coefficient.toFixed(3)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  fontFamily: 'monospace',
+                                  color:
+                                    f.pValue < 0.05 ? '#333' : '#999',
+                                }}
+                              >
+                                {f.pValue < 0.001
+                                  ? '<0.001'
+                                  : f.pValue.toFixed(3)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 0.5,
+                                }}
+                              >
+                                {f.coefficient > 0 ? (
+                                  <TrendingUpIcon
+                                    sx={{
+                                      fontSize: 18,
+                                      color: '#5B8C7A',
+                                    }}
+                                  />
+                                ) : (
+                                  <TrendingDownIcon
+                                    sx={{
+                                      fontSize: 18,
+                                      color: '#E8735A',
+                                    }}
+                                  />
+                                )}
+                                <Typography variant="body2">
+                                  {f.direction}
+                                </Typography>
+                              </Box>
+                            </TableCell>
+                            <TableCell>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {f.interpretation}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              </Collapse>
+            </Paper>
+          </>
+        )}
+      </Container>
+
+      {/* Feature Info Dialog */}
       <Dialog
         open={featureInfoOpen}
         onClose={() => setFeatureInfoOpen(false)}
