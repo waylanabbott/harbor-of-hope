@@ -33,11 +33,7 @@ jobs:
         run: npm run build
         working-directory: frontend
 
-      # Copy React build output into backend wwwroot so .NET serves it
-      - name: Copy frontend to backend wwwroot
-        run: |
-          rm -rf backend/HarborOfHope.API/wwwroot
-          cp -r frontend/dist backend/HarborOfHope.API/wwwroot
+      # Vite outputs directly to backend/HarborOfHope.API/wwwroot (see vite.config.ts)
 
       # ── Backend build ──
       - name: Set up .NET
