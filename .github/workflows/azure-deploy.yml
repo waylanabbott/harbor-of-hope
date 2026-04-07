@@ -1,0 +1,62 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: harbor-of-hope        # Change this to your App Service name
+  DOTNET_VERSION: "10.0.x"
+  NODE_VERSION: "22"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Frontend build ──
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend
+
+      # Copy React build output into backend wwwroot so .NET serves it
+      - name: Copy frontend to backend wwwroot
+        run: |
+          rm -rf backend/HarborOfHope.API/wwwroot
+          cp -r frontend/dist backend/HarborOfHope.API/wwwroot
+
+      # ── Backend build ──
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore backend dependencies
+        run: dotnet restore
+        working-directory: backend/HarborOfHope.API
+
+      - name: Publish backend
+        run: dotnet publish -c Release -o ./publish
+        working-directory: backend/HarborOfHope.API
+
+      # ── Deploy to Azure App Service ──
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: backend/HarborOfHope.API/publish
