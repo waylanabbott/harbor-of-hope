@@ -203,7 +203,11 @@ export default function UsersPage() {
                     )}
                   </TableCell>
                   <TableCell>
-                    {user.supporterId ? `#${user.supporterId}` : '—'}
+                    {user.supporterId ? (
+                      <Chip label={`Approved (#${user.supporterId})`} size="small" color="success" variant="outlined" />
+                    ) : (
+                      <Chip label="Pending" size="small" color="warning" variant="outlined" />
+                    )}
                   </TableCell>
                   <TableCell align="right">
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
