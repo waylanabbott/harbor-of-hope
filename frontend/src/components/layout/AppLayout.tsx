@@ -28,6 +28,7 @@ import SecurityIcon from '@mui/icons-material/Security';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from './AdminSidebar';
+import FontSizeSelector from '../ui/DarkModeToggle';
 import Footer from './Footer';
 import CookieConsentBanner from '../ui/CookieConsentBanner';
 
@@ -258,6 +259,11 @@ function AppLayout() {
                       </Button>
                     </>
                   )}
+
+                  {/* Font size selector */}
+                  <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
+                    <FontSizeSelector />
+                  </Box>
 
                   {/* User avatar with dropdown menu */}
                   <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>

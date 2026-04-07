@@ -11,9 +11,11 @@ import Cookies from 'js-cookie';
 import { getCookieConsentValue } from 'react-cookie-consent';
 import { getDesignTokens } from '../theme';
 
+type FontSize = 'small' | 'medium' | 'large';
+
 interface ThemeModeContextValue {
-  mode: 'light' | 'dark';
-  toggleMode: () => void;
+  fontSize: FontSize;
+  setFontSize: (size: FontSize) => void;
 }
 
 const ThemeContext = createContext<ThemeModeContextValue | undefined>(undefined);
@@ -22,28 +24,43 @@ export function hasConsent(): boolean {
   return getCookieConsentValue('harborCookieConsent') === 'true';
 }
 
-export function ThemeModeProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<'light' | 'dark'>(() =>
-    Cookies.get('darkMode') === 'true' ? 'dark' : 'light',
-  );
+const FONT_SCALE: Record<FontSize, number> = {
+  small: 0.875,
+  medium: 1,
+  large: 1.15,
+};
 
-  const toggleMode = () => {
-    setMode((prev) => {
-      const next = prev === 'light' ? 'dark' : 'light';
-      if (hasConsent()) {
-        Cookies.set('darkMode', String(next === 'dark'), {
-          expires: 365,
-          sameSite: 'Lax',
-        });
-      }
-      return next;
-    });
+export function ThemeModeProvider({ children }: { children: ReactNode }) {
+  const [fontSize, setFontSizeState] = useState<FontSize>(() => {
+    const saved = Cookies.get('fontSize');
+    if (saved === 'small' || saved === 'medium' || saved === 'large') return saved;
+    return 'medium';
+  });
+
+  const setFontSize = (size: FontSize) => {
+    setFontSizeState(size);
+    if (hasConsent()) {
+      Cookies.set('fontSize', size, {
+        expires: 365,
+        sameSite: 'Lax',
+      });
+    }
   };
 
-  const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+  const theme = useMemo(() => {
+    const base = getDesignTokens('light');
+    const scale = FONT_SCALE[fontSize];
+    return createTheme({
+      ...base,
+      typography: {
+        ...base.typography,
+        fontSize: 14 * scale,
+      },
+    });
+  }, [fontSize]);
 
   return (
-    <ThemeContext.Provider value={{ mode, toggleMode }}>
+    <ThemeContext.Provider value={{ fontSize, setFontSize }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
