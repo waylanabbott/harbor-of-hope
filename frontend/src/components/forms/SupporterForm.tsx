@@ -10,7 +10,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid,
+  Box,
   CircularProgress,
   Alert,
   useMediaQuery,
@@ -117,15 +117,16 @@ export default function SupporterForm({
     >
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogTitle>{isEdit ? 'Edit Supporter' : 'Add Supporter'}</DialogTitle>
-        <DialogContent dividers sx={{ px: { xs: 2, sm: 4 }, py: 3 }}>
+        <DialogContent dividers sx={{ px: { xs: 3, sm: 5 }, py: 4 }}>
           {submitError && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {submitError}
             </Alert>
           )}
 
-          <Grid container spacing={3} sx={{ maxWidth: 720, mx: 'auto' }}>
-            <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 600, mx: 'auto' }}>
+            {/* Row 1: Display Name + Type */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="displayName"
                 control={control}
@@ -135,20 +136,17 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Display Name"
                     fullWidth
-                    size="small"
                     required
                     error={!!errors.displayName}
                     helperText={errors.displayName?.message}
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="supporterType"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth size="small" error={!!errors.supporterType}>
+                  <FormControl fullWidth error={!!errors.supporterType}>
                     <InputLabel>Type</InputLabel>
                     <Select {...field} value={field.value ?? ''} label="Type">
                       <MenuItem value="Individual">Individual</MenuItem>
@@ -159,8 +157,10 @@ export default function SupporterForm({
                   </FormControl>
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row 2: First Name + Last Name */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="firstName"
                 control={control}
@@ -170,12 +170,9 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="First Name"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="lastName"
                 control={control}
@@ -185,12 +182,13 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Last Name"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row 3: Organization Name + Email */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="organizationName"
                 control={control}
@@ -200,12 +198,9 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Organization Name"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="email"
                 control={control}
@@ -216,14 +211,15 @@ export default function SupporterForm({
                     label="Email"
                     type="email"
                     fullWidth
-                    size="small"
                     error={!!errors.email}
                     helperText={errors.email?.message}
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row 4: Phone + Region */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="phone"
                 control={control}
@@ -233,12 +229,9 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Phone"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="region"
                 control={control}
@@ -248,12 +241,13 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Region"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row 5: Country + Relationship Type */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="country"
                 control={control}
@@ -263,12 +257,9 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Country"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="relationshipType"
                 control={control}
@@ -278,17 +269,18 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Relationship Type"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row 6: Status + Acquisition Channel */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="status"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth size="small">
+                  <FormControl fullWidth>
                     <InputLabel>Status</InputLabel>
                     <Select {...field} value={field.value ?? ''} label="Status">
                       <MenuItem value="Active">Active</MenuItem>
@@ -297,8 +289,6 @@ export default function SupporterForm({
                   </FormControl>
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="acquisitionChannel"
                 control={control}
@@ -308,12 +298,11 @@ export default function SupporterForm({
                     value={field.value ?? ''}
                     label="Acquisition Channel"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2 }}>

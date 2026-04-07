@@ -12,7 +12,7 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
-  Grid,
+  Box,
   CircularProgress,
   Alert,
   useMediaQuery,
@@ -124,15 +124,16 @@ export default function HomeVisitationForm({
         <DialogTitle>
           {isEdit ? 'Edit Home Visitation' : 'Add Home Visitation'}
         </DialogTitle>
-        <DialogContent dividers sx={{ px: { xs: 2, sm: 4 }, py: 3 }}>
+        <DialogContent dividers sx={{ px: { xs: 3, sm: 5 }, py: 4 }}>
           {submitError && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {submitError}
             </Alert>
           )}
 
-          <Grid container spacing={3} sx={{ maxWidth: 720, mx: 'auto' }}>
-            <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 600, mx: 'auto' }}>
+            {/* Row: Resident ID + Visit Date */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="residentId"
                 control={control}
@@ -144,15 +145,12 @@ export default function HomeVisitationForm({
                     label="Resident ID"
                     type="number"
                     fullWidth
-                    size="small"
                     required
                     error={!!errors.residentId}
                     helperText={errors.residentId?.message}
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="visitDate"
                 control={control}
@@ -163,7 +161,6 @@ export default function HomeVisitationForm({
                     label="Visit Date"
                     type="date"
                     fullWidth
-                    size="small"
                     required
                     error={!!errors.visitDate}
                     helperText={errors.visitDate?.message}
@@ -171,8 +168,10 @@ export default function HomeVisitationForm({
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row: Social Worker + Visit Type */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="socialWorker"
                 control={control}
@@ -182,17 +181,14 @@ export default function HomeVisitationForm({
                     value={field.value ?? ''}
                     label="Social Worker"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="visitType"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth size="small" error={!!errors.visitType}>
+                  <FormControl fullWidth error={!!errors.visitType}>
                     <InputLabel>Visit Type</InputLabel>
                     <Select {...field} value={field.value ?? ''} label="Visit Type">
                       <MenuItem value="Routine">Routine</MenuItem>
@@ -203,8 +199,10 @@ export default function HomeVisitationForm({
                   </FormControl>
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row: Location + Family Members */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="locationVisited"
                 control={control}
@@ -214,12 +212,9 @@ export default function HomeVisitationForm({
                     value={field.value ?? ''}
                     label="Location Visited"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="familyMembersPresent"
                 control={control}
@@ -229,51 +224,50 @@ export default function HomeVisitationForm({
                     value={field.value ?? ''}
                     label="Family Members Present"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Controller
-                name="purpose"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Purpose"
-                    fullWidth
-                    size="small"
-                    multiline
-                    rows={2}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Controller
-                name="observations"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Observations"
-                    fullWidth
-                    size="small"
-                    multiline
-                    rows={4}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Full width: Purpose */}
+            <Controller
+              name="purpose"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  label="Purpose"
+                  fullWidth
+                  multiline
+                  rows={2}
+                />
+              )}
+            />
+
+            {/* Full width: Observations */}
+            <Controller
+              name="observations"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  label="Observations"
+                  fullWidth
+                  multiline
+                  rows={4}
+                />
+              )}
+            />
+
+            {/* Row: Cooperation Level + Visit Outcome */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="familyCooperationLevel"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth size="small">
+                  <FormControl fullWidth>
                     <InputLabel>Cooperation Level</InputLabel>
                     <Select
                       {...field}
@@ -289,8 +283,6 @@ export default function HomeVisitationForm({
                   </FormControl>
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="visitOutcome"
                 control={control}
@@ -300,12 +292,13 @@ export default function HomeVisitationForm({
                     value={field.value ?? ''}
                     label="Visit Outcome"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            </Box>
+
+            {/* Checkboxes */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
               <Controller
                 name="safetyConcernsNoted"
                 control={control}
@@ -321,8 +314,6 @@ export default function HomeVisitationForm({
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
               <Controller
                 name="followUpNeeded"
                 control={control}
@@ -338,25 +329,24 @@ export default function HomeVisitationForm({
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Controller
-                name="followUpNotes"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Follow-up Notes"
-                    fullWidth
-                    size="small"
-                    multiline
-                    rows={2}
-                  />
-                )}
-              />
-            </Grid>
-          </Grid>
+            </Box>
+
+            {/* Full width: Follow-up Notes */}
+            <Controller
+              name="followUpNotes"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  label="Follow-up Notes"
+                  fullWidth
+                  multiline
+                  rows={3}
+                />
+              )}
+            />
+          </Box>
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2 }}>

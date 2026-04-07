@@ -12,7 +12,7 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
-  Grid,
+  Box,
   CircularProgress,
   Alert,
   useMediaQuery,
@@ -119,20 +119,21 @@ export default function DonationForm({
     >
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogTitle>{isEdit ? 'Edit Donation' : 'Add Donation'}</DialogTitle>
-        <DialogContent dividers sx={{ px: { xs: 2, sm: 4 }, py: 3 }}>
+        <DialogContent dividers sx={{ px: { xs: 3, sm: 5 }, py: 4 }}>
           {submitError && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {submitError}
             </Alert>
           )}
 
-          <Grid container spacing={3} sx={{ maxWidth: 720, mx: 'auto' }}>
-            <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 600, mx: 'auto' }}>
+            {/* Row 1: Donation Type + Date */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="donationType"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth size="small" error={!!errors.donationType}>
+                  <FormControl fullWidth error={!!errors.donationType}>
                     <InputLabel>Type</InputLabel>
                     <Select {...field} value={field.value ?? ''} label="Type">
                       <MenuItem value="Cash">Cash</MenuItem>
@@ -143,8 +144,6 @@ export default function DonationForm({
                   </FormControl>
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="donationDate"
                 control={control}
@@ -155,7 +154,6 @@ export default function DonationForm({
                     label="Date"
                     type="date"
                     fullWidth
-                    size="small"
                     required
                     error={!!errors.donationDate}
                     helperText={errors.donationDate?.message}
@@ -163,8 +161,10 @@ export default function DonationForm({
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row 2: Amount + Currency */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="amount"
                 control={control}
@@ -176,15 +176,12 @@ export default function DonationForm({
                     label="Amount"
                     type="number"
                     fullWidth
-                    size="small"
                     required
                     error={!!errors.amount}
                     helperText={errors.amount?.message}
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="currencyCode"
                 control={control}
@@ -194,29 +191,30 @@ export default function DonationForm({
                     value={field.value ?? 'USD'}
                     label="Currency"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Controller
-                name="isRecurring"
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={field.value}
-                        onChange={(e) => field.onChange(e.target.checked)}
-                      />
-                    }
-                    label="Recurring Donation"
-                  />
-                )}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Checkbox: Recurring */}
+            <Controller
+              name="isRecurring"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    />
+                  }
+                  label="Recurring Donation"
+                />
+              )}
+            />
+
+            {/* Row 3: Campaign Name + Channel Source */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="campaignName"
                 control={control}
@@ -226,12 +224,9 @@ export default function DonationForm({
                     value={field.value ?? ''}
                     label="Campaign Name"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="channelSource"
                 control={control}
@@ -241,12 +236,13 @@ export default function DonationForm({
                     value={field.value ?? ''}
                     label="Channel Source"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row 4: Estimated Value + Impact Unit */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="estimatedValue"
                 control={control}
@@ -262,12 +258,9 @@ export default function DonationForm({
                     label="Estimated Value"
                     type="number"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="impactUnit"
                 control={control}
@@ -277,29 +270,27 @@ export default function DonationForm({
                     value={field.value ?? ''}
                     label="Impact Unit"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Controller
-                name="notes"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Notes"
-                    fullWidth
-                    size="small"
-                    multiline
-                    rows={3}
-                  />
-                )}
-              />
-            </Grid>
-          </Grid>
+            </Box>
+
+            {/* Full width: Notes */}
+            <Controller
+              name="notes"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  label="Notes"
+                  fullWidth
+                  multiline
+                  rows={3}
+                />
+              )}
+            />
+          </Box>
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2 }}>
