@@ -177,6 +177,18 @@ function AppLayout() {
               <Button
                 color="inherit"
                 component={RouterLink}
+                to="/about"
+                sx={{
+                  borderBottom: location.pathname === '/about' ? '2px solid white' : '2px solid transparent',
+                  borderRadius: 0,
+                  pb: 0.5,
+                }}
+              >
+                About
+              </Button>
+              <Button
+                color="inherit"
+                component={RouterLink}
                 to="/impact"
                 sx={{
                   borderBottom: location.pathname === '/impact' ? '2px solid white' : '2px solid transparent',
@@ -407,6 +419,9 @@ function AppLayout() {
           <List>
             <ListItemButton onClick={() => navigateAndClose('/')}>
               <ListItemText primary="Home" />
+            </ListItemButton>
+            <ListItemButton onClick={() => navigateAndClose('/about')}>
+              <ListItemText primary="About" />
             </ListItemButton>
             <ListItemButton onClick={() => navigateAndClose('/impact')}>
               <ListItemText primary="Impact" />

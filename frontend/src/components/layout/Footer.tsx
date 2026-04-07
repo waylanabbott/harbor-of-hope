@@ -54,6 +54,7 @@ export default function Footer() {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               {[
                 { to: '/', label: 'Home' },
+                { to: '/about', label: 'About' },
                 { to: '/impact', label: 'Impact' },
                 { to: '/privacy', label: 'Privacy Policy' },
                 { to: '/login', label: 'Login' },

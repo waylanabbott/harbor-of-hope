@@ -8,6 +8,7 @@ import LogoutPage from './pages/auth/LogoutPage';
 import LandingPage from './pages/public/LandingPage';
 import PublicImpactPage from './pages/public/PublicImpactPage';
 import PrivacyPolicyPage from './pages/public/PrivacyPolicyPage';
+import AboutPage from './pages/public/AboutPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ResidentsPage from './pages/admin/ResidentsPage';
 import SupportersPage from './pages/admin/SupportersPage';
@@ -27,6 +28,7 @@ function App() {
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/impact" element={<PublicImpactPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

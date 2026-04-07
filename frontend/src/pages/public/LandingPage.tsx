@@ -11,6 +11,7 @@ import {
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
+import { Link as RouterLink } from 'react-router-dom';
 import { fetchPublicStats } from '../../lib/publicApi';
 import type { PublicStats } from '../../types/PublicImpact';
 
@@ -232,6 +233,50 @@ export default function LandingPage() {
           ))}
         </Box>
       </Container>
+
+      {/* Learn More CTA */}
+      <Box
+        sx={{
+          bgcolor: '#FFF8F0',
+          py: { xs: 6, md: 8 },
+          textAlign: 'center',
+        }}
+      >
+        <Container maxWidth="sm">
+          <Typography
+            variant="h5"
+            component="h2"
+            sx={{ fontWeight: 700, mb: 2, color: '#2D2D2D' }}
+          >
+            Want to Know More?
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ color: 'text.secondary', lineHeight: 1.7, mb: 4 }}
+          >
+            Learn how Harbor of Hope is achieving our mission through programs that
+            address every aspect of a girl&apos;s wellbeing — physical, emotional,
+            social, and spiritual.
+          </Typography>
+          <Button
+            variant="contained"
+            size="large"
+            component={RouterLink}
+            to="/about"
+            sx={{
+              px: 5,
+              py: 1.5,
+              fontSize: '1.05rem',
+              boxShadow: '0 4px 20px rgba(212,96,63,0.3)',
+              '&:hover': {
+                boxShadow: '0 6px 24px rgba(212,96,63,0.4)',
+              },
+            }}
+          >
+            Read More About Us
+          </Button>
+        </Container>
+      </Box>
 
       {/* Impact Stats Section — only rendered when stats loaded successfully */}
       {(loading || statsLoaded) && (
