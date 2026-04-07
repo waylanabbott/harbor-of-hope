@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
+  Box,
   Card,
   CardContent,
   Container,
@@ -53,17 +54,27 @@ function RegisterPage() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        position: 'relative',
+        zIndex: 1,
       }}
     >
       <Card sx={{ borderTop: '4px solid #D4603F' }}>
         <CardContent sx={{ p: 4 }}>
-          <Typography
-            variant="h5"
-            component="p"
-            sx={{ color: '#D4603F', fontWeight: 700, mb: 1 }}
-          >
-            Harbor of Hope
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <Box
+              component="img"
+              src="/logo.png"
+              alt="Harbor of Hope logo"
+              sx={{ height: 36, width: 36, borderRadius: '50%' }}
+            />
+            <Typography
+              variant="h5"
+              component="p"
+              sx={{ color: '#D4603F', fontWeight: 700 }}
+            >
+              Harbor of Hope
+            </Typography>
+          </Box>
           <Typography variant="h4" component="h1" gutterBottom>
             Create Account
           </Typography>

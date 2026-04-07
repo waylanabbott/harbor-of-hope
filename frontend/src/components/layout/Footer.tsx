@@ -27,9 +27,17 @@ export default function Footer() {
         >
           {/* Column 1: Mission */}
           <Box sx={{ flex: '1 1 0', maxWidth: { sm: 360 } }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: 'white' }}>
-              Harbor of Hope
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+              <Box
+                component="img"
+                src="/logo.png"
+                alt="Harbor of Hope logo"
+                sx={{ height: 48, width: 48, borderRadius: '50%' }}
+              />
+              <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>
+                Harbor of Hope
+              </Typography>
+            </Box>
             <Typography variant="body2" sx={{ lineHeight: 1.8, color: 'rgba(255,255,255,0.7)' }}>
               Providing safety, healing, and opportunity to girls who are
               survivors of trafficking. Together, we build brighter futures.
@@ -82,12 +90,20 @@ export default function Footer() {
 
         <Divider sx={{ my: 4, borderColor: 'rgba(255,255,255,0.15)' }} />
 
-        <Typography
-          variant="body2"
-          sx={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}
-        >
-          &copy; 2026 Harbor of Hope. All rights reserved.
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+          <Box
+            component="img"
+            src="/logo.png"
+            alt=""
+            sx={{ height: 24, width: 24, borderRadius: '50%', opacity: 0.6 }}
+          />
+          <Typography
+            variant="body2"
+            sx={{ color: 'rgba(255,255,255,0.5)' }}
+          >
+            &copy; 2026 Harbor of Hope. All rights reserved.
+          </Typography>
+        </Box>
       </Container>
     </Box>
   );

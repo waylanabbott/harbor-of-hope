@@ -131,8 +131,8 @@ export default function ProcessRecordingForm({
             </Alert>
           )}
 
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="residentId"
                 control={control}
@@ -152,7 +152,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="sessionDate"
                 control={control}
@@ -172,7 +172,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="socialWorker"
                 control={control}
@@ -187,7 +187,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="sessionType"
                 control={control}
@@ -204,7 +204,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="sessionDurationMinutes"
                 control={control}
@@ -225,7 +225,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="emotionalStateObserved"
                 control={control}
@@ -240,7 +240,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="emotionalStateEnd"
                 control={control}
@@ -306,7 +306,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 6, md: 4 }}>
               <Controller
                 name="progressNoted"
                 control={control}
@@ -323,7 +323,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 6, md: 4 }}>
               <Controller
                 name="concernsFlagged"
                 control={control}
@@ -340,7 +340,7 @@ export default function ProcessRecordingForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 6, md: 4 }}>
               <Controller
                 name="referralMade"
                 control={control}

@@ -180,12 +180,25 @@ export default function PublicImpactPage() {
       {/* Page Header */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #D4603F 0%, #E8935A 60%, #F5C89A 100%)',
+          position: 'relative',
           color: 'white',
           py: { xs: 6, md: 8 },
+          backgroundImage: 'url(/hero-1.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'linear-gradient(135deg, rgba(180,75,45,0.8) 0%, rgba(200,120,70,0.75) 100%)',
+            pointerEvents: 'none',
+          },
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Typography
             variant="h3"
             component="h1"

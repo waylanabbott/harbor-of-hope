@@ -124,8 +124,8 @@ export default function SupporterForm({
             </Alert>
           )}
 
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="displayName"
                 control={control}
@@ -143,7 +143,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="supporterType"
                 control={control}
@@ -160,7 +160,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="firstName"
                 control={control}
@@ -175,7 +175,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="lastName"
                 control={control}
@@ -190,7 +190,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="organizationName"
                 control={control}
@@ -205,7 +205,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="email"
                 control={control}
@@ -223,7 +223,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="phone"
                 control={control}
@@ -238,7 +238,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="region"
                 control={control}
@@ -253,7 +253,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="country"
                 control={control}
@@ -268,7 +268,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="relationshipType"
                 control={control}
@@ -283,7 +283,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="status"
                 control={control}
@@ -298,7 +298,7 @@ export default function SupporterForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="acquisitionChannel"
                 control={control}

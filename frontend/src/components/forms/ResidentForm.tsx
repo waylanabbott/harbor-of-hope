@@ -250,8 +250,8 @@ export default function ResidentForm({
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
                   Basic Info
                 </Typography>
-                <Grid container spacing={2} sx={{ mb: 3 }}>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid container spacing={3} sx={{ mb: 3 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="safehouseId"
                       control={control}
@@ -273,7 +273,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="caseControlNo"
                       control={control}
@@ -290,7 +290,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="internalCode"
                       control={control}
@@ -307,7 +307,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="caseStatus"
                       control={control}
@@ -323,7 +323,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="sex"
                       control={control}
@@ -339,7 +339,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="dateOfBirth"
                       control={control}
@@ -356,7 +356,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="caseCategory"
                       control={control}
@@ -377,8 +377,8 @@ export default function ResidentForm({
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
                   Personal
                 </Typography>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid container spacing={3}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="religion"
                       control={control}
@@ -393,7 +393,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="placeOfBirth"
                       control={control}
@@ -408,7 +408,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="birthStatus"
                       control={control}
@@ -440,7 +440,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="pwdType"
                       control={control}
@@ -472,7 +472,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="specialNeedsDiagnosis"
                       control={control}
@@ -497,9 +497,9 @@ export default function ResidentForm({
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
                   Sub-Categories
                 </Typography>
-                <Grid container spacing={1}>
+                <Grid container spacing={2}>
                   {subCategories.map((cat) => (
-                    <Grid size={{ xs: 12, sm: 6 }} key={cat.key}>
+                    <Grid size={{ xs: 12, md: 6 }} key={cat.key}>
                       <Controller
                         name={cat.key}
                         control={control}
@@ -527,9 +527,9 @@ export default function ResidentForm({
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
                   Family Background
                 </Typography>
-                <Grid container spacing={1}>
+                <Grid container spacing={2}>
                   {familyFields.map((f) => (
-                    <Grid size={{ xs: 12, sm: 6 }} key={f.key}>
+                    <Grid size={{ xs: 12, md: 6 }} key={f.key}>
                       <Controller
                         name={f.key}
                         control={control}
@@ -557,8 +557,8 @@ export default function ResidentForm({
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
                   Case Details
                 </Typography>
-                <Grid container spacing={2} sx={{ mb: 3 }}>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid container spacing={3} sx={{ mb: 3 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="dateOfAdmission"
                       control={control}
@@ -575,7 +575,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="ageUponAdmission"
                       control={control}
@@ -590,7 +590,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="presentAge"
                       control={control}
@@ -605,7 +605,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="lengthOfStay"
                       control={control}
@@ -620,7 +620,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="referralSource"
                       control={control}
@@ -635,7 +635,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="referringAgencyPerson"
                       control={control}
@@ -650,7 +650,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="assignedSocialWorker"
                       control={control}
@@ -671,8 +671,8 @@ export default function ResidentForm({
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
                   Reintegration
                 </Typography>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid container spacing={3}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="reintegrationType"
                       control={control}
@@ -687,7 +687,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="reintegrationStatus"
                       control={control}
@@ -702,7 +702,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="dateEnrolled"
                       control={control}
@@ -719,7 +719,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="dateClosed"
                       control={control}
@@ -746,7 +746,7 @@ export default function ResidentForm({
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
                   Assessment
                 </Typography>
-                <Grid container spacing={2}>
+                <Grid container spacing={3}>
                   <Grid size={{ xs: 12 }}>
                     <Controller
                       name="initialCaseAssessment"
@@ -764,7 +764,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="dateCaseStudyPrepared"
                       control={control}
@@ -781,7 +781,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="initialRiskLevel"
                       control={control}
@@ -803,7 +803,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, sm: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       name="currentRiskLevel"
                       control={control}

@@ -80,7 +80,13 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
           }}
         >
           {/* Issue 17: Organization name at top */}
-          <Box sx={{ px: 2.5, pt: 2, pb: 1 }}>
+          <Box sx={{ px: 2.5, pt: 2, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              component="img"
+              src="/logo.png"
+              alt="Harbor of Hope logo"
+              sx={{ height: 32, width: 32, borderRadius: '50%' }}
+            />
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               Harbor of Hope
             </Typography>

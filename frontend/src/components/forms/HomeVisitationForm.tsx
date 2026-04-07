@@ -131,8 +131,8 @@ export default function HomeVisitationForm({
             </Alert>
           )}
 
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="residentId"
                 control={control}
@@ -152,7 +152,7 @@ export default function HomeVisitationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="visitDate"
                 control={control}
@@ -172,7 +172,7 @@ export default function HomeVisitationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="socialWorker"
                 control={control}
@@ -187,7 +187,7 @@ export default function HomeVisitationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="visitType"
                 control={control}
@@ -204,7 +204,7 @@ export default function HomeVisitationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="locationVisited"
                 control={control}
@@ -219,7 +219,7 @@ export default function HomeVisitationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="familyMembersPresent"
                 control={control}
@@ -268,7 +268,7 @@ export default function HomeVisitationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="familyCooperationLevel"
                 control={control}
@@ -290,7 +290,7 @@ export default function HomeVisitationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="visitOutcome"
                 control={control}

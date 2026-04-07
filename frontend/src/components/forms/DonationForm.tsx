@@ -126,8 +126,8 @@ export default function DonationForm({
             </Alert>
           )}
 
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="donationType"
                 control={control}
@@ -144,7 +144,7 @@ export default function DonationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="donationDate"
                 control={control}
@@ -164,7 +164,7 @@ export default function DonationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="amount"
                 control={control}
@@ -184,7 +184,7 @@ export default function DonationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="currencyCode"
                 control={control}
@@ -216,7 +216,7 @@ export default function DonationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="campaignName"
                 control={control}
@@ -231,7 +231,7 @@ export default function DonationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="channelSource"
                 control={control}
@@ -246,7 +246,7 @@ export default function DonationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="estimatedValue"
                 control={control}
@@ -267,7 +267,7 @@ export default function DonationForm({
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="impactUnit"
                 control={control}

@@ -82,8 +82,8 @@ export default function AdminDashboard() {
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
-          gap: { xs: 2, md: 3 },
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: 'repeat(4, 1fr)' },
+          gap: { xs: 2, sm: 2.5, md: 3 },
           mb: 6,
         }}
       >

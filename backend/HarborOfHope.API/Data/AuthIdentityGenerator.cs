@@ -22,12 +22,13 @@ public class AuthIdentityGenerator
             }
         }
 
-        // Account 1: Admin (no MFA) — gets both Admin + Donor roles
+        // Account 1: Admin (no MFA) — gets both Admin + Donor roles, linked to supporter 2
         await CreateOrResetUser(userManager, new ApplicationUser
         {
             UserName = "admin@harbor.local",
             Email = "admin@harbor.local",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            SupporterId = 2
         }, "HarborOfHope2026!", new[] { AuthRoles.Admin, AuthRoles.Donor });
 
         // Account 2: Donor (no MFA, linked to supporter)
@@ -63,6 +64,13 @@ public class AuthIdentityGenerator
             if (!resetResult.Succeeded)
             {
                 Console.WriteLine($"[Seed] Warning: Could not reset password for '{user.Email}': {string.Join(", ", resetResult.Errors.Select(e => e.Description))}");
+            }
+
+            // Sync SupporterId if specified
+            if (user.SupporterId != null && existingUser.SupporterId != user.SupporterId)
+            {
+                existingUser.SupporterId = user.SupporterId;
+                await userManager.UpdateAsync(existingUser);
             }
 
             // Ensure all roles are assigned
