@@ -28,7 +28,10 @@ function ProtectedRoute({ role, children }: ProtectedRouteProps) {
   }
 
   if (role && !authSession.roles.includes(role)) {
-    return <Navigate to="/" replace />;
+    // Admins can access Donor pages (they have both roles)
+    if (!(role === 'Donor' && authSession.roles.includes('Admin'))) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   return <>{children}</>;

@@ -38,6 +38,7 @@ const adminPageNames: Record<string, string> = {
   '/admin/sessions': 'Sessions',
   '/admin/visits': 'Visits',
   '/admin/reports': 'Reports',
+  '/admin/users': 'Users',
 };
 
 function AppLayout() {
@@ -99,18 +100,28 @@ function AppLayout() {
 
       <AppBar position="static" elevation={1}>
         <Toolbar>
-          <Typography
-            variant="h6"
+          <Box
             component={RouterLink}
             to="/"
             sx={{
               flexGrow: 1,
               textDecoration: 'none',
               color: 'inherit',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
             }}
           >
-            Harbor of Hope
-          </Typography>
+            <Box
+              component="img"
+              src="/logo.png"
+              alt="Harbor of Hope logo"
+              sx={{ height: 40, width: 40, borderRadius: '50%' }}
+            />
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Harbor of Hope
+            </Typography>
+          </Box>
 
           {/* Hamburger menu button -- visible only on mobile */}
           {!isLoading && isMobile && (
@@ -193,11 +204,11 @@ function AppLayout() {
                         pb: 0.5,
                       }}
                     >
-                      Dashboard
+                      Admin
                     </Button>
                   )}
 
-                  {isDonor && !isAdmin && (
+                  {isDonor && (
                     <>
                       <Button
                         color="inherit"
@@ -209,7 +220,7 @@ function AppLayout() {
                           pb: 0.5,
                         }}
                       >
-                        My Dashboard
+                        Donate
                       </Button>
                       <Button
                         color="inherit"
@@ -388,14 +399,14 @@ function AppLayout() {
               <>
                 {isAdmin && (
                   <ListItemButton onClick={() => navigateAndClose('/admin/dashboard')}>
-                    <ListItemText primary="Dashboard" />
+                    <ListItemText primary="Admin" />
                   </ListItemButton>
                 )}
 
-                {isDonor && !isAdmin && (
+                {isDonor && (
                   <>
                     <ListItemButton onClick={() => navigateAndClose('/donor/dashboard')}>
-                      <ListItemText primary="My Dashboard" />
+                      <ListItemText primary="Donate" />
                     </ListItemButton>
                     <ListItemButton onClick={() => navigateAndClose('/donor/donations')}>
                       <ListItemText primary="My Donations" />

@@ -50,13 +50,14 @@ export default function LandingPage() {
       {/* Hero Section */}
       <Box
         sx={{
-          background:
-            'linear-gradient(135deg, #D4603F 0%, #C4533A 50%, #E8935A 100%)',
-          color: 'white',
-          py: { xs: 10, md: 16 },
-          textAlign: 'center',
           position: 'relative',
+          color: 'white',
+          py: { xs: 12, md: 20 },
+          textAlign: 'center',
           overflow: 'hidden',
+          backgroundImage: 'url(/hero-1.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -64,8 +65,7 @@ export default function LandingPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background:
-              'radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.15) 0%, transparent 70%)',
+            background: 'linear-gradient(135deg, rgba(180,75,45,0.75) 0%, rgba(160,65,40,0.65) 50%, rgba(200,120,70,0.7) 100%)',
             pointerEvents: 'none',
           },
         }}
@@ -78,7 +78,7 @@ export default function LandingPage() {
               fontWeight: 800,
               mb: 3,
               fontSize: { xs: '2.4rem', md: '3.6rem' },
-              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              textShadow: '0 2px 12px rgba(0,0,0,0.3)',
               lineHeight: 1.2,
             }}
           >
@@ -94,7 +94,7 @@ export default function LandingPage() {
               mx: 'auto',
               fontSize: { xs: '1.1rem', md: '1.35rem' },
               lineHeight: 1.6,
-              textShadow: '0 1px 4px rgba(0,0,0,0.1)',
+              textShadow: '0 1px 6px rgba(0,0,0,0.2)',
             }}
           >
             Safe homes for girls who are survivors of trafficking in Central
@@ -302,11 +302,29 @@ export default function LandingPage() {
       )}
 
       {/* Donate CTA Section */}
-      <Box sx={{ bgcolor: '#FFF8F0' }}>
+      <Box
+        id="donate"
+        sx={{
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundImage: 'url(/hero-2.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255, 248, 240, 0.85)',
+            pointerEvents: 'none',
+          },
+        }}
+      >
         <Container
           maxWidth="sm"
-          sx={{ py: { xs: 10, md: 14 }, textAlign: 'center' }}
-          id="donate"
+          sx={{ py: { xs: 10, md: 14 }, textAlign: 'center', position: 'relative', zIndex: 1 }}
         >
           <Typography
             variant="h4"

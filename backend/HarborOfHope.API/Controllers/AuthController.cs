@@ -333,6 +333,140 @@ public class AuthController(
         return Ok(new { message = "2FA has been disabled." });
     }
 
+    // ── Admin user management ──
+
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
+    [HttpGet("users")]
+    public async Task<IActionResult> ListUsers()
+    {
+        var users = userManager.Users.OrderBy(u => u.Email).ToList();
+        var result = new List<object>();
+
+        foreach (var user in users)
+        {
+            var roles = await userManager.GetRolesAsync(user);
+            result.Add(new
+            {
+                id = user.Id,
+                email = user.Email,
+                roles = roles.ToArray(),
+                emailConfirmed = user.EmailConfirmed,
+                twoFactorEnabled = user.TwoFactorEnabled,
+                supporterId = user.SupporterId
+            });
+        }
+
+        return Ok(result);
+    }
+
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
+    [HttpPost("users")]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            return BadRequest(new { message = "Email and password are required." });
+        }
+
+        var validRoles = new[] { AuthRoles.Admin, AuthRoles.Donor };
+        var role = validRoles.Contains(request.Role) ? request.Role : AuthRoles.Donor;
+
+        var user = new ApplicationUser
+        {
+            UserName = request.Email,
+            Email = request.Email,
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            return BadRequest(new
+            {
+                message = "Failed to create user.",
+                errors = result.Errors.Select(e => e.Description)
+            });
+        }
+
+        // Every user gets Donor role; admins get both Admin + Donor
+        await userManager.AddToRoleAsync(user, AuthRoles.Donor);
+        if (role == AuthRoles.Admin)
+        {
+            await userManager.AddToRoleAsync(user, AuthRoles.Admin);
+        }
+
+        var roles = await userManager.GetRolesAsync(user);
+        return Ok(new
+        {
+            id = user.Id,
+            email = user.Email,
+            roles = roles.ToArray(),
+            emailConfirmed = user.EmailConfirmed,
+            twoFactorEnabled = user.TwoFactorEnabled,
+            supporterId = user.SupporterId
+        });
+    }
+
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
+    [HttpPut("users/{id}/role")]
+    public async Task<IActionResult> ChangeUserRole(string id, [FromBody] ChangeRoleRequest request)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user == null) return NotFound(new { message = "User not found." });
+
+        if (request.Role != AuthRoles.Admin && request.Role != AuthRoles.Donor)
+        {
+            return BadRequest(new { message = "Invalid role." });
+        }
+
+        // Everyone keeps Donor. Toggle Admin on/off.
+        var currentRoles = await userManager.GetRolesAsync(user);
+        if (request.Role == AuthRoles.Admin && !currentRoles.Contains(AuthRoles.Admin))
+        {
+            await userManager.AddToRoleAsync(user, AuthRoles.Admin);
+        }
+        else if (request.Role == AuthRoles.Donor && currentRoles.Contains(AuthRoles.Admin))
+        {
+            await userManager.RemoveFromRoleAsync(user, AuthRoles.Admin);
+        }
+
+        // Ensure Donor role is always present
+        if (!currentRoles.Contains(AuthRoles.Donor))
+        {
+            await userManager.AddToRoleAsync(user, AuthRoles.Donor);
+        }
+
+        var updatedRoles = await userManager.GetRolesAsync(user);
+        return Ok(new { message = $"Roles updated to: {string.Join(", ", updatedRoles)}." });
+    }
+
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
+    [HttpDelete("users/{id}")]
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user == null) return NotFound(new { message = "User not found." });
+
+        // Prevent self-deletion
+        var currentUser = await userManager.GetUserAsync(User);
+        if (currentUser?.Id == user.Id)
+        {
+            return BadRequest(new { message = "You cannot delete your own account." });
+        }
+
+        var result = await userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            return BadRequest(new
+            {
+                message = "Failed to delete user.",
+                errors = result.Errors.Select(e => e.Description)
+            });
+        }
+
+        return NoContent();
+    }
+
     // ── Helpers ──
 
     private bool IsGoogleConfigured()
@@ -394,3 +528,5 @@ public class AuthController(
 public record LoginRequest(string Email, string Password, string? TwoFactorCode = null);
 public record RegisterRequest(string Email, string Password);
 public record MfaVerifyRequest(string Code);
+public record CreateUserRequest(string Email, string Password, string Role);
+public record ChangeRoleRequest(string Role);
