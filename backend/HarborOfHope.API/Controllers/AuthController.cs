@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using HarborOfHope.API.Data;
+using HarborOfHope.API.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HarborOfHope.API.Controllers;
 
@@ -15,7 +17,8 @@ namespace HarborOfHope.API.Controllers;
 public class AuthController(
     UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,
-    IConfiguration configuration) : ControllerBase
+    IConfiguration configuration,
+    AppDbContext appDb) : ControllerBase
 {
     private const string DefaultFrontendUrl = "http://localhost:3000";
     private const string DefaultExternalReturnPath = "/admin/dashboard";
@@ -465,6 +468,58 @@ public class AuthController(
         }
 
         return NoContent();
+    }
+
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
+    [HttpPost("users/{id}/link-supporter")]
+    public async Task<IActionResult> LinkUserToSupporter(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user == null) return NotFound(new { message = "User not found." });
+
+        if (string.IsNullOrWhiteSpace(user.Email))
+            return BadRequest(new { message = "User email is required to link a supporter profile." });
+
+        if (user.SupporterId != null)
+            return Ok(new { message = $"User is already linked to supporter #{user.SupporterId}." });
+
+        // Try to reuse an existing supporter profile by email (common during seeding / imports)
+        var existingSupporter = await appDb.Supporters
+            .OrderBy(s => s.SupporterId)
+            .FirstOrDefaultAsync(s => s.Email != null && s.Email.ToLower() == user.Email.ToLower());
+
+        Supporter supporter;
+        if (existingSupporter != null)
+        {
+            supporter = existingSupporter;
+        }
+        else
+        {
+            supporter = new Supporter
+            {
+                SupporterType = "Individual",
+                DisplayName = user.Email,
+                Email = user.Email,
+                Status = "Active",
+                AcquisitionChannel = "Website",
+                CreatedAt = DateTime.UtcNow
+            };
+            appDb.Supporters.Add(supporter);
+            await appDb.SaveChangesAsync();
+        }
+
+        user.SupporterId = supporter.SupporterId;
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            return BadRequest(new
+            {
+                message = "Failed to link supporter profile to user.",
+                errors = updateResult.Errors.Select(e => e.Description)
+            });
+        }
+
+        return Ok(new { message = $"Linked {user.Email} to supporter #{supporter.SupporterId}.", supporterId = supporter.SupporterId });
     }
 
     // ── Helpers ──

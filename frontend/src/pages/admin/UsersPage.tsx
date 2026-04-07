@@ -27,12 +27,14 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import LinkIcon from '@mui/icons-material/Link';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import {
   fetchUsers,
   createUser,
   changeUserRole,
   deleteUser,
+  linkUserToSupporter,
 } from '../../lib/usersApi';
 import type { UserItem } from '../../lib/usersApi';
 
@@ -56,6 +58,7 @@ export default function UsersPage() {
   // Delete dialog
   const [deleteTarget, setDeleteTarget] = useState<UserItem | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [linkLoading, setLinkLoading] = useState(false);
 
   // Role change dialog
   const [roleTarget, setRoleTarget] = useState<UserItem | null>(null);
@@ -127,6 +130,18 @@ export default function UsersPage() {
     }
   };
 
+  const handleLinkSupporter = async (user: UserItem) => {
+    try {
+      setLinkLoading(true);
+      await linkUserToSupporter(user.id);
+      await loadUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to link supporter.');
+    } finally {
+      setLinkLoading(false);
+    }
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 1 }}>
@@ -191,6 +206,16 @@ export default function UsersPage() {
                     {user.supporterId ? `#${user.supporterId}` : '—'}
                   </TableCell>
                   <TableCell align="right">
+                    {!user.supporterId && (
+                      <IconButton
+                        size="small"
+                        onClick={() => handleLinkSupporter(user)}
+                        title="Link to supporter profile"
+                        disabled={linkLoading}
+                      >
+                        <LinkIcon fontSize="small" />
+                      </IconButton>
+                    )}
                     <IconButton
                       size="small"
                       onClick={() => setRoleTarget(user)}

@@ -39,3 +39,9 @@ export function deleteUser(id: string): Promise<void> {
     method: 'DELETE',
   });
 }
+
+export function linkUserToSupporter(id: string): Promise<{ message: string; supporterId?: number }> {
+  return apiFetch<{ message: string; supporterId?: number }>(`/auth/users/${id}/link-supporter`, {
+    method: 'POST',
+  });
+}
