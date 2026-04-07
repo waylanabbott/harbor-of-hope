@@ -65,7 +65,7 @@ function RegisterPage() {
               component="img"
               src="/logo.png"
               alt="Harbor of Hope logo"
-              sx={{ height: 36, width: 36, borderRadius: '50%', transform: 'scale(1.2)' }}
+              sx={{ height: 36, width: 36, borderRadius: '50%', transform: 'scale(1.42)' }}
             />
             <Typography
               variant="h5"
