@@ -15,6 +15,7 @@ import {
   Box,
   CircularProgress,
   Alert,
+  Autocomplete,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -25,6 +26,8 @@ import type {
   ProcessRecordingItem,
   ProcessRecordingFormData,
 } from '../../types/ProcessRecording';
+import { fetchResidents } from '../../lib/residentsApi';
+import type { ResidentListItem } from '../../types/Resident';
 
 const processRecordingSchema = z.object({
   residentId: z.number({ error: 'Resident ID is required' }),
@@ -74,6 +77,13 @@ export default function ProcessRecordingForm({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [residents, setResidents] = useState<ResidentListItem[]>([]);
+
+  useEffect(() => {
+    fetchResidents({ page: 1, pageSize: 200, sortBy: 'caseControlNo', sortDir: 'asc' })
+      .then((data) => setResidents(data.items))
+      .catch(() => {});
+  }, []);
 
   const {
     control,
@@ -132,22 +142,29 @@ export default function ProcessRecordingForm({
           )}
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 600, mx: 'auto' }}>
-            {/* Row: Resident ID + Session Date */}
+            {/* Row: Resident + Session Date */}
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="residentId"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value || ''}
-                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                    label="Resident ID"
-                    type="number"
-                    fullWidth
-                    required
-                    error={!!errors.residentId}
-                    helperText={errors.residentId?.message}
+                  <Autocomplete
+                    options={residents}
+                    getOptionLabel={(opt) =>
+                      `${opt.caseControlNo ?? '?'} — ${opt.safehouseName ?? 'Unknown'}`
+                    }
+                    value={residents.find((r) => r.residentId === field.value) ?? null}
+                    onChange={(_e, value) => field.onChange(value?.residentId ?? 0)}
+                    isOptionEqualToValue={(opt, val) => opt.residentId === val.residentId}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Resident"
+                        required
+                        error={!!errors.residentId}
+                        helperText={errors.residentId?.message}
+                      />
+                    )}
                   />
                 )}
               />
