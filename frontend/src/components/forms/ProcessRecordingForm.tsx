@@ -12,7 +12,7 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
-  Grid,
+  Box,
   CircularProgress,
   Alert,
   useMediaQuery,
@@ -124,15 +124,16 @@ export default function ProcessRecordingForm({
         <DialogTitle>
           {isEdit ? 'Edit Session Recording' : 'Add Session Recording'}
         </DialogTitle>
-        <DialogContent dividers sx={{ px: { xs: 2, sm: 4 }, py: 3 }}>
+        <DialogContent dividers sx={{ px: { xs: 3, sm: 5 }, py: 4 }}>
           {submitError && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {submitError}
             </Alert>
           )}
 
-          <Grid container spacing={3} sx={{ maxWidth: 720, mx: 'auto' }}>
-            <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, maxWidth: 600, mx: 'auto' }}>
+            {/* Row: Resident ID + Session Date */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="residentId"
                 control={control}
@@ -144,15 +145,12 @@ export default function ProcessRecordingForm({
                     label="Resident ID"
                     type="number"
                     fullWidth
-                    size="small"
                     required
                     error={!!errors.residentId}
                     helperText={errors.residentId?.message}
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="sessionDate"
                 control={control}
@@ -163,7 +161,6 @@ export default function ProcessRecordingForm({
                     label="Session Date"
                     type="date"
                     fullWidth
-                    size="small"
                     required
                     error={!!errors.sessionDate}
                     helperText={errors.sessionDate?.message}
@@ -171,8 +168,10 @@ export default function ProcessRecordingForm({
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row: Social Worker + Session Type */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="socialWorker"
                 control={control}
@@ -182,17 +181,14 @@ export default function ProcessRecordingForm({
                     value={field.value ?? ''}
                     label="Social Worker"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="sessionType"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth size="small" error={!!errors.sessionType}>
+                  <FormControl fullWidth error={!!errors.sessionType}>
                     <InputLabel>Session Type</InputLabel>
                     <Select {...field} value={field.value ?? ''} label="Session Type">
                       <MenuItem value="Individual">Individual</MenuItem>
@@ -203,8 +199,10 @@ export default function ProcessRecordingForm({
                   </FormControl>
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            </Box>
+
+            {/* Row: Duration + Emotional States */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="sessionDurationMinutes"
                 control={control}
@@ -213,19 +211,14 @@ export default function ProcessRecordingForm({
                     {...field}
                     value={field.value ?? ''}
                     onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? Number(e.target.value) : null
-                      )
+                      field.onChange(e.target.value ? Number(e.target.value) : null)
                     }
-                    label="Duration (minutes)"
+                    label="Duration (min)"
                     type="number"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="emotionalStateObserved"
                 control={control}
@@ -235,12 +228,9 @@ export default function ProcessRecordingForm({
                     value={field.value ?? ''}
                     label="Emotional State (Start)"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="emotionalStateEnd"
                 control={control}
@@ -250,29 +240,29 @@ export default function ProcessRecordingForm({
                     value={field.value ?? ''}
                     label="Emotional State (End)"
                     fullWidth
-                    size="small"
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <Controller
-                name="sessionNarrative"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Session Narrative"
-                    fullWidth
-                    size="small"
-                    multiline
-                    rows={4}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
+            </Box>
+
+            {/* Full width: Session Narrative */}
+            <Controller
+              name="sessionNarrative"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  label="Session Narrative"
+                  fullWidth
+                  multiline
+                  rows={4}
+                />
+              )}
+            />
+
+            {/* Row: Interventions + Follow-up */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3 }}>
               <Controller
                 name="interventionsApplied"
                 control={control}
@@ -282,14 +272,11 @@ export default function ProcessRecordingForm({
                     value={field.value ?? ''}
                     label="Interventions Applied"
                     fullWidth
-                    size="small"
                     multiline
-                    rows={2}
+                    rows={3}
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
               <Controller
                 name="followUpActions"
                 control={control}
@@ -299,14 +286,15 @@ export default function ProcessRecordingForm({
                     value={field.value ?? ''}
                     label="Follow-up Actions"
                     fullWidth
-                    size="small"
                     multiline
-                    rows={2}
+                    rows={3}
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 6, md: 4 }}>
+            </Box>
+
+            {/* Checkboxes row */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
               <Controller
                 name="progressNoted"
                 control={control}
@@ -322,8 +310,6 @@ export default function ProcessRecordingForm({
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 6, md: 4 }}>
               <Controller
                 name="concernsFlagged"
                 control={control}
@@ -339,8 +325,6 @@ export default function ProcessRecordingForm({
                   />
                 )}
               />
-            </Grid>
-            <Grid size={{ xs: 6, md: 4 }}>
               <Controller
                 name="referralMade"
                 control={control}
@@ -356,8 +340,8 @@ export default function ProcessRecordingForm({
                   />
                 )}
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2 }}>
