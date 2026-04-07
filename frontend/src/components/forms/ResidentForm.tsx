@@ -243,7 +243,7 @@ export default function ResidentForm({
             <Tab label="Assessment" />
           </Tabs>
 
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ px: { xs: 2, sm: 4 }, py: 3, maxWidth: 720, mx: 'auto' }}>
             {/* Tab 0: Basic Info */}
             {activeTab === 0 && (
               <>

@@ -117,14 +117,14 @@ export default function SupporterForm({
     >
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogTitle>{isEdit ? 'Edit Supporter' : 'Add Supporter'}</DialogTitle>
-        <DialogContent dividers>
+        <DialogContent dividers sx={{ px: { xs: 2, sm: 4 }, py: 3 }}>
           {submitError && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 3 }}>
               {submitError}
             </Alert>
           )}
 
-          <Grid container spacing={3}>
+          <Grid container spacing={3} sx={{ maxWidth: 720, mx: 'auto' }}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="displayName"
