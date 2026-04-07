@@ -8,6 +8,7 @@ import {
   TextField,
   Paper,
   Autocomplete,
+  Popover,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DataTable from '../../components/ui/DataTable';
@@ -28,6 +29,103 @@ import type {
 } from '../../types/HomeVisitation';
 import type { ResidentListItem } from '../../types/Resident';
 
+function SafetyConcernChip({ row }: { row: HomeVisitationItem }) {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  if (!row.safetyConcernsNoted) {
+    return <Chip label="None" size="small" variant="outlined" />;
+  }
+  return (
+    <>
+      <Chip
+        label="Warning"
+        size="small"
+        color="warning"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{ cursor: 'pointer' }}
+      />
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        slotProps={{ paper: { sx: { p: 2.5, maxWidth: 360, borderRadius: 2 } } }}
+      >
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'warning.dark' }}>
+          Safety Concerns
+        </Typography>
+        {row.observations && (
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="caption" color="text.secondary">Observations</Typography>
+            <Typography variant="body2">{row.observations}</Typography>
+          </Box>
+        )}
+        {row.visitOutcome && (
+          <Box>
+            <Typography variant="caption" color="text.secondary">Visit Outcome</Typography>
+            <Typography variant="body2">{row.visitOutcome}</Typography>
+          </Box>
+        )}
+        {!row.observations && !row.visitOutcome && (
+          <Typography variant="body2" color="text.secondary">No additional notes recorded.</Typography>
+        )}
+      </Popover>
+    </>
+  );
+}
+
+function FollowUpChip({ row }: { row: HomeVisitationItem }) {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  if (!row.followUpNeeded) {
+    return <Chip label="No" size="small" variant="outlined" />;
+  }
+  return (
+    <>
+      <Chip
+        label="Needed"
+        size="small"
+        color="info"
+        variant="outlined"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{ cursor: 'pointer' }}
+      />
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        slotProps={{ paper: { sx: { p: 2.5, maxWidth: 360, borderRadius: 2 } } }}
+      >
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'info.dark' }}>
+          Follow-up Details
+        </Typography>
+        {row.followUpNotes && (
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="caption" color="text.secondary">Follow-up Notes</Typography>
+            <Typography variant="body2">{row.followUpNotes}</Typography>
+          </Box>
+        )}
+        {row.purpose && (
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="caption" color="text.secondary">Visit Purpose</Typography>
+            <Typography variant="body2">{row.purpose}</Typography>
+          </Box>
+        )}
+        {row.visitOutcome && (
+          <Box>
+            <Typography variant="caption" color="text.secondary">Visit Outcome</Typography>
+            <Typography variant="body2">{row.visitOutcome}</Typography>
+          </Box>
+        )}
+        {!row.followUpNotes && !row.purpose && !row.visitOutcome && (
+          <Typography variant="body2" color="text.secondary">No additional notes recorded.</Typography>
+        )}
+      </Popover>
+    </>
+  );
+}
+
 const columns: Column<HomeVisitationItem>[] = [
   { id: 'residentCode', label: 'Resident', sortable: true, minWidth: 100 },
   { id: 'visitDate', label: 'Date', sortable: true, minWidth: 100 },
@@ -40,26 +138,14 @@ const columns: Column<HomeVisitationItem>[] = [
     label: 'Safety Concerns',
     minWidth: 110,
     align: 'center',
-    render: (row) =>
-      row.safetyConcernsNoted ? (
-        <Chip label="Warning" size="small" color="warning" />
-      ) : (
-        <Chip label="None" size="small" variant="outlined" />
-      ),
+    render: (row) => <SafetyConcernChip row={row} />,
   },
   {
     id: 'followUpNeeded',
     label: 'Follow-up',
     minWidth: 90,
     align: 'center',
-    render: (row) => (
-      <Chip
-        label={row.followUpNeeded ? 'Needed' : 'No'}
-        size="small"
-        color={row.followUpNeeded ? 'info' : 'default'}
-        variant="outlined"
-      />
-    ),
+    render: (row) => <FollowUpChip row={row} />,
   },
 ];
 
