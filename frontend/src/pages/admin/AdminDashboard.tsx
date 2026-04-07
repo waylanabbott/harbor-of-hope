@@ -13,6 +13,7 @@ import {
   Skeleton,
   Alert,
   Button,
+  Popover,
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -23,7 +24,59 @@ import MetricCard from '../../components/ui/MetricCard';
 import ReintegrationGauge from '../../components/charts/ReintegrationGauge';
 import RiskBadge from '../../components/ui/RiskBadge';
 import { fetchDashboardStats } from '../../lib/dashboardApi';
-import type { DashboardStats } from '../../types/Dashboard';
+import type { DashboardStats, AttentionResident } from '../../types/Dashboard';
+
+function ClickableRiskBadge({ resident }: { resident: AttentionResident }) {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const hasDetails = resident.initialCaseAssessment || resident.caseCategory || resident.assignedSocialWorker;
+
+  return (
+    <>
+      <Box
+        onClick={hasDetails ? (e) => setAnchorEl(e.currentTarget as HTMLElement) : undefined}
+        sx={hasDetails ? { cursor: 'pointer', display: 'inline-flex' } : { display: 'inline-flex' }}
+      >
+        <RiskBadge level={resident.currentRiskLevel} />
+      </Box>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        slotProps={{ paper: { sx: { p: 2.5, maxWidth: 380, borderRadius: 2 } } }}
+      >
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>
+          {resident.caseControlNo} — Risk Details
+        </Typography>
+        {resident.initialRiskLevel && (
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="caption" color="text.secondary">Initial Risk Level</Typography>
+            <Typography variant="body2">{resident.initialRiskLevel}</Typography>
+          </Box>
+        )}
+        {resident.caseCategory && (
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="caption" color="text.secondary">Case Category</Typography>
+            <Typography variant="body2">{resident.caseCategory}</Typography>
+          </Box>
+        )}
+        {resident.assignedSocialWorker && (
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="caption" color="text.secondary">Assigned Social Worker</Typography>
+            <Typography variant="body2">{resident.assignedSocialWorker}</Typography>
+          </Box>
+        )}
+        {resident.initialCaseAssessment && (
+          <Box>
+            <Typography variant="caption" color="text.secondary">Case Assessment</Typography>
+            <Typography variant="body2">{resident.initialCaseAssessment}</Typography>
+          </Box>
+        )}
+      </Popover>
+    </>
+  );
+}
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -235,7 +288,7 @@ export default function AdminDashboard() {
                     <TableRow key={r.residentId}>
                       <TableCell>{r.caseControlNo ?? '-'}</TableCell>
                       <TableCell>{r.safehouseName ?? '-'}</TableCell>
-                      <TableCell><RiskBadge level={r.currentRiskLevel} /></TableCell>
+                      <TableCell><ClickableRiskBadge resident={r} /></TableCell>
                       <TableCell>{r.caseStatus ?? '-'}</TableCell>
                     </TableRow>
                   ))

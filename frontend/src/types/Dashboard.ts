@@ -21,4 +21,8 @@ export interface AttentionResident {
   safehouseName: string | null;
   currentRiskLevel: string | null;
   caseStatus: string | null;
+  initialRiskLevel: string | null;
+  initialCaseAssessment: string | null;
+  caseCategory: string | null;
+  assignedSocialWorker: string | null;
 }

@@ -26,4 +26,8 @@ public class AttentionResidentDto
     public string? SafehouseName { get; set; }
     public string? CurrentRiskLevel { get; set; }
     public string? CaseStatus { get; set; }
+    public string? InitialRiskLevel { get; set; }
+    public string? InitialCaseAssessment { get; set; }
+    public string? CaseCategory { get; set; }
+    public string? AssignedSocialWorker { get; set; }
 }

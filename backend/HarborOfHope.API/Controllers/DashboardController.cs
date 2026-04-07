@@ -63,7 +63,11 @@ public class DashboardController(AppDbContext db) : ControllerBase
                 CaseControlNo = r.CaseControlNo,
                 SafehouseName = r.Safehouse != null ? r.Safehouse.Name : null,
                 CurrentRiskLevel = r.CurrentRiskLevel,
-                CaseStatus = r.CaseStatus
+                CaseStatus = r.CaseStatus,
+                InitialRiskLevel = r.InitialRiskLevel,
+                InitialCaseAssessment = r.InitialCaseAssessment,
+                CaseCategory = r.CaseCategory,
+                AssignedSocialWorker = r.AssignedSocialWorker
             })
             .ToListAsync();
 
