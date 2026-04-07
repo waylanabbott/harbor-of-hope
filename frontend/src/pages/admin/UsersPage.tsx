@@ -206,31 +206,36 @@ export default function UsersPage() {
                     {user.supporterId ? `#${user.supporterId}` : '—'}
                   </TableCell>
                   <TableCell align="right">
-                    {!user.supporterId && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+                      {!user.supporterId && (
+                        <Button
+                          size="small"
+                          variant="contained"
+                          color="success"
+                          startIcon={<LinkIcon />}
+                          onClick={() => handleLinkSupporter(user)}
+                          disabled={linkLoading}
+                          sx={{ textTransform: 'none', borderRadius: 2, mr: 0.5 }}
+                        >
+                          Approve Donor
+                        </Button>
+                      )}
                       <IconButton
                         size="small"
-                        onClick={() => handleLinkSupporter(user)}
-                        title="Link to supporter profile"
-                        disabled={linkLoading}
+                        onClick={() => setRoleTarget(user)}
+                        title={user.roles.includes('Admin') ? 'Revoke Admin' : 'Grant Admin'}
                       >
-                        <LinkIcon fontSize="small" />
+                        <SwapHorizIcon fontSize="small" />
                       </IconButton>
-                    )}
-                    <IconButton
-                      size="small"
-                      onClick={() => setRoleTarget(user)}
-                      title={user.roles.includes('Admin') ? 'Revoke Admin' : 'Grant Admin'}
-                    >
-                      <SwapHorizIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => setDeleteTarget(user)}
-                      title="Delete user"
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => setDeleteTarget(user)}
+                        title="Delete user"
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))}
