@@ -11,52 +11,47 @@ namespace HarborOfHope.API.Controllers;
 [Authorize(Policy = AuthPolicies.AdminOnly)]
 public class ReportsController(AppDbContext db) : ControllerBase
 {
-    /// <summary>
-    /// GET /api/reports/donation-trends
-    /// Returns monthly donation amounts sorted chronologically (RPT-01).
-    /// </summary>
     [HttpGet("donation-trends")]
     public async Task<ActionResult<List<DonationTrendDto>>> GetDonationTrends()
     {
-        var trends = await db.Donations
+        var donations = await db.Donations
             .Where(d => d.DonationDate != null)
-            .GroupBy(d => new { d.DonationDate!.Value.Year, d.DonationDate!.Value.Month })
+            .Select(d => new { d.DonationDate!.Value.Year, d.DonationDate!.Value.Month, d.Amount })
+            .ToListAsync();
+
+        var trends = donations
+            .GroupBy(d => new { d.Year, d.Month })
             .Select(g => new DonationTrendDto(
                 $"{g.Key.Year}-{g.Key.Month:D2}",
                 g.Sum(d => d.Amount ?? 0),
                 g.Count()
             ))
             .OrderBy(t => t.Month)
-            .ToListAsync();
+            .ToList();
 
         return Ok(trends);
     }
 
-    /// <summary>
-    /// GET /api/reports/resident-outcomes
-    /// Returns reintegration status counts grouped by status (RPT-02).
-    /// </summary>
     [HttpGet("resident-outcomes")]
     public async Task<ActionResult<List<ResidentOutcomeDto>>> GetResidentOutcomes()
     {
-        var outcomes = await db.Residents
+        var residents = await db.Residents
             .Where(r => r.ReintegrationStatus != null)
-            .GroupBy(r => r.ReintegrationStatus!)
+            .Select(r => r.ReintegrationStatus!)
+            .ToListAsync();
+
+        var outcomes = residents
+            .GroupBy(s => s)
             .Select(g => new ResidentOutcomeDto(g.Key, g.Count()))
             .OrderByDescending(o => o.Count)
-            .ToListAsync();
+            .ToList();
 
         return Ok(outcomes);
     }
 
-    /// <summary>
-    /// GET /api/reports/safehouse-comparison
-    /// Returns per-safehouse metrics (RPT-03).
-    /// </summary>
     [HttpGet("safehouse-comparison")]
     public async Task<ActionResult<List<SafehouseComparisonDto>>> GetSafehouseComparison()
     {
-        // Load data into memory to avoid complex LINQ-to-SQL translation issues
         var safehouses = await db.Safehouses
             .Include(s => s.Residents)
             .Include(s => s.MonthlyMetrics)
@@ -93,11 +88,6 @@ public class ReportsController(AppDbContext db) : ControllerBase
         return Ok(comparisons);
     }
 
-    /// <summary>
-    /// POST /api/reports/batch-churn
-    /// Returns pre-computed churn predictions from the predictions table (DONR-06).
-    /// Max 100 supporters per request.
-    /// </summary>
     [HttpPost("batch-churn")]
     public async Task<ActionResult<List<ChurnPredictionDto>>> GetBatchChurnPredictions(
         [FromBody] BatchChurnRequest request)
@@ -117,7 +107,6 @@ public class ReportsController(AppDbContext db) : ControllerBase
             ))
             .ToListAsync();
 
-        // For supporters without predictions, return "Unknown"
         var foundIds = predictions.Select(p => p.SupporterId).ToHashSet();
         foreach (var id in request.SupporterIds.Where(id => !foundIds.Contains(id)))
         {
