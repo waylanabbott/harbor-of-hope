@@ -18,15 +18,23 @@ import type { PublicStats } from '../../types/PublicImpact';
 export default function LandingPage() {
   const [stats, setStats] = useState<PublicStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [statsLoaded, setStatsLoaded] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Home | Harbor of Hope';
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
     async function loadStats() {
       try {
         const data = await fetchPublicStats();
-        if (!cancelled) setStats(data);
+        if (!cancelled) {
+          setStats(data);
+          setStatsLoaded(true);
+        }
       } catch {
-        // Stats are non-critical for landing page
+        // Stats are non-critical for landing page — hide section on failure
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -43,7 +51,7 @@ export default function LandingPage() {
       <Box
         sx={{
           background:
-            'linear-gradient(135deg, #D4603F 0%, #E8935A 40%, #F5C89A 75%, #FFF8F0 100%)',
+            'linear-gradient(135deg, #D4603F 0%, #C4533A 50%, #E8935A 100%)',
           color: 'white',
           py: { xs: 10, md: 16 },
           textAlign: 'center',
@@ -96,7 +104,7 @@ export default function LandingPage() {
             variant="contained"
             size="large"
             href="#donate"
-            aria-label="Donate now - scroll to donation section"
+            aria-label="Support our mission - scroll to learn more"
             sx={{
               px: 6,
               py: 1.8,
@@ -111,7 +119,7 @@ export default function LandingPage() {
               },
             }}
           >
-            Donate Now
+            Support Our Mission
           </Button>
         </Container>
       </Box>
@@ -145,11 +153,40 @@ export default function LandingPage() {
           We provide safety, healing, and opportunity to survivors of
           trafficking through three pillars of support.
         </Typography>
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 4 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 4, sm: 5 },
+            justifyContent: 'center',
+            alignItems: 'stretch',
+          }}
+        >
+          {[
+            {
+              icon: <VolunteerActivismIcon sx={{ fontSize: 36, color: 'primary.main' }} />,
+              iconBg: 'rgba(212,96,63,0.1)',
+              title: 'Safe Homes',
+              text: 'Providing secure, nurturing environments for girls rescued from trafficking in Central America.',
+            },
+            {
+              icon: <SchoolIcon sx={{ fontSize: 36, color: 'secondary.main' }} />,
+              iconBg: 'rgba(91,140,122,0.1)',
+              title: 'Education & Healing',
+              text: 'Comprehensive programs including education, therapy, and life skills training for recovery and growth.',
+            },
+            {
+              icon: <PublicIcon sx={{ fontSize: 36, color: 'primary.main' }} />,
+              iconBg: 'rgba(212,96,63,0.1)',
+              title: 'Community Impact',
+              text: 'Building partnerships with local communities to prevent trafficking and support survivors\u2019 reintegration.',
+            },
+          ].map((card) => (
             <Card
+              key={card.title}
               sx={{
-                height: '100%',
+                flex: '1 1 0',
+                minWidth: 0,
                 borderRadius: 4,
                 boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
                 transition: 'transform 0.2s ease, box-shadow 0.2s ease',
@@ -159,251 +196,110 @@ export default function LandingPage() {
                 },
               }}
             >
-              <CardContent sx={{ p: 4, textAlign: 'center' }}>
+              <CardContent
+                sx={{
+                  p: 4,
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
                 <Box
                   sx={{
                     width: 72,
                     height: 72,
                     borderRadius: '50%',
-                    bgcolor: 'rgba(212,96,63,0.1)',
+                    bgcolor: card.iconBg,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    mx: 'auto',
                     mb: 3,
                   }}
                 >
-                  <VolunteerActivismIcon
-                    sx={{ fontSize: 36, color: 'primary.main' }}
-                  />
+                  {card.icon}
                 </Box>
-                <Typography
-                  variant="h6"
-                  sx={{ mb: 1.5, fontWeight: 700, color: '#2D2D2D' }}
-                >
-                  Safe Homes
+                <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 700, color: '#2D2D2D' }}>
+                  {card.title}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: 'text.secondary', lineHeight: 1.7 }}
-                >
-                  Providing secure, nurturing environments for girls rescued from
-                  trafficking in Central America.
+                <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.7 }}>
+                  {card.text}
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Card
-              sx={{
-                height: '100%',
-                borderRadius: 4,
-                boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                },
-              }}
-            >
-              <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                <Box
-                  sx={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: '50%',
-                    bgcolor: 'rgba(91,140,122,0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mx: 'auto',
-                    mb: 3,
-                  }}
-                >
-                  <SchoolIcon
-                    sx={{ fontSize: 36, color: 'secondary.main' }}
-                  />
-                </Box>
-                <Typography
-                  variant="h6"
-                  sx={{ mb: 1.5, fontWeight: 700, color: '#2D2D2D' }}
-                >
-                  Education & Healing
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: 'text.secondary', lineHeight: 1.7 }}
-                >
-                  Comprehensive programs including education, therapy, and life
-                  skills training for recovery and growth.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Card
-              sx={{
-                height: '100%',
-                borderRadius: 4,
-                boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                },
-              }}
-            >
-              <CardContent sx={{ p: 4, textAlign: 'center' }}>
-                <Box
-                  sx={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: '50%',
-                    bgcolor: 'rgba(212,96,63,0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mx: 'auto',
-                    mb: 3,
-                  }}
-                >
-                  <PublicIcon
-                    sx={{ fontSize: 36, color: 'primary.main' }}
-                  />
-                </Box>
-                <Typography
-                  variant="h6"
-                  sx={{ mb: 1.5, fontWeight: 700, color: '#2D2D2D' }}
-                >
-                  Community Impact
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ color: 'text.secondary', lineHeight: 1.7 }}
-                >
-                  Building partnerships with local communities to prevent
-                  trafficking and support survivors' reintegration.
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+          ))}
+        </Box>
       </Container>
 
-      {/* Impact Stats Section */}
-      <Box
-        sx={{
-          background:
-            'linear-gradient(135deg, #D4603F 0%, #C4533A 100%)',
-          color: 'white',
-          py: { xs: 8, md: 10 },
-        }}
-      >
-        <Container>
-          <Typography
-            variant="h4"
-            component="h2"
-            sx={{
-              textAlign: 'center',
-              mb: 6,
-              fontWeight: 700,
-            }}
-          >
-            Our Impact
-          </Typography>
-          <Grid container spacing={4}>
+      {/* Impact Stats Section — only rendered when stats loaded successfully */}
+      {(loading || statsLoaded) && (
+        <Box
+          sx={{
+            background:
+              'linear-gradient(135deg, #D4603F 0%, #C4533A 100%)',
+            color: 'white',
+            py: { xs: 8, md: 10 },
+          }}
+        >
+          <Container>
+            <Typography
+              variant="h4"
+              component="h2"
+              sx={{
+                textAlign: 'center',
+                mb: 6,
+                fontWeight: 700,
+              }}
+            >
+              Our Impact
+            </Typography>
             {loading ? (
-              <Grid size={{ xs: 12 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                  <CircularProgress sx={{ color: 'white' }} />
-                </Box>
-              </Grid>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress sx={{ color: 'white' }} />
+              </Box>
             ) : (
-              <>
-                <Grid size={{ xs: 6, md: 3 }}>
-                  <Box sx={{ textAlign: 'center' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  gap: { xs: 4, md: 8 },
+                }}
+              >
+                {[
+                  { value: stats?.totalResidentsServed ?? '—', label: 'Residents Served' },
+                  {
+                    value: stats?.totalDonationsReceived != null
+                      ? `$${Math.round(stats.totalDonationsReceived).toLocaleString()}`
+                      : '—',
+                    label: 'Donations Received',
+                  },
+                  { value: stats?.successfulReintegrations ?? '—', label: 'Successful Reintegrations' },
+                  {
+                    value: stats?.reintegrationRate != null
+                      ? `${stats.reintegrationRate}%`
+                      : '—',
+                    label: 'Reintegration Rate',
+                  },
+                ].map((stat) => (
+                  <Box key={stat.label} sx={{ textAlign: 'center', minWidth: 140 }}>
                     <Typography
                       variant="h3"
-                      sx={{
-                        fontWeight: 800,
-                        fontSize: { xs: '2rem', md: '3rem' },
-                      }}
+                      sx={{ fontWeight: 800, fontSize: { xs: '2rem', md: '3rem' } }}
                     >
-                      {stats?.totalResidentsServed ?? 0}
+                      {stat.value}
                     </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{ opacity: 0.9, mt: 1 }}
-                    >
-                      Residents Served
+                    <Typography variant="body1" sx={{ opacity: 0.9, mt: 1 }}>
+                      {stat.label}
                     </Typography>
                   </Box>
-                </Grid>
-                <Grid size={{ xs: 6, md: 3 }}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography
-                      variant="h3"
-                      sx={{
-                        fontWeight: 800,
-                        fontSize: { xs: '2rem', md: '3rem' },
-                      }}
-                    >
-                      $
-                      {(
-                        stats?.totalDonationsReceived ?? 0
-                      ).toLocaleString()}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{ opacity: 0.9, mt: 1 }}
-                    >
-                      Donations Received
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 6, md: 3 }}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography
-                      variant="h3"
-                      sx={{
-                        fontWeight: 800,
-                        fontSize: { xs: '2rem', md: '3rem' },
-                      }}
-                    >
-                      {stats?.successfulReintegrations ?? 0}
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{ opacity: 0.9, mt: 1 }}
-                    >
-                      Successful Reintegrations
-                    </Typography>
-                  </Box>
-                </Grid>
-                <Grid size={{ xs: 6, md: 3 }}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography
-                      variant="h3"
-                      sx={{
-                        fontWeight: 800,
-                        fontSize: { xs: '2rem', md: '3rem' },
-                      }}
-                    >
-                      {stats?.reintegrationRate ?? 0}%
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      sx={{ opacity: 0.9, mt: 1 }}
-                    >
-                      Reintegration Rate
-                    </Typography>
-                  </Box>
-                </Grid>
-              </>
+                ))}
+              </Box>
             )}
-          </Grid>
-        </Container>
-      </Box>
+          </Container>
+        </Box>
+      )}
 
       {/* Donate CTA Section */}
       <Box sx={{ bgcolor: '#FFF8F0' }}>
@@ -445,7 +341,7 @@ export default function LandingPage() {
               },
             }}
           >
-            Contact Us to Donate
+            Support Our Mission
           </Button>
         </Container>
       </Box>

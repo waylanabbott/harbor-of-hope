@@ -68,6 +68,10 @@ const columns: Column<SupporterItem>[] = [
 ];
 
 export default function SupportersPage() {
+  useEffect(() => {
+    document.title = 'Supporters | Harbor of Hope';
+  }, []);
+
   // Data state
   const [supporters, setSupporters] = useState<PagedResult<SupporterItem> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,6 +79,7 @@ export default function SupportersPage() {
 
   // Churn prediction state
   const [churnPredictions, setChurnPredictions] = useState<Map<number, ChurnPrediction>>(new Map());
+  const [churnError, setChurnError] = useState(false);
 
   // Pagination and sort
   const [page, setPage] = useState(1);
@@ -132,6 +137,7 @@ export default function SupportersPage() {
   // Fetch churn predictions when supporters load
   useEffect(() => {
     if (!supporters?.items?.length) return;
+    setChurnError(false);
     const ids = supporters.items.map((s) => s.supporterId);
     fetchBatchChurnPredictions(ids)
       .then((predictions) => {
@@ -139,7 +145,7 @@ export default function SupportersPage() {
         setChurnPredictions(map);
       })
       .catch(() => {
-        // Silently fail -- churn badges are non-critical enhancement
+        setChurnError(true);
       });
   }, [supporters]);
 
@@ -153,8 +159,11 @@ export default function SupportersPage() {
       align: 'center' as const,
       render: (row: SupporterItem) => {
         const prediction = churnPredictions.get(row.supporterId);
-        if (!prediction)
+        if (!prediction) {
+          if (churnError)
+            return <Chip label="N/A" size="small" variant="outlined" color="default" />;
           return <Chip label="..." size="small" variant="outlined" />;
+        }
         return (
           <MuiTooltip
             title={`${(prediction.churnProbability * 100).toFixed(0)}% churn probability`}

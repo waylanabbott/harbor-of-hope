@@ -12,16 +12,33 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  ListItemIcon,
   Divider,
+  Breadcrumbs,
+  Link,
   useMediaQuery,
   useTheme,
+  Avatar,
+  Menu,
+  MenuItem,
 } from '@mui/material';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import MenuIcon from '@mui/icons-material/Menu';
+import SecurityIcon from '@mui/icons-material/Security';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from './AdminSidebar';
-import DarkModeToggle from '../ui/DarkModeToggle';
 import Footer from './Footer';
 import CookieConsentBanner from '../ui/CookieConsentBanner';
+
+const adminPageNames: Record<string, string> = {
+  '/admin/dashboard': 'Dashboard',
+  '/admin/residents': 'Residents',
+  '/admin/donors': 'Supporters',
+  '/admin/sessions': 'Sessions',
+  '/admin/visits': 'Visits',
+  '/admin/reports': 'Reports',
+};
 
 function AppLayout() {
   const { authSession, isAuthenticated, isLoading } = useAuth();
@@ -31,6 +48,7 @@ function AppLayout() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
 
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -94,8 +112,6 @@ function AppLayout() {
             Harbor of Hope
           </Typography>
 
-          <DarkModeToggle />
-
           {/* Hamburger menu button -- visible only on mobile */}
           {!isLoading && isMobile && (
             <IconButton
@@ -109,21 +125,58 @@ function AppLayout() {
           )}
 
           {/* Desktop navigation buttons -- hidden on mobile */}
+          {/* Issue 23: Active page indicator via underline */}
           {!isLoading && (
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
-              <Button color="inherit" component={RouterLink} to="/">
+              <Button
+                color="inherit"
+                component={RouterLink}
+                to="/"
+                sx={{
+                  borderBottom: location.pathname === '/' ? '2px solid white' : '2px solid transparent',
+                  borderRadius: 0,
+                  pb: 0.5,
+                }}
+              >
                 Home
               </Button>
-              <Button color="inherit" component={RouterLink} to="/impact">
+              <Button
+                color="inherit"
+                component={RouterLink}
+                to="/impact"
+                sx={{
+                  borderBottom: location.pathname === '/impact' ? '2px solid white' : '2px solid transparent',
+                  borderRadius: 0,
+                  pb: 0.5,
+                }}
+              >
                 Impact
               </Button>
 
               {!isAuthenticated ? (
                 <>
-                  <Button color="inherit" component={RouterLink} to="/login">
+                  <Button
+                    color="inherit"
+                    component={RouterLink}
+                    to="/login"
+                    sx={{
+                      borderBottom: location.pathname === '/login' ? '2px solid white' : '2px solid transparent',
+                      borderRadius: 0,
+                      pb: 0.5,
+                    }}
+                  >
                     Login
                   </Button>
-                  <Button color="inherit" component={RouterLink} to="/register">
+                  <Button
+                    color="inherit"
+                    component={RouterLink}
+                    to="/register"
+                    sx={{
+                      borderBottom: location.pathname === '/register' ? '2px solid white' : '2px solid transparent',
+                      borderRadius: 0,
+                      pb: 0.5,
+                    }}
+                  >
                     Register
                   </Button>
                 </>
@@ -134,6 +187,11 @@ function AppLayout() {
                       color="inherit"
                       component={RouterLink}
                       to="/admin/dashboard"
+                      sx={{
+                        borderBottom: location.pathname.startsWith('/admin') ? '2px solid white' : '2px solid transparent',
+                        borderRadius: 0,
+                        pb: 0.5,
+                      }}
                     >
                       Dashboard
                     </Button>
@@ -145,6 +203,11 @@ function AppLayout() {
                         color="inherit"
                         component={RouterLink}
                         to="/donor/dashboard"
+                        sx={{
+                          borderBottom: location.pathname === '/donor/dashboard' ? '2px solid white' : '2px solid transparent',
+                          borderRadius: 0,
+                          pb: 0.5,
+                        }}
                       >
                         My Dashboard
                       </Button>
@@ -152,22 +215,86 @@ function AppLayout() {
                         color="inherit"
                         component={RouterLink}
                         to="/donor/donations"
+                        sx={{
+                          borderBottom: location.pathname === '/donor/donations' ? '2px solid white' : '2px solid transparent',
+                          borderRadius: 0,
+                          pb: 0.5,
+                        }}
                       >
                         My Donations
                       </Button>
                     </>
                   )}
 
-                  <Button
-                    color="inherit"
-                    component={RouterLink}
-                    to="/manage-mfa"
-                  >
-                    MFA Settings
-                  </Button>
-                  <Button color="inherit" component={RouterLink} to="/logout">
-                    Logout
-                  </Button>
+                  {/* User avatar with dropdown menu */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mr: 1,
+                        display: { xs: 'none', lg: 'block' },
+                        opacity: 0.9,
+                      }}
+                    >
+                      {authSession.email}
+                    </Typography>
+                    <IconButton
+                      onClick={(e) => setUserMenuAnchor(e.currentTarget)}
+                      size="small"
+                      aria-label="User menu"
+                      aria-controls={userMenuAnchor ? 'user-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={userMenuAnchor ? 'true' : undefined}
+                    >
+                      <Avatar
+                        sx={{
+                          width: 32,
+                          height: 32,
+                          bgcolor: 'rgba(255,255,255,0.2)',
+                          fontSize: '0.875rem',
+                        }}
+                      >
+                        {(authSession.email ?? '?')[0].toUpperCase()}
+                      </Avatar>
+                    </IconButton>
+                    <Menu
+                      id="user-menu"
+                      anchorEl={userMenuAnchor}
+                      open={Boolean(userMenuAnchor)}
+                      onClose={() => setUserMenuAnchor(null)}
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    >
+                      <MenuItem disabled sx={{ opacity: '1 !important' }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {authSession.email}
+                        </Typography>
+                      </MenuItem>
+                      <Divider />
+                      <MenuItem
+                        onClick={() => {
+                          setUserMenuAnchor(null);
+                          navigate('/manage-mfa');
+                        }}
+                      >
+                        <ListItemIcon>
+                          <SecurityIcon fontSize="small" />
+                        </ListItemIcon>
+                        MFA Settings
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          setUserMenuAnchor(null);
+                          navigate('/logout');
+                        }}
+                      >
+                        <ListItemIcon>
+                          <LogoutIcon fontSize="small" />
+                        </ListItemIcon>
+                        Logout
+                      </MenuItem>
+                    </Menu>
+                  </Box>
                 </>
               )}
             </Box>
@@ -192,6 +319,25 @@ function AppLayout() {
               overflow: 'auto',
             }}
           >
+            {/* Issue 26: Admin breadcrumbs */}
+            <Breadcrumbs
+              separator={<NavigateNextIcon fontSize="small" />}
+              sx={{ mb: 2 }}
+              aria-label="breadcrumb"
+            >
+              <Link
+                component={RouterLink}
+                to="/admin/dashboard"
+                underline="hover"
+                color="text.secondary"
+                variant="body2"
+              >
+                Admin
+              </Link>
+              <Typography variant="body2" color="text.primary">
+                {adminPageNames[location.pathname] ?? 'Page'}
+              </Typography>
+            </Breadcrumbs>
             <Outlet />
           </Box>
         </Box>

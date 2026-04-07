@@ -21,6 +21,10 @@ import { fetchMyDonations } from '../../lib/donorPortalApi';
 import type { DonorDonation } from '../../types/DonorPortal';
 
 export default function DonorHistoryPage() {
+  useEffect(() => {
+    document.title = 'My Donations | Harbor of Hope';
+  }, []);
+
   const [donations, setDonations] = useState<DonorDonation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

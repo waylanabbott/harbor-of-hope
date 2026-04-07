@@ -44,6 +44,10 @@ const columns: Column<ResidentListItem>[] = [
 ];
 
 export default function ResidentsPage() {
+  useEffect(() => {
+    document.title = 'Residents | Harbor of Hope';
+  }, []);
+
   // Data state
   const [residents, setResidents] = useState<PagedResult<ResidentListItem> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -175,11 +179,15 @@ export default function ResidentsPage() {
       label: 'Safehouse',
       value: safehouseId,
       options: [
-        { value: '1', label: 'Safehouse 1' },
-        { value: '2', label: 'Safehouse 2' },
-        { value: '3', label: 'Safehouse 3' },
-        { value: '4', label: 'Safehouse 4' },
-        { value: '5', label: 'Safehouse 5' },
+        { value: '1', label: 'Lighthouse Safehouse 1 - Quezon City' },
+        { value: '2', label: 'Lighthouse Safehouse 2 - Cebu City' },
+        { value: '3', label: 'Lighthouse Safehouse 3 - Davao City' },
+        { value: '4', label: 'Lighthouse Safehouse 4 - Iloilo City' },
+        { value: '5', label: 'Lighthouse Safehouse 5 - Baguio City' },
+        { value: '6', label: 'Lighthouse Safehouse 6 - Cagayan de Oro' },
+        { value: '7', label: 'Lighthouse Safehouse 7 - Bacolod' },
+        { value: '8', label: 'Lighthouse Safehouse 8 - Tacloban' },
+        { value: '9', label: 'Lighthouse Safehouse 9 - General Santos' },
       ],
       onChange: setSafehouseId,
     },

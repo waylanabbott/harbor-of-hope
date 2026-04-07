@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   Box,
   Typography,
@@ -9,7 +9,12 @@ import {
   CardContent,
   CircularProgress,
   Alert,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   ResponsiveContainer,
   LineChart,
@@ -58,6 +63,14 @@ export default function PublicImpactPage() {
   const [snapshots, setSnapshots] = useState<ImpactSnapshot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedChart, setExpandedChart] = useState<{
+    title: string;
+    content: ReactNode;
+  } | null>(null);
+
+  useEffect(() => {
+    document.title = 'Impact | Harbor of Hope';
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -101,7 +114,69 @@ export default function PublicImpactPage() {
     p: { xs: 3, md: 4 },
     borderRadius: 4,
     boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    '&:hover': {
+      transform: 'translateY(-3px)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+    },
   };
+
+  function renderHealthChart(height: number) {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
+          <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
+          <YAxis tick={{ fill: '#6B6B6B' }} />
+          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} />
+          <Line type="monotone" dataKey="avgHealthScore" stroke="#5B8C7A" name="Avg Health Score" strokeWidth={2.5} dot={{ r: 3, fill: '#5B8C7A' }} activeDot={{ r: 5 }} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  function renderDonationsChart(height: number) {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
+          <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
+          <YAxis tick={{ fill: '#6B6B6B' }} />
+          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Donations']} />
+          <Bar dataKey="donationsTotal" fill="#D4603F" name="Donations ($)" radius={[6, 6, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  function renderResidentsChart(height: number) {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
+          <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
+          <YAxis tick={{ fill: '#6B6B6B' }} />
+          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} />
+          <Line type="monotone" dataKey="totalResidents" stroke="#D4603F" name="Total Residents" strokeWidth={2.5} dot={{ r: 3, fill: '#D4603F' }} activeDot={{ r: 5 }} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  function renderEducationChart(height: number) {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
+          <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
+          <YAxis tick={{ fill: '#6B6B6B' }} />
+          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} formatter={(value: number) => [`${value.toFixed(1)}%`, 'Education Progress']} />
+          <Line type="monotone" dataKey="educationProgress" stroke="#5B8C7A" name="Education Progress (%)" strokeWidth={2.5} dot={{ r: 3, fill: '#5B8C7A' }} activeDot={{ r: 5 }} />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
 
   if (loading) {
     return (
@@ -158,176 +233,95 @@ export default function PublicImpactPage() {
         )}
 
         {/* Charts Section */}
-        <Grid container spacing={4} sx={{ mb: { xs: 6, md: 8 } }}>
+        <Grid container spacing={{ xs: 4, md: 6 }} sx={{ mb: { xs: 6, md: 10 } }}>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Paper sx={paperSx}>
-              <Typography
-                variant="h6"
-                component="h2"
-                sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}
-              >
+            <Paper
+              sx={paperSx}
+              onClick={() => setExpandedChart({ title: 'Average Health Score Over Time', content: renderHealthChart(500) })}
+            >
+              <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}>
                 Average Health Score Over Time
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontSize: 11, fill: '#6B6B6B' }}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis tick={{ fill: '#6B6B6B' }} />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: 'none',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="avgHealthScore"
-                    stroke="#5B8C7A"
-                    name="Avg Health Score"
-                    strokeWidth={2.5}
-                    dot={{ r: 3, fill: '#5B8C7A' }}
-                    activeDot={{ r: 5 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {renderHealthChart(300)}
+              <Typography variant="caption" sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+                Click to expand
+              </Typography>
             </Paper>
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <Paper sx={paperSx}>
-              <Typography
-                variant="h6"
-                component="h2"
-                sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}
-              >
+            <Paper
+              sx={paperSx}
+              onClick={() => setExpandedChart({ title: 'Monthly Donations', content: renderDonationsChart(500) })}
+            >
+              <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}>
                 Monthly Donations
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontSize: 11, fill: '#6B6B6B' }}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis tick={{ fill: '#6B6B6B' }} />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: 'none',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    }}
-                    formatter={(value: number) => [
-                      `$${value.toLocaleString()}`,
-                      'Donations',
-                    ]}
-                  />
-                  <Bar
-                    dataKey="donationsTotal"
-                    fill="#D4603F"
-                    name="Donations ($)"
-                    radius={[6, 6, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              {renderDonationsChart(300)}
+              <Typography variant="caption" sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+                Click to expand
+              </Typography>
             </Paper>
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <Paper sx={paperSx}>
-              <Typography
-                variant="h6"
-                component="h2"
-                sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}
-              >
+            <Paper
+              sx={paperSx}
+              onClick={() => setExpandedChart({ title: 'Total Residents Over Time', content: renderResidentsChart(500) })}
+            >
+              <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}>
                 Total Residents Over Time
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontSize: 11, fill: '#6B6B6B' }}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis tick={{ fill: '#6B6B6B' }} />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: 'none',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="totalResidents"
-                    stroke="#D4603F"
-                    name="Total Residents"
-                    strokeWidth={2.5}
-                    dot={{ r: 3, fill: '#D4603F' }}
-                    activeDot={{ r: 5 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {renderResidentsChart(300)}
+              <Typography variant="caption" sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+                Click to expand
+              </Typography>
             </Paper>
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <Paper sx={paperSx}>
-              <Typography
-                variant="h6"
-                component="h2"
-                sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}
-              >
+            <Paper
+              sx={paperSx}
+              onClick={() => setExpandedChart({ title: 'Education Progress', content: renderEducationChart(500) })}
+            >
+              <Typography variant="h6" component="h2" sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}>
                 Education Progress
               </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontSize: 11, fill: '#6B6B6B' }}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis tick={{ fill: '#6B6B6B' }} />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: 'none',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    }}
-                    formatter={(value: number) => [
-                      `${value.toFixed(1)}%`,
-                      'Education Progress',
-                    ]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="educationProgress"
-                    stroke="#5B8C7A"
-                    name="Education Progress (%)"
-                    strokeWidth={2.5}
-                    dot={{ r: 3, fill: '#5B8C7A' }}
-                    activeDot={{ r: 5 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {renderEducationChart(300)}
+              <Typography variant="caption" sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+                Click to expand
+              </Typography>
             </Paper>
           </Grid>
         </Grid>
+
+        {/* Expanded Chart Dialog */}
+        <Dialog
+          open={expandedChart !== null}
+          onClose={() => setExpandedChart(null)}
+          maxWidth="lg"
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: 4, p: { xs: 1, md: 2 } },
+          }}
+        >
+          {expandedChart && (
+            <>
+              <DialogTitle sx={{ fontWeight: 700, fontSize: '1.5rem', pr: 6 }}>
+                {expandedChart.title}
+                <IconButton
+                  onClick={() => setExpandedChart(null)}
+                  sx={{ position: 'absolute', right: 16, top: 16 }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent sx={{ pt: 2 }}>
+                {expandedChart.content}
+              </DialogContent>
+            </>
+          )}
+        </Dialog>
 
         {/* Recent Snapshots Section */}
         {recentSnapshots.length > 0 && (
@@ -339,7 +333,7 @@ export default function PublicImpactPage() {
             >
               Recent Updates
             </Typography>
-            <Grid container spacing={3}>
+            <Grid container spacing={{ xs: 4, md: 6 }}>
               {recentSnapshots.map((snapshot, index) => (
                 <Grid size={{ xs: 12, sm: 6 }} key={index}>
                   <Card

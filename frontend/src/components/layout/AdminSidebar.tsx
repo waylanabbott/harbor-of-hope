@@ -8,6 +8,8 @@ import {
   Box,
   IconButton,
   Tooltip,
+  Typography,
+  Divider,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
@@ -32,7 +34,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
   { label: 'Residents', icon: <PeopleIcon />, path: '/admin/residents' },
-  { label: 'Donors', icon: <VolunteerActivismIcon />, path: '/admin/donors' },
+  { label: 'Supporters', icon: <VolunteerActivismIcon />, path: '/admin/donors' },
   { label: 'Sessions', icon: <PsychologyIcon />, path: '/admin/sessions' },
   { label: 'Visits', icon: <HomeIcon />, path: '/admin/visits' },
   { label: 'Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
@@ -73,6 +75,13 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
             height: '100%',
           }}
         >
+          {/* Issue 17: Organization name at top */}
+          <Box sx={{ px: 2.5, pt: 2, pb: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              Harbor of Hope
+            </Typography>
+          </Box>
+          <Divider />
           <List sx={{ flex: 1, pt: 2 }}>
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -153,6 +162,17 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
           height: '100%',
         }}
       >
+        {/* Issue 17: Organization name at top */}
+        {!isCollapsed && (
+          <>
+            <Box sx={{ px: 2.5, pt: 2, pb: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                Harbor of Hope
+              </Typography>
+            </Box>
+            <Divider />
+          </>
+        )}
         <List sx={{ flex: 1, pt: 2 }}>
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;

@@ -1,14 +1,29 @@
-import { Box, Container, Typography } from '@mui/material';
+import { useEffect } from 'react';
+import { Box, Container, Divider, Typography } from '@mui/material';
 
 export default function PrivacyPolicyPage() {
+  useEffect(() => {
+    document.title = 'Privacy Policy | Harbor of Hope';
+  }, []);
+
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" sx={{ mb: 1 }}>
-        Privacy Policy
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-        Last updated: April 2026
-      </Typography>
+    <Container maxWidth="md" sx={{ py: { xs: 4, md: 8 } }}>
+      {/* Page header with coral accent */}
+      <Box
+        sx={{
+          borderLeft: '4px solid',
+          borderColor: 'primary.main',
+          pl: 2,
+          mb: 4,
+        }}
+      >
+        <Typography variant="h4" component="h1" sx={{ mb: 0.5 }}>
+          Privacy Policy
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Last updated: April 2026
+        </Typography>
+      </Box>
 
       <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Who We Are
@@ -19,6 +34,8 @@ export default function PrivacyPolicyPage() {
         explains how we collect, use, and protect your information when you visit
         our website.
       </Typography>
+
+      <Divider sx={{ my: 3 }} />
 
       <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Information We Collect
@@ -48,6 +65,8 @@ export default function PrivacyPolicyPage() {
         </li>
       </Box>
 
+      <Divider sx={{ my: 3 }} />
+
       <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         How We Use Your Information
       </Typography>
@@ -74,6 +93,8 @@ export default function PrivacyPolicyPage() {
         </li>
       </Box>
 
+      <Divider sx={{ my: 3 }} />
+
       <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Cookies
       </Typography>
@@ -98,6 +119,8 @@ export default function PrivacyPolicyPage() {
         </li>
       </Box>
 
+      <Divider sx={{ my: 3 }} />
+
       <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Data Security
       </Typography>
@@ -107,6 +130,8 @@ export default function PrivacyPolicyPage() {
         data.
       </Typography>
 
+      <Divider sx={{ my: 3 }} />
+
       <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Your Rights
       </Typography>
@@ -114,6 +139,8 @@ export default function PrivacyPolicyPage() {
         You may request access to, correction of, or deletion of your personal
         data by contacting us.
       </Typography>
+
+      <Divider sx={{ my: 3 }} />
 
       <Typography variant="h6" component="h2" sx={{ mt: 3, mb: 1 }}>
         Contact Us

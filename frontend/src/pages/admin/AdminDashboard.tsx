@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -12,11 +13,13 @@ import {
   Paper,
   Skeleton,
   Alert,
+  Button,
 } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MetricCard from '../../components/ui/MetricCard';
 import ReintegrationGauge from '../../components/charts/ReintegrationGauge';
 import RiskBadge from '../../components/ui/RiskBadge';
@@ -27,6 +30,10 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = 'Dashboard | Harbor of Hope';
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,8 +63,12 @@ export default function AdminDashboard() {
 
   return (
     <Box>
-      <Typography variant="h4" component="h1" sx={{ mb: 3 }}>
-        Dashboard
+      {/* Issue 12: Enhanced title with subtitle and date */}
+      <Typography variant="h4" component="h1" sx={{ mb: 0.5 }}>
+        Harbor of Hope Admin Dashboard
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        Overview as of April 2026
       </Typography>
 
       {error && (
@@ -114,15 +125,29 @@ export default function AdminDashboard() {
         </Grid>
       </Grid>
 
-      {/* OKR Gauge */}
+      {/* Issue 13: OKR Gauge wrapped in Paper with title and subtitle */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-        <Box sx={{ maxWidth: 400, width: '100%' }}>
+        <Paper
+          sx={{
+            maxWidth: 440,
+            width: '100%',
+            p: 3,
+            textAlign: 'center',
+          }}
+          variant="outlined"
+        >
+          <Typography variant="h6" sx={{ mb: 0.5 }}>
+            Reintegration OKR
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Target: 80%
+          </Typography>
           {loading ? (
             <Skeleton variant="circular" width={200} height={200} sx={{ mx: 'auto' }} />
           ) : (
             <ReintegrationGauge rate={stats?.reintegrationRate ?? 0} />
           )}
-        </Box>
+        </Paper>
       </Box>
 
       {/* Bottom Tables */}
@@ -179,6 +204,17 @@ export default function AdminDashboard() {
               </TableBody>
             </Table>
           </TableContainer>
+          {/* Issue 14: View All Donors link */}
+          <Box sx={{ mt: 1.5, textAlign: 'right' }}>
+            <Button
+              component={RouterLink}
+              to="/admin/donors"
+              size="small"
+              endIcon={<ArrowForwardIcon />}
+            >
+              View All Donors
+            </Button>
+          </Box>
         </Grid>
 
         {/* Residents Needing Attention */}
@@ -229,6 +265,17 @@ export default function AdminDashboard() {
               </TableBody>
             </Table>
           </TableContainer>
+          {/* Issue 14: View All Residents link */}
+          <Box sx={{ mt: 1.5, textAlign: 'right' }}>
+            <Button
+              component={RouterLink}
+              to="/admin/residents"
+              size="small"
+              endIcon={<ArrowForwardIcon />}
+            >
+              View All Residents
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </Box>

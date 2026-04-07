@@ -6,6 +6,8 @@ import {
   Chip,
   Alert,
   TextField,
+  Paper,
+  Autocomplete,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DataTable from '../../components/ui/DataTable';
@@ -18,11 +20,13 @@ import {
   updateHomeVisitation,
   deleteHomeVisitation,
 } from '../../lib/homeVisitationsApi';
+import { fetchResidents } from '../../lib/residentsApi';
 import type { PagedResult } from '../../types/Pagination';
 import type {
   HomeVisitationItem,
   HomeVisitationFormData,
 } from '../../types/HomeVisitation';
+import type { ResidentListItem } from '../../types/Resident';
 
 const columns: Column<HomeVisitationItem>[] = [
   { id: 'residentCode', label: 'Resident', sortable: true, minWidth: 100 },
@@ -60,6 +64,10 @@ const columns: Column<HomeVisitationItem>[] = [
 ];
 
 export default function HomeVisitationsPage() {
+  useEffect(() => {
+    document.title = 'Visitations | Harbor of Hope';
+  }, []);
+
   // Data state
   const [visits, setVisits] = useState<PagedResult<HomeVisitationItem> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,6 +81,8 @@ export default function HomeVisitationsPage() {
 
   // Filters
   const [residentId, setResidentId] = useState('');
+  const [residents, setResidents] = useState<ResidentListItem[]>([]);
+  const [selectedResident, setSelectedResident] = useState<ResidentListItem | null>(null);
 
   // Form dialog state
   const [formOpen, setFormOpen] = useState(false);
@@ -81,6 +91,13 @@ export default function HomeVisitationsPage() {
   // Delete confirmation state
   const [deleteTarget, setDeleteTarget] = useState<HomeVisitationItem | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Load residents list for the filter dropdown
+  useEffect(() => {
+    fetchResidents({ page: 1, pageSize: 200, sortBy: 'caseControlNo', sortDir: 'asc' })
+      .then((data) => setResidents(data.items))
+      .catch(() => { /* non-critical */ });
+  }, []);
 
   const loadVisits = useCallback(async () => {
     try {
@@ -181,16 +198,25 @@ export default function HomeVisitationsPage() {
         </Alert>
       )}
 
-      <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-        <TextField
+      <Paper variant="outlined" sx={{ p: 2, mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
+        <Autocomplete
           size="small"
-          label="Filter by Resident ID"
-          type="number"
-          value={residentId}
-          onChange={(e) => setResidentId(e.target.value)}
-          sx={{ minWidth: 200 }}
+          options={residents}
+          getOptionLabel={(opt) =>
+            `${opt.internalCode ?? ''} - ${opt.caseControlNo ?? ''}`.trim()
+          }
+          value={selectedResident}
+          onChange={(_e, value) => {
+            setSelectedResident(value);
+            setResidentId(value ? String(value.residentId) : '');
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Filter by Resident" placeholder="Search residents..." />
+          )}
+          sx={{ minWidth: 280 }}
+          isOptionEqualToValue={(opt, val) => opt.residentId === val.residentId}
         />
-      </Box>
+      </Paper>
 
       <DataTable<HomeVisitationItem>
         columns={columns}

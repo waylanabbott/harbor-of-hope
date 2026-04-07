@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Card,
@@ -9,6 +10,10 @@ import {
 import MfaSetup from '../../components/auth/MfaSetup';
 
 function ManageMfaPage() {
+  useEffect(() => {
+    document.title = 'MFA Settings | Harbor of Hope';
+  }, []);
+
   return (
     <Container maxWidth="md" sx={{ py: 6 }}>
       <Card>

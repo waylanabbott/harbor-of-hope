@@ -41,10 +41,33 @@ export function getDesignTokens(mode: 'light' | 'dark'): ThemeOptions {
           },
         },
       },
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            borderRadius: 0,
+          },
+        },
+      },
       MuiPaper: {
         styleOverrides: {
           root: {
             borderRadius: 16,
+          },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 8,
+            },
+          },
+        },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8,
           },
         },
       },

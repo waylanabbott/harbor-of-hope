@@ -54,6 +54,10 @@ import type {
 const PIE_COLORS = ['#5B8C7A', '#E8735A', '#5B9BD5', '#E6A817', '#9B59B6'];
 
 export default function ReportsPage() {
+  useEffect(() => {
+    document.title = 'Reports | Harbor of Hope';
+  }, []);
+
   const [donationTrends, setDonationTrends] = useState<DonationTrend[]>([]);
   const [residentOutcomes, setResidentOutcomes] = useState<ResidentOutcome[]>(
     []
@@ -173,7 +177,7 @@ export default function ReportsPage() {
         Reports and Analytics
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        Data-driven insights and ML-powered recommendations (pre-computed)
+        Data-driven insights to guide your decision-making
       </Typography>
 
       {error && (
@@ -316,7 +320,9 @@ export default function ReportsPage() {
                 color="text.secondary"
                 sx={{ mb: 2 }}
               >
-                Pre-computed insights from post effectiveness analysis
+                {socialMediaPredictions
+                  ? `Based on analysis of ${socialMediaPredictions.length} social media posts`
+                  : 'Pre-computed insights from post effectiveness analysis'}
               </Typography>
 
               {mlSocialError ? (
@@ -381,7 +387,9 @@ export default function ReportsPage() {
                 color="text.secondary"
                 sx={{ mb: 2 }}
               >
-                Pre-computed analysis of session outcomes
+                {counselingPredictions
+                  ? `Based on analysis of ${counselingPredictions.length} counseling sessions`
+                  : 'Pre-computed analysis of session outcomes'}
               </Typography>
 
               {mlCounselingError ? (

@@ -16,6 +16,7 @@ import HomeVisitationsPage from './pages/admin/HomeVisitationsPage';
 import ReportsPage from './pages/admin/ReportsPage';
 import DonorDashboard from './pages/donor/DonorDashboard';
 import DonorHistoryPage from './pages/donor/DonorHistoryPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -106,6 +107,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* Catch-all 404 route */}
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

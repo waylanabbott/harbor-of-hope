@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -140,7 +140,7 @@ export default function DataTable<T>({
               const isExpanded = expandedRows.has(rowId);
 
               return (
-                <Box component="tbody" key={rowId}>
+                <React.Fragment key={rowId}>
                   <TableRow hover>
                     {hasExpand && (
                       <TableCell sx={{ width: 48, p: 0 }}>
@@ -206,7 +206,7 @@ export default function DataTable<T>({
                       </TableCell>
                     </TableRow>
                   )}
-                </Box>
+                </React.Fragment>
               );
             })}
           </TableBody>

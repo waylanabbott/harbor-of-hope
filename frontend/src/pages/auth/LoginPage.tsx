@@ -29,6 +29,10 @@ function LoginPage() {
   >([]);
 
   useEffect(() => {
+    document.title = 'Sign In | Harbor of Hope';
+  }, []);
+
+  useEffect(() => {
     void loadProviders();
   }, []);
 
@@ -56,8 +60,14 @@ function LoginPage() {
         return;
       }
 
-      await refreshAuth();
-      navigate('/admin/dashboard');
+      const session = await refreshAuth();
+      if (session.roles.includes('Admin')) {
+        navigate('/admin/dashboard');
+      } else if (session.roles.includes('Donor')) {
+        navigate('/donor/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to log in.');
     }
@@ -68,9 +78,25 @@ function LoginPage() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ py: 6 }}>
-      <Card>
+    <Container
+      maxWidth="sm"
+      sx={{
+        py: 6,
+        minHeight: 'calc(100vh - 130px)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
+      <Card sx={{ borderTop: '4px solid #D4603F' }}>
         <CardContent sx={{ p: 4 }}>
+          <Typography
+            variant="h5"
+            component="p"
+            sx={{ color: '#D4603F', fontWeight: 700, mb: 1 }}
+          >
+            Harbor of Hope
+          </Typography>
           <Typography variant="h4" component="h1" gutterBottom>
             Sign In
           </Typography>

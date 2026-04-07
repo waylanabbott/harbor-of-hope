@@ -13,7 +13,7 @@ interface AuthContextValue {
   authSession: AuthSession;
   isAuthenticated: boolean;
   isLoading: boolean;
-  refreshAuth: () => Promise<void>;
+  refreshAuth: () => Promise<AuthSession>;
 }
 
 const anonymousSession: AuthSession = {
@@ -30,12 +30,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useState<AuthSession>(anonymousSession);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refreshAuth = useCallback(async () => {
+  const refreshAuth = useCallback(async (): Promise<AuthSession> => {
     try {
       const session = await fetchCurrentUser();
       setAuthSession(session);
+      return session;
     } catch {
       setAuthSession(anonymousSession);
+      return anonymousSession;
     } finally {
       setIsLoading(false);
     }

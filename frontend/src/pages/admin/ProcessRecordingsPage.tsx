@@ -6,8 +6,12 @@ import {
   Chip,
   Alert,
   TextField,
+  Paper,
+  Autocomplete,
+  InputAdornment,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 import DataTable from '../../components/ui/DataTable';
 import type { Column } from '../../components/ui/DataTable';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -18,11 +22,13 @@ import {
   updateProcessRecording,
   deleteProcessRecording,
 } from '../../lib/processRecordingsApi';
+import { fetchResidents } from '../../lib/residentsApi';
 import type { PagedResult } from '../../types/Pagination';
 import type {
   ProcessRecordingItem,
   ProcessRecordingFormData,
 } from '../../types/ProcessRecording';
+import type { ResidentListItem } from '../../types/Resident';
 
 const columns: Column<ProcessRecordingItem>[] = [
   { id: 'residentCode', label: 'Resident', sortable: true, minWidth: 100 },
@@ -62,6 +68,10 @@ const columns: Column<ProcessRecordingItem>[] = [
 ];
 
 export default function ProcessRecordingsPage() {
+  useEffect(() => {
+    document.title = 'Sessions | Harbor of Hope';
+  }, []);
+
   // Data state
   const [recordings, setRecordings] = useState<PagedResult<ProcessRecordingItem> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,6 +85,8 @@ export default function ProcessRecordingsPage() {
 
   // Filters
   const [residentId, setResidentId] = useState('');
+  const [residents, setResidents] = useState<ResidentListItem[]>([]);
+  const [selectedResident, setSelectedResident] = useState<ResidentListItem | null>(null);
 
   // Form dialog state
   const [formOpen, setFormOpen] = useState(false);
@@ -83,6 +95,13 @@ export default function ProcessRecordingsPage() {
   // Delete confirmation state
   const [deleteTarget, setDeleteTarget] = useState<ProcessRecordingItem | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Load residents list for the filter dropdown
+  useEffect(() => {
+    fetchResidents({ page: 1, pageSize: 200, sortBy: 'caseControlNo', sortDir: 'asc' })
+      .then((data) => setResidents(data.items))
+      .catch(() => { /* non-critical */ });
+  }, []);
 
   const loadRecordings = useCallback(async () => {
     try {
@@ -183,16 +202,25 @@ export default function ProcessRecordingsPage() {
         </Alert>
       )}
 
-      <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-        <TextField
+      <Paper variant="outlined" sx={{ p: 2, mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
+        <Autocomplete
           size="small"
-          label="Filter by Resident ID"
-          type="number"
-          value={residentId}
-          onChange={(e) => setResidentId(e.target.value)}
-          sx={{ minWidth: 200 }}
+          options={residents}
+          getOptionLabel={(opt) =>
+            `${opt.internalCode ?? ''} - ${opt.caseControlNo ?? ''}`.trim()
+          }
+          value={selectedResident}
+          onChange={(_e, value) => {
+            setSelectedResident(value);
+            setResidentId(value ? String(value.residentId) : '');
+          }}
+          renderInput={(params) => (
+            <TextField {...params} label="Filter by Resident" placeholder="Search residents..." />
+          )}
+          sx={{ minWidth: 280 }}
+          isOptionEqualToValue={(opt, val) => opt.residentId === val.residentId}
         />
-      </Box>
+      </Paper>
 
       <DataTable<ProcessRecordingItem>
         columns={columns}
