@@ -207,7 +207,7 @@ export default function ProcessRecordingsPage() {
           size="small"
           options={residents}
           getOptionLabel={(opt) =>
-            `${opt.internalCode ?? ''} - ${opt.caseControlNo ?? ''}`.trim()
+            `${opt.caseControlNo ?? 'No case #'} — ${opt.safehouseName ?? 'Unknown safehouse'}${opt.caseStatus ? ` (${opt.caseStatus})` : ''}`
           }
           value={selectedResident}
           onChange={(_e, value) => {
