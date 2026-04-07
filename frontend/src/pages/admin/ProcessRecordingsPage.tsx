@@ -8,6 +8,7 @@ import {
   TextField,
   Paper,
   Autocomplete,
+  Popover,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DataTable from '../../components/ui/DataTable';
@@ -27,6 +28,103 @@ import type {
   ProcessRecordingFormData,
 } from '../../types/ProcessRecording';
 import type { ResidentListItem } from '../../types/Resident';
+
+function ProgressChip({ row }: { row: ProcessRecordingItem }) {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const hasNotes = row.sessionNarrative || row.interventionsApplied || row.followUpActions;
+
+  if (!row.progressNoted) {
+    return <Chip label="No" size="small" variant="outlined" />;
+  }
+
+  return (
+    <>
+      <Chip
+        label="Yes"
+        size="small"
+        color="success"
+        variant="outlined"
+        onClick={hasNotes ? (e) => setAnchorEl(e.currentTarget) : undefined}
+        sx={hasNotes ? { cursor: 'pointer' } : undefined}
+      />
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        slotProps={{ paper: { sx: { p: 2.5, maxWidth: 400, borderRadius: 2 } } }}
+      >
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'success.dark' }}>
+          Session Notes
+        </Typography>
+        {row.sessionNarrative && (
+          <Box sx={{ mb: 1.5 }}>
+            <Typography variant="caption" color="text.secondary">Narrative</Typography>
+            <Typography variant="body2">{row.sessionNarrative}</Typography>
+          </Box>
+        )}
+        {row.interventionsApplied && (
+          <Box sx={{ mb: 1.5 }}>
+            <Typography variant="caption" color="text.secondary">Interventions Applied</Typography>
+            <Typography variant="body2">{row.interventionsApplied}</Typography>
+          </Box>
+        )}
+        {row.followUpActions && (
+          <Box>
+            <Typography variant="caption" color="text.secondary">Follow-up Actions</Typography>
+            <Typography variant="body2">{row.followUpActions}</Typography>
+          </Box>
+        )}
+      </Popover>
+    </>
+  );
+}
+
+function ConcernsChip({ row }: { row: ProcessRecordingItem }) {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const hasNotes = row.sessionNarrative || row.followUpActions;
+
+  if (!row.concernsFlagged) {
+    return <Chip label="None" size="small" variant="outlined" />;
+  }
+
+  return (
+    <>
+      <Chip
+        label="Flagged"
+        size="small"
+        color="warning"
+        onClick={hasNotes ? (e) => setAnchorEl(e.currentTarget) : undefined}
+        sx={hasNotes ? { cursor: 'pointer' } : undefined}
+      />
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        slotProps={{ paper: { sx: { p: 2.5, maxWidth: 400, borderRadius: 2 } } }}
+      >
+        <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, color: 'warning.dark' }}>
+          Concern Details
+        </Typography>
+        {row.sessionNarrative && (
+          <Box sx={{ mb: 1.5 }}>
+            <Typography variant="caption" color="text.secondary">Narrative</Typography>
+            <Typography variant="body2">{row.sessionNarrative}</Typography>
+          </Box>
+        )}
+        {row.followUpActions && (
+          <Box>
+            <Typography variant="caption" color="text.secondary">Follow-up Actions</Typography>
+            <Typography variant="body2">{row.followUpActions}</Typography>
+          </Box>
+        )}
+      </Popover>
+    </>
+  );
+}
 
 const columns: Column<ProcessRecordingItem>[] = [
   { id: 'residentCode', label: 'Resident', sortable: true, minWidth: 100 },
@@ -54,14 +152,14 @@ const columns: Column<ProcessRecordingItem>[] = [
     label: 'Progress',
     minWidth: 80,
     align: 'center',
-    render: (row) => (
-      <Chip
-        label={row.progressNoted ? 'Yes' : 'No'}
-        size="small"
-        color={row.progressNoted ? 'success' : 'default'}
-        variant="outlined"
-      />
-    ),
+    render: (row) => <ProgressChip row={row} />,
+  },
+  {
+    id: 'concernsFlagged',
+    label: 'Concerns',
+    minWidth: 90,
+    align: 'center',
+    render: (row) => <ConcernsChip row={row} />,
   },
 ];
 
