@@ -14,6 +14,7 @@ import SupportersPage from './pages/admin/SupportersPage';
 import ProcessRecordingsPage from './pages/admin/ProcessRecordingsPage';
 import HomeVisitationsPage from './pages/admin/HomeVisitationsPage';
 import ReportsPage from './pages/admin/ReportsPage';
+import ExplanatoryInsightsPage from './pages/admin/ExplanatoryInsightsPage';
 import DonorDashboard from './pages/donor/DonorDashboard';
 import DonorHistoryPage from './pages/donor/DonorHistoryPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -86,6 +87,14 @@ function App() {
           element={
             <ProtectedRoute role="Admin">
               <ReportsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/insights"
+          element={
+            <ProtectedRoute role="Admin">
+              <ExplanatoryInsightsPage />
             </ProtectedRoute>
           }
         />

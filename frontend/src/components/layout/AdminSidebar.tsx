@@ -19,6 +19,7 @@ import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import HomeIcon from '@mui/icons-material/Home';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import ScienceIcon from '@mui/icons-material/Science';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
@@ -38,6 +39,7 @@ const navItems: NavItem[] = [
   { label: 'Sessions', icon: <PsychologyIcon />, path: '/admin/sessions' },
   { label: 'Visits', icon: <HomeIcon />, path: '/admin/visits' },
   { label: 'Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
+  { label: 'Insights', icon: <ScienceIcon />, path: '/admin/insights' },
 ];
 
 interface AdminSidebarProps {
