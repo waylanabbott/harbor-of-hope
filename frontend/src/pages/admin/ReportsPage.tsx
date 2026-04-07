@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   Box,
   Typography,
@@ -11,7 +11,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -65,6 +70,7 @@ export default function ReportsPage() {
   const [error, setError] = useState<string | null>(null);
   const [mlSocialError, setMlSocialError] = useState(false);
   const [mlCounselingError, setMlCounselingError] = useState(false);
+  const [expandedChart, setExpandedChart] = useState<{ title: string; content: ReactNode } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,6 +120,83 @@ export default function ReportsPage() {
       ? counselingPredictions.reduce((sum, p) => sum + p.predictedImprovement, 0) / counselingPredictions.length
       : 0;
 
+  // Chart render functions — accept height so expanded view can be taller
+  function renderDonationTrends(height: number) {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <ComposedChart data={donationTrends}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
+          <XAxis dataKey="month" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" height={60} />
+          <YAxis yAxisId="left" tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
+          <YAxis yAxisId="right" orientation="right" />
+          <Tooltip
+            contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
+            formatter={(value: number, name: string) => {
+              if (name === 'Amount ($)') return [`$${value.toLocaleString()}`, name];
+              return [value, name];
+            }}
+          />
+          <Legend />
+          <Bar dataKey="totalAmount" yAxisId="left" fill="#E8735A" name="Amount ($)" barSize={20} radius={[4, 4, 0, 0]} />
+          <Line dataKey="donationCount" yAxisId="right" stroke="#5B8C7A" name="# Donations" strokeWidth={2} dot={{ r: 3 }} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  function renderReintegrationPie(height: number, outerRadius: number) {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <PieChart>
+          <Pie
+            data={residentOutcomes}
+            dataKey="count"
+            nameKey="status"
+            cx="50%"
+            cy="45%"
+            outerRadius={outerRadius}
+            label={false}
+          >
+            {residentOutcomes.map((_entry, index) => (
+              <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip
+            contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
+            formatter={(value: number, name: string) => [value, name]}
+          />
+          <Legend
+            layout="horizontal"
+            verticalAlign="bottom"
+            formatter={(value: string) => {
+              const item = residentOutcomes.find((o) => o.status === value);
+              const total = residentOutcomes.reduce((s, o) => s + o.count, 0);
+              const pct = item && total > 0 ? ((item.count / total) * 100).toFixed(0) : '0';
+              return `${value} (${pct}%)`;
+            }}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  function renderSafehouseComparison(height: number) {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <BarChart data={safehouseComparison}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
+          <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+          <YAxis />
+          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} />
+          <Legend />
+          <Bar dataKey="avgEducationProgress" fill="#5B9BD5" name="Avg Education Progress" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="avgHealthScore" fill="#5B8C7A" name="Avg Health Score" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="totalIncidents" fill="#E8735A" name="Total Incidents" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  }
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
@@ -129,6 +212,12 @@ export default function ReportsPage() {
     height: '100%',
     display: 'flex',
     flexDirection: 'column' as const,
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    '&:hover': {
+      transform: 'translateY(-3px)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+    },
   };
 
   return (
@@ -158,80 +247,78 @@ export default function ReportsPage() {
           mb: { xs: 4, md: 5 },
         }}
       >
-        <Paper sx={chartPaperSx}>
+        <Paper
+          sx={chartPaperSx}
+          onClick={() => setExpandedChart({ title: 'Donation Trends Over Time', content: renderDonationTrends(500) })}
+        >
           <Typography variant="h6" sx={{ mb: 3, fontWeight: 700 }}>
             Donation Trends Over Time
           </Typography>
           <Box sx={{ flex: 1, minHeight: 350 }}>
-            <ResponsiveContainer width="100%" height={350}>
-              <ComposedChart data={donationTrends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" height={60} />
-                <YAxis yAxisId="left" tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`} />
-                <YAxis yAxisId="right" orientation="right" />
-                <Tooltip
-                  contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
-                  formatter={(value: number, name: string) => {
-                    if (name === 'Amount ($)') return [`$${value.toLocaleString()}`, name];
-                    return [value, name];
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="totalAmount" yAxisId="left" fill="#E8735A" name="Amount ($)" barSize={20} radius={[4, 4, 0, 0]} />
-                <Line dataKey="donationCount" yAxisId="right" stroke="#5B8C7A" name="# Donations" strokeWidth={2} dot={{ r: 3 }} />
-              </ComposedChart>
-            </ResponsiveContainer>
+            {renderDonationTrends(350)}
           </Box>
+          <Typography variant="caption" sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+            Click to expand
+          </Typography>
         </Paper>
 
-        <Paper sx={chartPaperSx}>
+        <Paper
+          sx={chartPaperSx}
+          onClick={() => setExpandedChart({ title: 'Reintegration Status', content: renderReintegrationPie(500, 180) })}
+        >
           <Typography variant="h6" sx={{ mb: 3, fontWeight: 700 }}>
             Reintegration Status
           </Typography>
           <Box sx={{ flex: 1, minHeight: 350, display: 'flex', alignItems: 'center' }}>
-            <ResponsiveContainer width="100%" height={350}>
-              <PieChart>
-                <Pie
-                  data={residentOutcomes}
-                  dataKey="count"
-                  nameKey="status"
-                  cx="50%"
-                  cy="45%"
-                  outerRadius={100}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
-                  {residentOutcomes.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend layout="horizontal" verticalAlign="bottom" />
-              </PieChart>
-            </ResponsiveContainer>
+            {renderReintegrationPie(320, 100)}
           </Box>
+          <Typography variant="caption" sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+            Click to expand
+          </Typography>
         </Paper>
       </Box>
 
       {/* Row 2: Safehouse Comparison — full width */}
-      <Paper sx={{ ...chartPaperSx, mb: { xs: 4, md: 5 } }}>
+      <Paper
+        sx={{ ...chartPaperSx, mb: { xs: 4, md: 5 } }}
+        onClick={() => setExpandedChart({ title: 'Safehouse Comparison', content: renderSafehouseComparison(500) })}
+      >
         <Typography variant="h6" sx={{ mb: 3, fontWeight: 700 }}>
           Safehouse Comparison
         </Typography>
         <Box sx={{ flex: 1, minHeight: 350 }}>
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={safehouseComparison}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} />
-              <Legend />
-              <Bar dataKey="avgEducationProgress" fill="#5B9BD5" name="Avg Education Progress" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="avgHealthScore" fill="#5B8C7A" name="Avg Health Score" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="totalIncidents" fill="#E8735A" name="Total Incidents" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {renderSafehouseComparison(350)}
         </Box>
+        <Typography variant="caption" sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+          Click to expand
+        </Typography>
       </Paper>
+
+      {/* Expanded Chart Dialog */}
+      <Dialog
+        open={expandedChart !== null}
+        onClose={() => setExpandedChart(null)}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 4, p: { xs: 1, md: 2 } } }}
+      >
+        {expandedChart && (
+          <>
+            <DialogTitle sx={{ fontWeight: 700, fontSize: '1.5rem', pr: 6 }}>
+              {expandedChart.title}
+              <IconButton
+                onClick={() => setExpandedChart(null)}
+                sx={{ position: 'absolute', right: 16, top: 16 }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ pt: 2 }}>
+              {expandedChart.content}
+            </DialogContent>
+          </>
+        )}
+      </Dialog>
 
       {/* Row 3: ML Insight Cards */}
       <Box
