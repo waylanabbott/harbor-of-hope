@@ -131,8 +131,8 @@ export default function ReportsPage() {
           <YAxis yAxisId="right" orientation="right" />
           <Tooltip
             contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
-            formatter={(value: number, name: string) => {
-              if (name === 'Amount ($)') return [`$${value.toLocaleString()}`, name];
+            formatter={(value: any, name: any) => {
+              if (name === 'Amount ($)') return [`$${Number(value).toLocaleString()}`, name];
               return [value, name];
             }}
           />
@@ -163,7 +163,7 @@ export default function ReportsPage() {
           </Pie>
           <Tooltip
             contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}
-            formatter={(value: number, name: string) => [value, name]}
+            formatter={(value: any, name: any) => [value, name]}
           />
           <Legend
             layout="horizontal"

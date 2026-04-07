@@ -27,10 +27,10 @@ import type {
 } from '../../types/ProcessRecording';
 
 const processRecordingSchema = z.object({
-  residentId: z.number({ required_error: 'Resident ID is required' }),
-  sessionDate: z.string().min(1, 'Date is required'),
+  residentId: z.number({ error: 'Resident ID is required' }),
+  sessionDate: z.string().min(1, 'Date is required').nullable(),
   socialWorker: z.string().max(200).optional().nullable(),
-  sessionType: z.string().min(1, 'Session type is required'),
+  sessionType: z.string().min(1, 'Session type is required').nullable(),
   sessionDurationMinutes: z.number().optional().nullable(),
   emotionalStateObserved: z.string().optional().nullable(),
   emotionalStateEnd: z.string().optional().nullable(),
@@ -81,7 +81,7 @@ export default function ProcessRecordingForm({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ProcessRecordingFormData>({
-    resolver: zodResolver(processRecordingSchema),
+    resolver: zodResolver(processRecordingSchema) as never,
     defaultValues,
   });
 

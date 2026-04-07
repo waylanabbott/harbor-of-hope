@@ -76,7 +76,7 @@ export default function SupporterForm({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<SupporterFormData>({
-    resolver: zodResolver(supporterSchema),
+    resolver: zodResolver(supporterSchema) as never,
     defaultValues,
   });
 

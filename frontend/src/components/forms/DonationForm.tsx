@@ -25,12 +25,12 @@ import type { DonationItem, DonationFormData } from '../../types/Donation';
 
 const donationSchema = z.object({
   supporterId: z.number(),
-  donationType: z.string().min(1, 'Type is required'),
-  donationDate: z.string().min(1, 'Date is required'),
+  donationType: z.string().min(1, 'Type is required').nullable(),
+  donationDate: z.string().min(1, 'Date is required').nullable(),
   isRecurring: z.boolean().default(false),
   campaignName: z.string().max(200).optional().nullable(),
   channelSource: z.string().optional().nullable(),
-  currencyCode: z.string().default('USD'),
+  currencyCode: z.string().nullable().default('USD'),
   amount: z.number().min(0.01, 'Amount must be positive'),
   estimatedValue: z.number().optional().nullable(),
   impactUnit: z.string().optional().nullable(),
@@ -78,7 +78,7 @@ export default function DonationForm({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<DonationFormData>({
-    resolver: zodResolver(donationSchema),
+    resolver: zodResolver(donationSchema) as never,
     defaultValues,
   });
 

@@ -194,8 +194,8 @@ export default function DonorHistoryPage() {
                     border: 'none',
                     boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
                   }}
-                  formatter={(value: number, name: string) => [
-                    `$${value.toLocaleString()}`,
+                  formatter={(value: any, name: any) => [
+                    `$${Number(value).toLocaleString()}`,
                     name,
                   ]}
                 />

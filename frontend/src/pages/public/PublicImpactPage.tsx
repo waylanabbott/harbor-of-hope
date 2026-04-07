@@ -125,7 +125,7 @@ export default function PublicImpactPage() {
           <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
           <YAxis tick={{ fill: '#6B6B6B' }} />
-          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} formatter={(value: number) => [`$${value.toLocaleString()}`, 'Donations']} />
+          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} formatter={(value: any) => [`$${Number(value).toLocaleString()}`, 'Donations']} />
           <Bar dataKey="donationsTotal" fill="#D4603F" name="Donations ($)" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
@@ -153,7 +153,7 @@ export default function PublicImpactPage() {
           <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
           <YAxis tick={{ fill: '#6B6B6B' }} />
-          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} formatter={(value: number) => [`${value.toFixed(1)}%`, 'Education Progress']} />
+          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} formatter={(value: any) => [`${Number(value).toFixed(1)}%`, 'Education Progress']} />
           <Line type="monotone" dataKey="educationProgress" stroke="#5B8C7A" name="Education Progress (%)" strokeWidth={2.5} dot={{ r: 3, fill: '#5B8C7A' }} activeDot={{ r: 5 }} />
         </LineChart>
       </ResponsiveContainer>

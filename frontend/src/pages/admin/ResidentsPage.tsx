@@ -354,7 +354,7 @@ function ExpandedResidentRow({ residentId }: { residentId: number }) {
   return (
     <Grid container spacing={2}>
       {/* Identity */}
-      <Grid size={{ xs: 12, md: 4 }}>
+      <Grid item xs={12} md={4}>
         <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
           Identity
         </Typography>
@@ -368,7 +368,7 @@ function ExpandedResidentRow({ residentId }: { residentId: number }) {
       </Grid>
 
       {/* Case Info */}
-      <Grid size={{ xs: 12, md: 4 }}>
+      <Grid item xs={12} md={4}>
         <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
           Case Info
         </Typography>
@@ -382,7 +382,7 @@ function ExpandedResidentRow({ residentId }: { residentId: number }) {
       </Grid>
 
       {/* Reintegration & Sub-categories */}
-      <Grid size={{ xs: 12, md: 4 }}>
+      <Grid item xs={12} md={4}>
         <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
           Reintegration
         </Typography>

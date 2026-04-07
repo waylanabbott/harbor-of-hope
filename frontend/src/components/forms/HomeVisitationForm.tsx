@@ -27,10 +27,10 @@ import type {
 } from '../../types/HomeVisitation';
 
 const homeVisitationSchema = z.object({
-  residentId: z.number({ required_error: 'Resident ID is required' }),
-  visitDate: z.string().min(1, 'Date is required'),
+  residentId: z.number({ error: 'Resident ID is required' }),
+  visitDate: z.string().min(1, 'Date is required').nullable(),
   socialWorker: z.string().max(200).optional().nullable(),
-  visitType: z.string().min(1, 'Visit type is required'),
+  visitType: z.string().min(1, 'Visit type is required').nullable(),
   locationVisited: z.string().optional().nullable(),
   familyMembersPresent: z.string().optional().nullable(),
   purpose: z.string().optional().nullable(),
@@ -81,7 +81,7 @@ export default function HomeVisitationForm({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<HomeVisitationFormData>({
-    resolver: zodResolver(homeVisitationSchema),
+    resolver: zodResolver(homeVisitationSchema) as never,
     defaultValues,
   });
 

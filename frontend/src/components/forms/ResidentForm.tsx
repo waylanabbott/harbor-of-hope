@@ -28,10 +28,10 @@ import { z } from 'zod';
 import type { ResidentDetail, ResidentFormData } from '../../types/Resident';
 
 const residentSchema = z.object({
-  safehouseId: z.number({ required_error: 'Safehouse is required' }),
+  safehouseId: z.number({ error: 'Safehouse is required' }),
   caseControlNo: z.string().max(50).optional().nullable(),
   internalCode: z.string().max(50).optional().nullable(),
-  caseStatus: z.string().min(1, 'Status is required'),
+  caseStatus: z.string().min(1, 'Status is required').nullable(),
   sex: z.string().optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
   birthStatus: z.string().max(100).optional().nullable(),
@@ -157,7 +157,7 @@ export default function ResidentForm({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ResidentFormData>({
-    resolver: zodResolver(residentSchema),
+    resolver: zodResolver(residentSchema) as never,
     defaultValues,
   });
 
@@ -251,7 +251,7 @@ export default function ResidentForm({
                   Basic Info
                 </Typography>
                 <Grid container spacing={3} sx={{ mb: 3 }}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="safehouseId"
                       control={control}
@@ -273,7 +273,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="caseControlNo"
                       control={control}
@@ -290,7 +290,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="internalCode"
                       control={control}
@@ -307,7 +307,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="caseStatus"
                       control={control}
@@ -323,7 +323,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="sex"
                       control={control}
@@ -339,7 +339,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="dateOfBirth"
                       control={control}
@@ -356,7 +356,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="caseCategory"
                       control={control}
@@ -378,7 +378,7 @@ export default function ResidentForm({
                   Personal
                 </Typography>
                 <Grid container spacing={3}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="religion"
                       control={control}
@@ -393,7 +393,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="placeOfBirth"
                       control={control}
@@ -408,7 +408,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="birthStatus"
                       control={control}
@@ -423,7 +423,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
+                  <Grid item xs={6} sm={3}>
                     <Controller
                       name="isPwd"
                       control={control}
@@ -440,7 +440,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="pwdType"
                       control={control}
@@ -455,7 +455,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 6, sm: 3 }}>
+                  <Grid item xs={6} sm={3}>
                     <Controller
                       name="hasSpecialNeeds"
                       control={control}
@@ -472,7 +472,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="specialNeedsDiagnosis"
                       control={control}
@@ -499,7 +499,7 @@ export default function ResidentForm({
                 </Typography>
                 <Grid container spacing={2}>
                   {subCategories.map((cat) => (
-                    <Grid size={{ xs: 12, md: 6 }} key={cat.key}>
+                    <Grid item xs={12} md={6} key={cat.key}>
                       <Controller
                         name={cat.key}
                         control={control}
@@ -529,7 +529,7 @@ export default function ResidentForm({
                 </Typography>
                 <Grid container spacing={2}>
                   {familyFields.map((f) => (
-                    <Grid size={{ xs: 12, md: 6 }} key={f.key}>
+                    <Grid item xs={12} md={6} key={f.key}>
                       <Controller
                         name={f.key}
                         control={control}
@@ -558,7 +558,7 @@ export default function ResidentForm({
                   Case Details
                 </Typography>
                 <Grid container spacing={3} sx={{ mb: 3 }}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="dateOfAdmission"
                       control={control}
@@ -575,7 +575,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="ageUponAdmission"
                       control={control}
@@ -590,7 +590,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="presentAge"
                       control={control}
@@ -605,7 +605,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="lengthOfStay"
                       control={control}
@@ -620,7 +620,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="referralSource"
                       control={control}
@@ -635,7 +635,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="referringAgencyPerson"
                       control={control}
@@ -650,7 +650,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="assignedSocialWorker"
                       control={control}
@@ -672,7 +672,7 @@ export default function ResidentForm({
                   Reintegration
                 </Typography>
                 <Grid container spacing={3}>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="reintegrationType"
                       control={control}
@@ -687,7 +687,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="reintegrationStatus"
                       control={control}
@@ -702,7 +702,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="dateEnrolled"
                       control={control}
@@ -719,7 +719,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="dateClosed"
                       control={control}
@@ -747,7 +747,7 @@ export default function ResidentForm({
                   Assessment
                 </Typography>
                 <Grid container spacing={3}>
-                  <Grid size={{ xs: 12 }}>
+                  <Grid item xs={12}>
                     <Controller
                       name="initialCaseAssessment"
                       control={control}
@@ -764,7 +764,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="dateCaseStudyPrepared"
                       control={control}
@@ -781,7 +781,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="initialRiskLevel"
                       control={control}
@@ -803,7 +803,7 @@ export default function ResidentForm({
                       )}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: 6 }}>
+                  <Grid item xs={12} md={6}>
                     <Controller
                       name="currentRiskLevel"
                       control={control}
