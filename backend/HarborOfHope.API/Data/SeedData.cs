@@ -104,8 +104,15 @@ public static class SeedData
         var schema = entityType?.GetSchema() ?? "public";
         var fullTable = string.IsNullOrEmpty(schema) ? $"\"{tableName}\"" : $"\"{schema}\".\"{tableName}\"";
 
-        // Enable explicit ID insertion for PostgreSQL SERIAL columns
-        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER ALL;");
+        // Disable FK triggers for insert (try USER triggers if ALL isn't allowed — Neon restriction)
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER ALL;");
+        }
+        catch
+        {
+            await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER USER;");
+        }
 
         foreach (var record in records)
         {
@@ -117,11 +124,25 @@ public static class SeedData
         var pk = entityType?.FindPrimaryKey()?.Properties.FirstOrDefault()?.GetColumnName();
         if (pk != null)
         {
-            await context.Database.ExecuteSqlRawAsync(
-                $"SELECT setval(pg_get_serial_sequence('{schema}.{tableName}', '{pk}'), COALESCE(MAX(\"{pk}\"), 0) + 1, false) FROM {fullTable};");
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync(
+                    $"SELECT setval(pg_get_serial_sequence('{schema}.{tableName}', '{pk}'), COALESCE(MAX(\"{pk}\"), 0) + 1, false) FROM {fullTable};");
+            }
+            catch
+            {
+                Console.WriteLine($"  Note: Could not reset sequence for {tableName}.{pk} (may not be a SERIAL column)");
+            }
         }
 
-        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER ALL;");
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER ALL;");
+        }
+        catch
+        {
+            await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER USER;");
+        }
 
         // Detach all tracked entities to avoid conflicts with next table
         context.ChangeTracker.Clear();
@@ -151,17 +172,23 @@ public static class SeedData
         var schema = entityType?.GetSchema() ?? "public";
         var fullTable = $"\"{schema}\".\"{tableName}\"";
 
-        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER ALL;");
+        try { await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER ALL;"); }
+        catch { await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} DISABLE TRIGGER USER;"); }
+
         foreach (var record in records)
             context.Entry(record).State = EntityState.Added;
         await context.SaveChangesAsync();
 
         var pk = entityType?.FindPrimaryKey()?.Properties.FirstOrDefault()?.GetColumnName();
         if (pk != null)
-            await context.Database.ExecuteSqlRawAsync(
-                $"SELECT setval(pg_get_serial_sequence('{schema}.{tableName}', '{pk}'), COALESCE(MAX(\"{pk}\"), 0) + 1, false) FROM {fullTable};");
+        {
+            try { await context.Database.ExecuteSqlRawAsync(
+                $"SELECT setval(pg_get_serial_sequence('{schema}.{tableName}', '{pk}'), COALESCE(MAX(\"{pk}\"), 0) + 1, false) FROM {fullTable};"); }
+            catch { Console.WriteLine($"  Note: Could not reset sequence for {tableName}.{pk}"); }
+        }
 
-        await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER ALL;");
+        try { await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER ALL;"); }
+        catch { await context.Database.ExecuteSqlRawAsync($"ALTER TABLE {fullTable} ENABLE TRIGGER USER;"); }
         context.ChangeTracker.Clear();
         Console.WriteLine($"Seeded {records.Count} PartnerAssignment records from partner_assignments.csv");
     }
