@@ -138,7 +138,7 @@ function AppLayout() {
               component="img"
               src="/logo.png"
               alt="Harbor of Hope logo"
-              sx={{ height: 40, width: 40, borderRadius: '50%' }}
+              sx={{ height: 44, width: 44 }}
             />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
               Harbor of Hope
