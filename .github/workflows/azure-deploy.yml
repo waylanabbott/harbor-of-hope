@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: harbor-of-hope        # Change this to your App Service name
+  AZURE_WEBAPP_NAME: harbor-of-hope
   DOTNET_VERSION: "10.0.x"
   NODE_VERSION: "22"
 
@@ -49,10 +49,17 @@ jobs:
         run: dotnet publish -c Release -o ./publish
         working-directory: backend/HarborOfHope.API
 
-      # ── Deploy to Azure App Service ──
+      # ── Deploy via Zip Deploy using basic auth ──
+      - name: Create zip package
+        run: cd backend/HarborOfHope.API/publish && zip -r /tmp/deploy.zip .
+
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: backend/HarborOfHope.API/publish
+        run: |
+          curl -s -X POST \
+            "https://${{ env.AZURE_WEBAPP_NAME }}.scm.azurewebsites.net/api/zipdeploy" \
+            -u "${{ secrets.AZURE_DEPLOY_USERNAME }}:${{ secrets.AZURE_DEPLOY_PASSWORD }}" \
+            -H "Content-Type: application/zip" \
+            --data-binary @/tmp/deploy.zip \
+            -w "\nHTTP %{http_code}\n" \
+            -o /tmp/deploy-response.txt
+          cat /tmp/deploy-response.txt
