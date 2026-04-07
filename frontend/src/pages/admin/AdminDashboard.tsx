@@ -3,7 +3,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
   Box,
   Typography,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -37,7 +36,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     let cancelled = false;
-
     async function loadStats() {
       try {
         setLoading(true);
@@ -45,98 +43,75 @@ export default function AdminDashboard() {
         const data = await fetchDashboardStats();
         if (!cancelled) setStats(data);
       } catch (err) {
-        if (!cancelled) {
-          setError(
-            err instanceof Error ? err.message : 'Failed to load dashboard'
-          );
-        }
+        if (!cancelled)
+          setError(err instanceof Error ? err.message : 'Failed to load dashboard');
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
-
     loadStats();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
+  const metrics = [
+    { title: 'Total Residents', value: stats?.totalResidents ?? 0, icon: <PeopleIcon /> },
+    { title: 'Active Cases', value: stats?.activeCases ?? 0, icon: <AssignmentIcon /> },
+    { title: 'Total Donations', value: `$${(stats?.totalDonations ?? 0).toLocaleString()}`, icon: <AttachMoneyIcon /> },
+    { title: 'Reintegration Rate', value: `${stats?.reintegrationRate ?? 0}%`, icon: <TrendingUpIcon /> },
+  ];
+
   return (
-    <Box>
-      {/* Issue 12: Enhanced title with subtitle and date */}
-      <Typography variant="h4" component="h1" sx={{ mb: 0.5 }}>
-        Harbor of Hope Admin Dashboard
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        Overview as of April 2026
-      </Typography>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', px: { xs: 2, md: 4 } }}>
+      {/* Header */}
+      <Box sx={{ textAlign: 'center', mb: 5 }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 0.5 }}>
+          Harbor of Hope Admin Dashboard
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Overview as of April 2026
+        </Typography>
+      </Box>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity="error" sx={{ mb: 4, borderRadius: 3 }}>
           {error}
         </Alert>
       )}
 
-      {/* Metric Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          {loading ? (
-            <Skeleton variant="rounded" height={120} />
-          ) : (
-            <MetricCard
-              title="Total Residents"
-              value={stats?.totalResidents ?? 0}
-              icon={<PeopleIcon />}
-            />
-          )}
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          {loading ? (
-            <Skeleton variant="rounded" height={120} />
-          ) : (
-            <MetricCard
-              title="Active Cases"
-              value={stats?.activeCases ?? 0}
-              icon={<AssignmentIcon />}
-            />
-          )}
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          {loading ? (
-            <Skeleton variant="rounded" height={120} />
-          ) : (
-            <MetricCard
-              title="Total Donations"
-              value={`$${(stats?.totalDonations ?? 0).toLocaleString()}`}
-              icon={<AttachMoneyIcon />}
-            />
-          )}
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          {loading ? (
-            <Skeleton variant="rounded" height={120} />
-          ) : (
-            <MetricCard
-              title="Reintegration Rate"
-              value={`${stats?.reintegrationRate ?? 0}%`}
-              icon={<TrendingUpIcon />}
-            />
-          )}
-        </Grid>
-      </Grid>
+      {/* Metric Cards — even 4-column grid */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
+          gap: { xs: 2, md: 3 },
+          mb: 6,
+        }}
+      >
+        {metrics.map((m) => (
+          <Box key={m.title}>
+            {loading ? (
+              <Skeleton variant="rounded" height={120} sx={{ borderRadius: 3 }} />
+            ) : (
+              <MetricCard title={m.title} value={m.value} icon={m.icon} />
+            )}
+          </Box>
+        ))}
+      </Box>
 
-      {/* Issue 13: OKR Gauge wrapped in Paper with title and subtitle */}
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+      {/* OKR Gauge — centered */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 6 }}>
         <Paper
           sx={{
             maxWidth: 440,
             width: '100%',
-            p: 3,
+            p: 4,
             textAlign: 'center',
+            borderRadius: 4,
+            boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
           }}
           variant="outlined"
         >
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
+          <Typography variant="h6" sx={{ mb: 0.5, fontWeight: 700 }}>
             Reintegration OKR
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -150,14 +125,25 @@ export default function AdminDashboard() {
         </Paper>
       </Box>
 
-      {/* Bottom Tables */}
-      <Grid container spacing={3}>
+      {/* Bottom Tables — side by side with proper gaps */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          gap: { xs: 4, md: 5 },
+          mb: 4,
+        }}
+      >
         {/* Recent Donations */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+        <Box>
+          <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 700 }}>
             Recent Donations
           </Typography>
-          <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
+          <TableContainer
+            component={Paper}
+            variant="outlined"
+            sx={{ overflowX: 'auto', borderRadius: 3 }}
+          >
             <Table size="small" aria-label="Recent donations">
               <TableHead>
                 <TableRow>
@@ -189,14 +175,10 @@ export default function AdminDashboard() {
                   stats?.recentDonations.map((d) => (
                     <TableRow key={d.donationId}>
                       <TableCell>{d.supporterName ?? 'Anonymous'}</TableCell>
-                      <TableCell align="right">
-                        ${d.amount.toLocaleString()}
-                      </TableCell>
+                      <TableCell align="right">${d.amount.toLocaleString()}</TableCell>
                       <TableCell>{d.donationType ?? '-'}</TableCell>
                       <TableCell>
-                        {d.donationDate
-                          ? new Date(d.donationDate).toLocaleDateString()
-                          : '-'}
+                        {d.donationDate ? new Date(d.donationDate).toLocaleDateString() : '-'}
                       </TableCell>
                     </TableRow>
                   ))
@@ -204,25 +186,23 @@ export default function AdminDashboard() {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* Issue 14: View All Donors link */}
-          <Box sx={{ mt: 1.5, textAlign: 'right' }}>
-            <Button
-              component={RouterLink}
-              to="/admin/donors"
-              size="small"
-              endIcon={<ArrowForwardIcon />}
-            >
+          <Box sx={{ mt: 2, textAlign: 'right' }}>
+            <Button component={RouterLink} to="/admin/donors" size="small" endIcon={<ArrowForwardIcon />}>
               View All Donors
             </Button>
           </Box>
-        </Grid>
+        </Box>
 
         {/* Residents Needing Attention */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+        <Box>
+          <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: 700 }}>
             Residents Needing Attention
           </Typography>
-          <TableContainer component={Paper} variant="outlined" sx={{ overflowX: 'auto' }}>
+          <TableContainer
+            component={Paper}
+            variant="outlined"
+            sx={{ overflowX: 'auto', borderRadius: 3 }}
+          >
             <Table size="small" aria-label="Residents needing attention">
               <TableHead>
                 <TableRow>
@@ -255,9 +235,7 @@ export default function AdminDashboard() {
                     <TableRow key={r.residentId}>
                       <TableCell>{r.caseControlNo ?? '-'}</TableCell>
                       <TableCell>{r.safehouseName ?? '-'}</TableCell>
-                      <TableCell>
-                        <RiskBadge level={r.currentRiskLevel} />
-                      </TableCell>
+                      <TableCell><RiskBadge level={r.currentRiskLevel} /></TableCell>
                       <TableCell>{r.caseStatus ?? '-'}</TableCell>
                     </TableRow>
                   ))
@@ -265,19 +243,13 @@ export default function AdminDashboard() {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* Issue 14: View All Residents link */}
-          <Box sx={{ mt: 1.5, textAlign: 'right' }}>
-            <Button
-              component={RouterLink}
-              to="/admin/residents"
-              size="small"
-              endIcon={<ArrowForwardIcon />}
-            >
+          <Box sx={{ mt: 2, textAlign: 'right' }}>
+            <Button component={RouterLink} to="/admin/residents" size="small" endIcon={<ArrowForwardIcon />}>
               View All Residents
             </Button>
           </Box>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   );
 }

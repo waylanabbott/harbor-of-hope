@@ -56,25 +56,39 @@ public class ReportsController(AppDbContext db) : ControllerBase
     [HttpGet("safehouse-comparison")]
     public async Task<ActionResult<List<SafehouseComparisonDto>>> GetSafehouseComparison()
     {
-        var comparisons = await db.Safehouses
+        // Load data into memory to avoid complex LINQ-to-SQL translation issues
+        var safehouses = await db.Safehouses
             .Include(s => s.Residents)
             .Include(s => s.MonthlyMetrics)
-            .Select(s => new SafehouseComparisonDto(
+            .ToListAsync();
+
+        var comparisons = safehouses.Select(s =>
+        {
+            var healthScores = s.MonthlyMetrics
+                .Where(m => m.AvgHealthScore != null)
+                .Select(m => (double)m.AvgHealthScore!.Value)
+                .ToList();
+
+            var eduProgress = s.MonthlyMetrics
+                .Where(m => m.AvgEducationProgress != null)
+                .Select(m => (double)m.AvgEducationProgress!.Value)
+                .ToList();
+
+            var incidents = s.MonthlyMetrics
+                .Where(m => m.IncidentCount != null)
+                .Sum(m => m.IncidentCount!.Value);
+
+            return new SafehouseComparisonDto(
                 s.SafehouseId,
                 s.Name ?? "Unknown",
                 s.Residents.Count,
-                s.MonthlyMetrics.Any(m => m.AvgHealthScore != null)
-                    ? (decimal)s.MonthlyMetrics.Where(m => m.AvgHealthScore != null).Average(m => (double)m.AvgHealthScore!.Value)
-                    : 0m,
-                s.MonthlyMetrics.Any(m => m.AvgEducationProgress != null)
-                    ? (decimal)s.MonthlyMetrics.Where(m => m.AvgEducationProgress != null).Average(m => (double)m.AvgEducationProgress!.Value)
-                    : 0m,
-                s.MonthlyMetrics.Any(m => m.IncidentCount != null)
-                    ? s.MonthlyMetrics.Where(m => m.IncidentCount != null).Sum(m => m.IncidentCount!.Value)
-                    : 0
-            ))
-            .OrderByDescending(c => c.ResidentCount)
-            .ToListAsync();
+                healthScores.Count > 0 ? (decimal)healthScores.Average() : 0m,
+                eduProgress.Count > 0 ? (decimal)eduProgress.Average() : 0m,
+                incidents
+            );
+        })
+        .OrderByDescending(c => c.ResidentCount)
+        .ToList();
 
         return Ok(comparisons);
     }
