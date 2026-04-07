@@ -26,6 +26,17 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { ResidentDetail, ResidentFormData } from '../../types/Resident';
+import {
+  BIRTH_STATUSES,
+  CASE_CATEGORIES,
+  CASE_STATUSES,
+  PWD_TYPES,
+  REFERRAL_SOURCES,
+  RELIGIONS,
+  REINTEGRATION_STATUSES,
+  REINTEGRATION_TYPES,
+  SEX_OPTIONS,
+} from '../../constants/domainFieldOptions';
 
 const residentSchema = z.object({
   safehouseId: z.number({ error: 'Safehouse is required' }),
@@ -133,6 +144,20 @@ const defaultValues: ResidentFormData = {
   dateClosed: null,
 };
 
+/** Map older form values onto seeded CSV / DB conventions */
+function normalizeResidentFormFields(data: ResidentDetail): ResidentFormData {
+  const { residentId, safehouseName, createdAt, ...rest } = data;
+  void residentId;
+  void safehouseName;
+  void createdAt;
+  let sex = rest.sex ?? null;
+  if (sex === 'Female') sex = 'F';
+  if (sex === 'Male') sex = 'M';
+  let caseStatus = rest.caseStatus;
+  if (caseStatus === 'Pending') caseStatus = 'Active';
+  return { ...rest, sex, caseStatus };
+}
+
 interface ResidentFormProps {
   open: boolean;
   onClose: () => void;
@@ -165,9 +190,7 @@ export default function ResidentForm({
   useEffect(() => {
     if (open) {
       if (initialData) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { residentId, safehouseName, createdAt, ...formFields } = initialData;
-        reset(formFields);
+        reset(normalizeResidentFormFields(initialData));
       } else {
         reset(defaultValues);
       }
@@ -315,9 +338,11 @@ export default function ResidentForm({
                         <FormControl fullWidth size="small" error={!!errors.caseStatus}>
                           <InputLabel>Status</InputLabel>
                           <Select {...field} label="Status">
-                            <MenuItem value="Active">Active</MenuItem>
-                            <MenuItem value="Closed">Closed</MenuItem>
-                            <MenuItem value="Pending">Pending</MenuItem>
+                            {CASE_STATUSES.map((s) => (
+                              <MenuItem key={s} value={s}>
+                                {s}
+                              </MenuItem>
+                            ))}
                           </Select>
                         </FormControl>
                       )}
@@ -331,9 +356,11 @@ export default function ResidentForm({
                         <FormControl fullWidth size="small">
                           <InputLabel>Sex</InputLabel>
                           <Select {...field} value={field.value ?? ''} label="Sex">
-                            <MenuItem value="">Not specified</MenuItem>
-                            <MenuItem value="Female">Female</MenuItem>
-                            <MenuItem value="Male">Male</MenuItem>
+                            {SEX_OPTIONS.map((o) => (
+                              <MenuItem key={o.value || 'empty'} value={o.value}>
+                                {o.label}
+                              </MenuItem>
+                            ))}
                           </Select>
                         </FormControl>
                       )}
@@ -361,13 +388,23 @@ export default function ResidentForm({
                       name="caseCategory"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          value={field.value ?? ''}
-                          label="Case Category"
-                          fullWidth
-                          size="small"
-                        />
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Case Category</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="Case Category"
+                          >
+                            <MenuItem value="">
+                              <em>Not specified</em>
+                            </MenuItem>
+                            {CASE_CATEGORIES.map((c) => (
+                              <MenuItem key={c} value={c}>
+                                {c}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -383,13 +420,23 @@ export default function ResidentForm({
                       name="religion"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          value={field.value ?? ''}
-                          label="Religion"
-                          fullWidth
-                          size="small"
-                        />
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Religion</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="Religion"
+                          >
+                            <MenuItem value="">
+                              <em>Not specified</em>
+                            </MenuItem>
+                            {RELIGIONS.map((r) => (
+                              <MenuItem key={r} value={r}>
+                                {r}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -413,13 +460,23 @@ export default function ResidentForm({
                       name="birthStatus"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          value={field.value ?? ''}
-                          label="Birth Status"
-                          fullWidth
-                          size="small"
-                        />
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Birth Status</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="Birth Status"
+                          >
+                            <MenuItem value="">
+                              <em>Not specified</em>
+                            </MenuItem>
+                            {BIRTH_STATUSES.map((b) => (
+                              <MenuItem key={b} value={b}>
+                                {b}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -445,13 +502,23 @@ export default function ResidentForm({
                       name="pwdType"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          value={field.value ?? ''}
-                          label="PWD Type"
-                          fullWidth
-                          size="small"
-                        />
+                        <FormControl fullWidth size="small">
+                          <InputLabel>PWD Type</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="PWD Type"
+                          >
+                            <MenuItem value="">
+                              <em>Not applicable / not specified</em>
+                            </MenuItem>
+                            {PWD_TYPES.map((p) => (
+                              <MenuItem key={p} value={p}>
+                                {p}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -625,13 +692,23 @@ export default function ResidentForm({
                       name="referralSource"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          value={field.value ?? ''}
-                          label="Referral Source"
-                          fullWidth
-                          size="small"
-                        />
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Referral Source</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="Referral Source"
+                          >
+                            <MenuItem value="">
+                              <em>Not specified</em>
+                            </MenuItem>
+                            {REFERRAL_SOURCES.map((r) => (
+                              <MenuItem key={r} value={r}>
+                                {r}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -677,13 +754,23 @@ export default function ResidentForm({
                       name="reintegrationType"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          value={field.value ?? ''}
-                          label="Reintegration Type"
-                          fullWidth
-                          size="small"
-                        />
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Reintegration Type</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="Reintegration Type"
+                          >
+                            <MenuItem value="">
+                              <em>Not specified</em>
+                            </MenuItem>
+                            {REINTEGRATION_TYPES.map((t) => (
+                              <MenuItem key={t} value={t}>
+                                {t}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       )}
                     />
                   </Grid>
@@ -692,13 +779,23 @@ export default function ResidentForm({
                       name="reintegrationStatus"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          value={field.value ?? ''}
-                          label="Reintegration Status"
-                          fullWidth
-                          size="small"
-                        />
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Reintegration Status</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="Reintegration Status"
+                          >
+                            <MenuItem value="">
+                              <em>Not specified</em>
+                            </MenuItem>
+                            {REINTEGRATION_STATUSES.map((s) => (
+                              <MenuItem key={s} value={s}>
+                                {s}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       )}
                     />
                   </Grid>

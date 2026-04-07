@@ -198,7 +198,7 @@ export default function ResidentsPage() {
       options: [
         { value: 'Active', label: 'Active' },
         { value: 'Closed', label: 'Closed' },
-        { value: 'Pending', label: 'Pending' },
+        { value: 'Transferred', label: 'Transferred' },
       ],
       onChange: setStatus,
     },

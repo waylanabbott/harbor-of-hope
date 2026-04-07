@@ -39,8 +39,10 @@ export default function Footer() {
               </Typography>
             </Box>
             <Typography variant="body2" sx={{ lineHeight: 1.8, color: 'rgba(255,255,255,0.7)' }}>
-              Providing safety, healing, and opportunity to girls who are
-              survivors of trafficking. Together, we build brighter futures.
+              We are Harbor of Hope: full of hope, love and new beginnings. Our focus
+              is progress in all aspects of life. We treat each other as family where
+              each individual is seen, heard and loved. We create fun memories, we fight
+              for justice and we acknowledge God in all we do.
             </Typography>
           </Box>
 

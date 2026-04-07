@@ -28,6 +28,11 @@ import type {
 } from '../../types/HomeVisitation';
 import { fetchResidents } from '../../lib/residentsApi';
 import type { ResidentListItem } from '../../types/Resident';
+import {
+  FAMILY_COOPERATION_LEVELS,
+  HOME_VISIT_TYPES,
+  VISIT_OUTCOMES,
+} from '../../constants/domainFieldOptions';
 
 const homeVisitationSchema = z.object({
   residentId: z.number({ error: 'Resident ID is required' }),
@@ -208,10 +213,14 @@ export default function HomeVisitationForm({
                   <FormControl fullWidth error={!!errors.visitType}>
                     <InputLabel>Visit Type</InputLabel>
                     <Select {...field} value={field.value ?? ''} label="Visit Type">
-                      <MenuItem value="Routine">Routine</MenuItem>
-                      <MenuItem value="Emergency">Emergency</MenuItem>
-                      <MenuItem value="Follow-up">Follow-up</MenuItem>
-                      <MenuItem value="Assessment">Assessment</MenuItem>
+                      <MenuItem value="">
+                        <em>Select visit type</em>
+                      </MenuItem>
+                      {HOME_VISIT_TYPES.map((t) => (
+                        <MenuItem key={t} value={t}>
+                          {t}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 )}
@@ -292,10 +301,11 @@ export default function HomeVisitationForm({
                       label="Cooperation Level"
                     >
                       <MenuItem value="">Not assessed</MenuItem>
-                      <MenuItem value="High">High</MenuItem>
-                      <MenuItem value="Medium">Medium</MenuItem>
-                      <MenuItem value="Low">Low</MenuItem>
-                      <MenuItem value="Uncooperative">Uncooperative</MenuItem>
+                      {FAMILY_COOPERATION_LEVELS.map((lvl) => (
+                        <MenuItem key={lvl} value={lvl}>
+                          {lvl}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 )}
@@ -304,12 +314,23 @@ export default function HomeVisitationForm({
                 name="visitOutcome"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Visit Outcome"
-                    fullWidth
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Visit Outcome</InputLabel>
+                    <Select
+                      {...field}
+                      value={field.value ?? ''}
+                      label="Visit Outcome"
+                    >
+                      <MenuItem value="">
+                        <em>Not specified</em>
+                      </MenuItem>
+                      {VISIT_OUTCOMES.map((o) => (
+                        <MenuItem key={o} value={o}>
+                          {o}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
               />
             </Box>

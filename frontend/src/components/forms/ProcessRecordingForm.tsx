@@ -28,6 +28,11 @@ import type {
 } from '../../types/ProcessRecording';
 import { fetchResidents } from '../../lib/residentsApi';
 import type { ResidentListItem } from '../../types/Resident';
+import {
+  EMOTIONAL_STATES_END,
+  EMOTIONAL_STATES_START,
+  SESSION_TYPES,
+} from '../../constants/domainFieldOptions';
 
 const processRecordingSchema = z.object({
   residentId: z.number({ error: 'Resident ID is required' }),
@@ -208,58 +213,97 @@ export default function ProcessRecordingForm({
                   <FormControl fullWidth error={!!errors.sessionType}>
                     <InputLabel>Session Type</InputLabel>
                     <Select {...field} value={field.value ?? ''} label="Session Type">
-                      <MenuItem value="Individual">Individual</MenuItem>
-                      <MenuItem value="Group">Group</MenuItem>
-                      <MenuItem value="Family">Family</MenuItem>
-                      <MenuItem value="Crisis">Crisis</MenuItem>
+                      <MenuItem value="">
+                        <em>Select session type</em>
+                      </MenuItem>
+                      {SESSION_TYPES.map((t) => (
+                        <MenuItem key={t} value={t}>
+                          {t}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 )}
               />
             </Box>
 
-            {/* Row: Duration + Emotional States */}
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 3 }}>
-              <Controller
-                name="sessionDurationMinutes"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    onChange={(e) =>
-                      field.onChange(e.target.value ? Number(e.target.value) : null)
-                    }
-                    label="Duration (min)"
-                    type="number"
-                    fullWidth
-                  />
-                )}
-              />
-              <Controller
-                name="emotionalStateObserved"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Emotional State (Start)"
-                    fullWidth
-                  />
-                )}
-              />
-              <Controller
-                name="emotionalStateEnd"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Emotional State (End)"
-                    fullWidth
-                  />
-                )}
-              />
+            {/* Duration on its own row; emotional selects need width so labels don’t overlap the arrow */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ maxWidth: { xs: '100%', sm: 220 } }}>
+                <Controller
+                  name="sessionDurationMinutes"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        field.onChange(e.target.value ? Number(e.target.value) : null)
+                      }
+                      label="Duration (min)"
+                      type="number"
+                      fullWidth
+                    />
+                  )}
+                />
+              </Box>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                  gap: 3,
+                  minWidth: 0,
+                }}
+              >
+                <Controller
+                  name="emotionalStateObserved"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl fullWidth size="small" sx={{ minWidth: 0 }}>
+                      <InputLabel id="emotion-start-label">Emotional state (start)</InputLabel>
+                      <Select
+                        {...field}
+                        labelId="emotion-start-label"
+                        value={field.value ?? ''}
+                        label="Emotional state (start)"
+                      >
+                        <MenuItem value="">
+                          <em>Not specified</em>
+                        </MenuItem>
+                        {EMOTIONAL_STATES_START.map((s) => (
+                          <MenuItem key={s} value={s}>
+                            {s}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                <Controller
+                  name="emotionalStateEnd"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl fullWidth size="small" sx={{ minWidth: 0 }}>
+                      <InputLabel id="emotion-end-label">Emotional state (end)</InputLabel>
+                      <Select
+                        {...field}
+                        labelId="emotion-end-label"
+                        value={field.value ?? ''}
+                        label="Emotional state (end)"
+                      >
+                        <MenuItem value="">
+                          <em>Not specified</em>
+                        </MenuItem>
+                        {EMOTIONAL_STATES_END.map((s) => (
+                          <MenuItem key={s} value={s}>
+                            {s}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </Box>
             </Box>
 
             {/* Full width: Session Narrative */}

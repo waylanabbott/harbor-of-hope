@@ -20,6 +20,12 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { SupporterItem, SupporterFormData } from '../../types/Supporter';
+import {
+  ACQUISITION_CHANNELS,
+  SUPPORTER_COUNTRIES,
+  SUPPORTER_REGIONS,
+  SUPPORTER_RELATIONSHIP_TYPES,
+} from '../../constants/domainFieldOptions';
 
 const supporterSchema = z.object({
   displayName: z.string().min(1, 'Display name is required').max(200),
@@ -236,12 +242,19 @@ export default function SupporterForm({
                 name="region"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Region"
-                    fullWidth
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Region</InputLabel>
+                    <Select {...field} value={field.value ?? ''} label="Region">
+                      <MenuItem value="">
+                        <em>Not specified</em>
+                      </MenuItem>
+                      {SUPPORTER_REGIONS.map((r) => (
+                        <MenuItem key={r} value={r}>
+                          {r}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
               />
             </Box>
@@ -252,24 +265,44 @@ export default function SupporterForm({
                 name="country"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Country"
-                    fullWidth
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Country</InputLabel>
+                    <Select {...field} value={field.value ?? ''} label="Country">
+                      <MenuItem value="">
+                        <em>Not specified</em>
+                      </MenuItem>
+                      {SUPPORTER_COUNTRIES.map((c) => (
+                        <MenuItem key={c} value={c}>
+                          {c}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
               />
               <Controller
                 name="relationshipType"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Relationship Type"
-                    fullWidth
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Relationship Type</InputLabel>
+                    <Select
+                      {...field}
+                      value={field.value ?? ''}
+                      label="Relationship Type"
+                    >
+                      <MenuItem value="">
+                        <em>Not specified</em>
+                      </MenuItem>
+                      {SUPPORTER_RELATIONSHIP_TYPES.map((r) => (
+                        <MenuItem key={r} value={r}>
+                          {r === 'PartnerOrganization'
+                            ? 'Partner organization'
+                            : r}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
               />
             </Box>
@@ -293,12 +326,29 @@ export default function SupporterForm({
                 name="acquisitionChannel"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    value={field.value ?? ''}
-                    label="Acquisition Channel"
-                    fullWidth
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Acquisition Channel</InputLabel>
+                    <Select
+                      {...field}
+                      value={field.value ?? ''}
+                      label="Acquisition Channel"
+                    >
+                      <MenuItem value="">
+                        <em>Not specified</em>
+                      </MenuItem>
+                      {ACQUISITION_CHANNELS.map((a) => (
+                        <MenuItem key={a} value={a}>
+                          {a === 'SocialMedia'
+                            ? 'Social media'
+                            : a === 'PartnerReferral'
+                              ? 'Partner referral'
+                              : a === 'WordOfMouth'
+                                ? 'Word of mouth'
+                                : a}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 )}
               />
             </Box>

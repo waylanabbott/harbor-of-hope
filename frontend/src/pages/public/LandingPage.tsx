@@ -143,14 +143,16 @@ export default function LandingPage() {
             textAlign: 'center',
             mb: 6,
             color: 'text.secondary',
-            maxWidth: 600,
+            maxWidth: 720,
             mx: 'auto',
             fontSize: '1.1rem',
             lineHeight: 1.7,
           }}
         >
-          We provide safety, healing, and opportunity to survivors of
-          trafficking through three pillars of support.
+          We are Harbor of Hope: full of hope, love and new beginnings. Our focus
+          is progress in all aspects of life. We treat each other as family where
+          each individual is seen, heard and loved. We create fun memories, we
+          fight for justice and we acknowledge God in all we do.
         </Typography>
         <Box
           sx={{
