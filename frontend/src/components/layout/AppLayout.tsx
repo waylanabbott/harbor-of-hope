@@ -41,6 +41,7 @@ const adminPageNames: Record<string, string> = {
   '/admin/sessions': 'Sessions',
   '/admin/visits': 'Visits',
   '/admin/reports': 'Reports',
+  '/admin/social': 'Social Media',
   '/admin/users': 'Users',
 };
 
