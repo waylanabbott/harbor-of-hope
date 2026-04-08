@@ -196,6 +196,26 @@ function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
     return mapped;
   }, [filtered, sortBy]);
 
+  // Top 15 extremes for each chart
+  const revenueTop15 = useMemo(() => {
+    const sorted = [...chartData];
+    if (sortBy === 'gap') sorted.sort((a, b) => a.gap - b.gap);
+    else if (sortBy === 'actual') sorted.sort((a, b) => b.actual - a.actual);
+    else sorted.sort((a, b) => b.predicted - a.predicted);
+    return sorted.slice(0, 15);
+  }, [chartData, sortBy]);
+
+  const gapTop15 = useMemo(() => {
+    const sorted = [...chartData].sort((a, b) => a.gap - b.gap);
+    const bottom = sorted.slice(0, 15);
+    const top = sorted.slice(-15);
+    // Merge and deduplicate, keep sorted by gap
+    const merged = new Map<number, typeof chartData[0]>();
+    bottom.forEach((d) => merged.set(d.postId, d));
+    top.forEach((d) => merged.set(d.postId, d));
+    return Array.from(merged.values()).sort((a, b) => a.gap - b.gap);
+  }, [chartData]);
+
   // Summary stats
   const overperforming = chartData.filter((d) => d.gap > 0).length;
   const underperforming = chartData.filter((d) => d.gap < 0).length;
@@ -263,16 +283,16 @@ function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
         </Card>
       </Box>
 
-      {/* Actual vs Predicted Bar Chart */}
+      {/* Actual vs Predicted Bar Chart — top 15 extremes */}
       <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-        Revenue by Post
+        Revenue by Post — Top 15
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Each post shows actual (green) vs. predicted (coral) donation revenue. Hover for details.
+        Showing the 15 most extreme posts. Actual (green) vs. predicted (coral) donation revenue.
       </Typography>
-      <Box sx={{ height: Math.max(400, Math.min(chartData.length * 28, 800)), overflowY: 'auto' }}>
-        <ResponsiveContainer width="100%" height={Math.max(400, chartData.length * 28)}>
-          <BarChart data={chartData} layout="vertical" margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
+      <Box sx={{ height: 480 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={revenueTop15} layout="vertical" margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" horizontal={false} />
             <XAxis
               type="number"
@@ -325,12 +345,12 @@ function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
           Performance Gap
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Difference between actual and predicted revenue. Green = exceeded expectations, coral = fell short. Posts are sorted by gap size.
+          Top 15 overperformers and top 15 underperformers. Green = exceeded expectations, coral = fell short.
         </Typography>
-        <Box sx={{ height: Math.max(400, Math.min(chartData.length * 24, 800)), overflowY: 'auto' }}>
-          <ResponsiveContainer width="100%" height={Math.max(400, chartData.length * 24)}>
+        <Box sx={{ height: 580 }}>
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={[...chartData].sort((a, b) => a.gap - b.gap)}
+              data={gapTop15}
               layout="vertical"
               margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
             >
@@ -359,7 +379,7 @@ function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
                 }}
               />
               <Bar dataKey="gap" radius={[4, 4, 4, 4]} barSize={12}>
-                {[...chartData].sort((a, b) => a.gap - b.gap).map((entry, i) => (
+                {gapTop15.map((entry, i) => (
                   <Cell key={i} fill={entry.gap >= 0 ? '#5B8C7A' : '#E8735A'} />
                 ))}
               </Bar>
