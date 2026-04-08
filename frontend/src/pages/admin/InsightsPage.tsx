@@ -23,8 +23,6 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   CircularProgress,
-  Switch,
-  FormControlLabel,
   Select,
   MenuItem,
   FormControl,
@@ -48,9 +46,8 @@ import {
   Tooltip as RechartsTooltip,
   CartesianGrid,
   Cell,
-  ScatterChart,
-  Scatter,
-  ZAxis,
+  ReferenceLine,
+  Legend,
 } from 'recharts';
 import ExplanatoryInsightsPage from './ExplanatoryInsightsPage';
 import {
@@ -166,12 +163,10 @@ function modelStrength(r2: number): { label: string; color: string } {
   return { label: 'Weak', color: '#E8735A' };
 }
 
-/* ─── Campaign Interactive Predictor ─── */
+/* ─── Campaign: Actual vs Predicted Revenue ─── */
 
 function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
-  const [hasCta, setHasCta] = useState(true);
-  const [hasStory, setHasStory] = useState(true);
-  const [isBoosted, setIsBoosted] = useState(false);
+  const [sortBy, setSortBy] = useState<'gap' | 'actual' | 'predicted'>('gap');
   const [postType, setPostType] = useState<string>('All');
 
   const postTypes = useMemo(() => {
@@ -179,87 +174,53 @@ function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
     return ['All', ...Array.from(types).sort()];
   }, [data]);
 
-  // Filter posts matching the selected features
   const filtered = useMemo(() => {
-    return data.filter((d) => {
-      if (hasCta && !d.hasCallToAction) return false;
-      if (!hasCta && d.hasCallToAction) return false;
-      if (hasStory && !d.featuresResidentStory) return false;
-      if (!hasStory && d.featuresResidentStory) return false;
-      if (isBoosted && !d.isBoosted) return false;
-      if (!isBoosted && d.isBoosted) return false;
-      if (postType !== 'All' && d.postType !== postType) return false;
-      return true;
-    });
-  }, [data, hasCta, hasStory, isBoosted, postType]);
+    let posts = postType === 'All' ? data : data.filter((d) => d.postType === postType);
+    return posts;
+  }, [data, postType]);
 
-  const avgPredicted = filtered.length > 0
-    ? filtered.reduce((s, d) => s + d.predictedDonationValuePhp, 0) / filtered.length
-    : 0;
-  const medianPredicted = useMemo(() => {
-    if (filtered.length === 0) return 0;
-    const sorted = [...filtered].sort((a, b) => a.predictedDonationValuePhp - b.predictedDonationValuePhp);
-    const mid = Math.floor(sorted.length / 2);
-    return sorted.length % 2 !== 0
-      ? sorted[mid].predictedDonationValuePhp
-      : (sorted[mid - 1].predictedDonationValuePhp + sorted[mid].predictedDonationValuePhp) / 2;
-  }, [filtered]);
-  const maxPredicted = filtered.length > 0
-    ? Math.max(...filtered.map((d) => d.predictedDonationValuePhp))
-    : 0;
-
-  // Scatter data: actual vs predicted
-  const scatterData = useMemo(() => {
-    return filtered.slice(0, 200).map((d) => ({
+  // Chart data sorted by selected criteria
+  const chartData = useMemo(() => {
+    const mapped = filtered.map((d) => ({
+      name: `#${d.postId}`,
+      postId: d.postId,
       actual: Math.round(d.estimatedDonationValuePhp),
       predicted: Math.round(d.predictedDonationValuePhp),
-      postId: d.postId,
+      gap: Math.round(d.estimatedDonationValuePhp - d.predictedDonationValuePhp),
+      platform: d.platform,
+      postType: d.postType,
     }));
-  }, [filtered]);
+    if (sortBy === 'gap') mapped.sort((a, b) => a.gap - b.gap);
+    else if (sortBy === 'actual') mapped.sort((a, b) => b.actual - a.actual);
+    else mapped.sort((a, b) => b.predicted - a.predicted);
+    return mapped;
+  }, [filtered, sortBy]);
 
-  // Comparison bars: show average predicted for each toggle combination
-  const comparisonData = useMemo(() => {
-    const combos = [
-      { label: 'No CTA, No Story', cta: false, story: false },
-      { label: 'CTA Only', cta: true, story: false },
-      { label: 'Story Only', cta: false, story: true },
-      { label: 'CTA + Story', cta: true, story: true },
-    ];
-    return combos.map((c) => {
-      const matching = data.filter(
-        (d) => d.hasCallToAction === c.cta && d.featuresResidentStory === c.story,
-      );
-      const avg =
-        matching.length > 0
-          ? matching.reduce((s, d) => s + d.predictedDonationValuePhp, 0) / matching.length
-          : 0;
-      return { name: c.label, avgPredicted: Math.round(avg), count: matching.length };
-    });
-  }, [data]);
+  // Summary stats
+  const overperforming = chartData.filter((d) => d.gap > 0).length;
+  const underperforming = chartData.filter((d) => d.gap < 0).length;
+  const biggestOver = chartData.length > 0 ? Math.max(...chartData.map((d) => d.gap)) : 0;
+  const biggestUnder = chartData.length > 0 ? Math.min(...chartData.map((d) => d.gap)) : 0;
 
   return (
     <Paper sx={{ p: { xs: 3, md: 4 }, mb: 5, borderRadius: 3, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
       <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-        Post Donation Predictor
+        Actual vs. Predicted Post Revenue
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Toggle post features below to see how they affect predicted donation value. Data is drawn from {data.length} posts scored by the ML pipeline.
+        Compare actual donation revenue against ML-predicted values for each post. Green bars exceeded predictions (overperforming), coral bars fell short (underperforming).
       </Typography>
 
       {/* Controls */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 4, alignItems: 'center' }}>
-        <FormControlLabel
-          control={<Switch checked={hasCta} onChange={(_, v) => setHasCta(v)} color="primary" />}
-          label="Call to Action"
-        />
-        <FormControlLabel
-          control={<Switch checked={hasStory} onChange={(_, v) => setHasStory(v)} color="primary" />}
-          label="Resident Story"
-        />
-        <FormControlLabel
-          control={<Switch checked={isBoosted} onChange={(_, v) => setIsBoosted(v)} color="primary" />}
-          label="Boosted"
-        />
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <InputLabel>Sort By</InputLabel>
+          <Select value={sortBy} label="Sort By" onChange={(e) => setSortBy(e.target.value as 'gap' | 'actual' | 'predicted')}>
+            <MenuItem value="gap">Performance Gap</MenuItem>
+            <MenuItem value="actual">Actual Revenue</MenuItem>
+            <MenuItem value="predicted">Predicted Revenue</MenuItem>
+          </Select>
+        </FormControl>
         <FormControl size="small" sx={{ minWidth: 160 }}>
           <InputLabel>Post Type</InputLabel>
           <Select value={postType} label="Post Type" onChange={(e) => setPostType(e.target.value)}>
@@ -270,124 +231,142 @@ function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
         </FormControl>
       </Box>
 
-      {/* Prediction Summary Cards */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr 1fr' }, gap: 2, mb: 4 }}>
+      {/* Summary Cards */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr 1fr' }, gap: 2, mb: 4 }}>
         <Card variant="outlined" sx={{ borderRadius: 2 }}>
           <CardContent sx={{ textAlign: 'center', py: 2 }}>
-            <Typography variant="overline" color="text.secondary">Matching Posts</Typography>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: '#9B59B6' }}>{filtered.length}</Typography>
+            <Typography variant="overline" color="text.secondary">Overperforming</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#5B8C7A' }}>{overperforming}</Typography>
           </CardContent>
         </Card>
         <Card variant="outlined" sx={{ borderRadius: 2 }}>
           <CardContent sx={{ textAlign: 'center', py: 2 }}>
-            <Typography variant="overline" color="text.secondary">Avg Predicted</Typography>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: '#9B59B6' }}>
-              {'\u20B1'}{avgPredicted.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            <Typography variant="overline" color="text.secondary">Underperforming</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#E8735A' }}>{underperforming}</Typography>
+          </CardContent>
+        </Card>
+        <Card variant="outlined" sx={{ borderRadius: 2 }}>
+          <CardContent sx={{ textAlign: 'center', py: 2 }}>
+            <Typography variant="overline" color="text.secondary">Biggest Overperformer</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#5B8C7A' }}>
+              +{'\u20B1'}{biggestOver.toLocaleString()}
             </Typography>
           </CardContent>
         </Card>
         <Card variant="outlined" sx={{ borderRadius: 2 }}>
           <CardContent sx={{ textAlign: 'center', py: 2 }}>
-            <Typography variant="overline" color="text.secondary">Median Predicted</Typography>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: '#9B59B6' }}>
-              {'\u20B1'}{medianPredicted.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card variant="outlined" sx={{ borderRadius: 2 }}>
-          <CardContent sx={{ textAlign: 'center', py: 2 }}>
-            <Typography variant="overline" color="text.secondary">Max Predicted</Typography>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: '#9B59B6' }}>
-              {'\u20B1'}{maxPredicted.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            <Typography variant="overline" color="text.secondary">Biggest Underperformer</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#E8735A' }}>
+              {'\u20B1'}{biggestUnder.toLocaleString()}
             </Typography>
           </CardContent>
         </Card>
       </Box>
 
-      {/* Comparison Bar Chart */}
+      {/* Actual vs Predicted Bar Chart */}
       <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-        Impact of CTA + Story on Predicted Donations
+        Revenue by Post
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Average predicted donation value by feature combination (all posts).
+        Each post shows actual (green) vs. predicted (coral) donation revenue. Hover for details.
       </Typography>
-      <Box sx={{ height: 240 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={comparisonData} margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-            <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#333' }} />
-            <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => `\u20B1${(v / 1000).toFixed(0)}k`} />
+      <Box sx={{ height: Math.max(400, Math.min(chartData.length * 28, 800)), overflowY: 'auto' }}>
+        <ResponsiveContainer width="100%" height={Math.max(400, chartData.length * 28)}>
+          <BarChart data={chartData} layout="vertical" margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" horizontal={false} />
+            <XAxis
+              type="number"
+              tick={{ fontSize: 11 }}
+              tickFormatter={(v: number) => `\u20B1${(v / 1000).toFixed(0)}k`}
+            />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={60}
+              tick={{ fontSize: 11, fill: '#666' }}
+            />
             <RechartsTooltip
               content={({ active, payload }) => {
                 if (!active || !payload?.[0]) return null;
-                const row = payload[0].payload as { name: string; avgPredicted: number; count: number };
+                const d = payload[0].payload as { postId: number; actual: number; predicted: number; gap: number; platform: string; postType: string };
                 return (
-                  <Paper sx={{ p: 1.5, borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{row.name}</Typography>
-                    <Typography variant="body2">Avg: {'\u20B1'}{row.avgPredicted.toLocaleString()}</Typography>
-                    <Typography variant="body2" color="text.secondary">{row.count} posts</Typography>
+                  <Paper sx={{ p: 2, borderRadius: 2, boxShadow: '0 6px 18px rgba(0,0,0,0.14)' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Post #{d.postId}</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                      {d.platform} &middot; {d.postType}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#5B8C7A' }}>
+                      Actual: {'\u20B1'}{d.actual.toLocaleString()}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#E8735A' }}>
+                      Predicted: {'\u20B1'}{d.predicted.toLocaleString()}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 700, mt: 0.5, color: d.gap >= 0 ? '#5B8C7A' : '#E8735A' }}>
+                      {d.gap >= 0 ? '+' : ''}{'\u20B1'}{d.gap.toLocaleString()} ({d.gap >= 0 ? 'over' : 'under'}performing)
+                    </Typography>
                   </Paper>
                 );
               }}
             />
-            <Bar dataKey="avgPredicted" radius={[6, 6, 0, 0]}>
-              {comparisonData.map((_, i) => (
-                <Cell key={i} fill={['#E0D6CC', '#E8935A', '#5B8C7A', '#9B59B6'][i]} />
-              ))}
-            </Bar>
+            <Legend
+              verticalAlign="top"
+              height={36}
+              formatter={(value: string) => <span style={{ fontSize: 13, fontWeight: 500, color: '#333' }}>{value}</span>}
+            />
+            <Bar dataKey="actual" name="Actual Revenue" fill="#5B8C7A" radius={[0, 4, 4, 0]} barSize={10} />
+            <Bar dataKey="predicted" name="Predicted Revenue" fill="#E8735A" radius={[0, 4, 4, 0]} barSize={10} />
           </BarChart>
         </ResponsiveContainer>
       </Box>
 
-      {/* Scatter: Actual vs Predicted */}
-      {scatterData.length > 0 && (
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-            Actual vs. Predicted Donations
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Each dot is a post matching your filters. Points near the diagonal line were predicted accurately.
-          </Typography>
-          <Box sx={{ height: 300 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <ScatterChart margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-                <XAxis
-                  type="number"
-                  dataKey="actual"
-                  name="Actual"
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(v: number) => `\u20B1${(v / 1000).toFixed(0)}k`}
-                  label={{ value: 'Actual (PHP)', position: 'insideBottom', offset: -4, fontSize: 12 }}
-                />
-                <YAxis
-                  type="number"
-                  dataKey="predicted"
-                  name="Predicted"
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(v: number) => `\u20B1${(v / 1000).toFixed(0)}k`}
-                  label={{ value: 'Predicted (PHP)', angle: -90, position: 'insideLeft', fontSize: 12 }}
-                />
-                <ZAxis range={[30, 30]} />
-                <RechartsTooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.[0]) return null;
-                    const d = payload[0].payload as { actual: number; predicted: number; postId: number };
-                    return (
-                      <Paper sx={{ p: 1.5, borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}>
-                        <Typography variant="subtitle2">Post #{d.postId}</Typography>
-                        <Typography variant="body2">Actual: {'\u20B1'}{d.actual.toLocaleString()}</Typography>
-                        <Typography variant="body2">Predicted: {'\u20B1'}{d.predicted.toLocaleString()}</Typography>
-                      </Paper>
-                    );
-                  }}
-                />
-                <Scatter data={scatterData} fill="#9B59B6" fillOpacity={0.5} />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </Box>
+      {/* Performance Gap Chart */}
+      <Box sx={{ mt: 5 }}>
+        <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+          Performance Gap
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Difference between actual and predicted revenue. Green = exceeded expectations, coral = fell short. Posts are sorted by gap size.
+        </Typography>
+        <Box sx={{ height: Math.max(400, Math.min(chartData.length * 24, 800)), overflowY: 'auto' }}>
+          <ResponsiveContainer width="100%" height={Math.max(400, chartData.length * 24)}>
+            <BarChart
+              data={[...chartData].sort((a, b) => a.gap - b.gap)}
+              layout="vertical"
+              margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" horizontal={false} />
+              <XAxis
+                type="number"
+                tick={{ fontSize: 11 }}
+                tickFormatter={(v: number) => `${v >= 0 ? '+' : ''}\u20B1${(v / 1000).toFixed(0)}k`}
+              />
+              <YAxis type="category" dataKey="name" width={60} tick={{ fontSize: 11, fill: '#666' }} />
+              <ReferenceLine x={0} stroke="#999" strokeWidth={1.5} />
+              <RechartsTooltip
+                content={({ active, payload }) => {
+                  if (!active || !payload?.[0]) return null;
+                  const d = payload[0].payload as { postId: number; actual: number; predicted: number; gap: number };
+                  return (
+                    <Paper sx={{ p: 1.5, borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Post #{d.postId}</Typography>
+                      <Typography variant="body2">Actual: {'\u20B1'}{d.actual.toLocaleString()}</Typography>
+                      <Typography variant="body2">Predicted: {'\u20B1'}{d.predicted.toLocaleString()}</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700, color: d.gap >= 0 ? '#5B8C7A' : '#E8735A' }}>
+                        Gap: {d.gap >= 0 ? '+' : ''}{'\u20B1'}{d.gap.toLocaleString()}
+                      </Typography>
+                    </Paper>
+                  );
+                }}
+              />
+              <Bar dataKey="gap" radius={[4, 4, 4, 4]} barSize={12}>
+                {[...chartData].sort((a, b) => a.gap - b.gap).map((entry, i) => (
+                  <Cell key={i} fill={entry.gap >= 0 ? '#5B8C7A' : '#E8735A'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </Box>
-      )}
+      </Box>
     </Paper>
   );
 }
