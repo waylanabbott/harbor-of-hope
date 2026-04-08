@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Typography,
-  Container,
   Paper,
   Tabs,
   Tab,
@@ -24,7 +23,6 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   CircularProgress,
-  Alert,
   Switch,
   FormControlLabel,
   Select,
@@ -397,40 +395,30 @@ function CampaignPredictor({ data }: { data: CampaignPredictionRow[] }) {
 /* ─── Main Component ─── */
 
 export default function InsightsPage() {
-  useEffect(() => {
-    document.title = 'ML Insights | Harbor of Hope';
-  }, []);
-
   const [topTab, setTopTab] = useState<'predictive' | 'explanatory'>('predictive');
   const [activeTab, setActiveTab] = useState(0);
   const [showTechnical, setShowTechnical] = useState(false);
 
-  // DB-driven prediction data
+  // DB-driven prediction data — each fetched independently so one failure doesn't block others
   const [churnData, setChurnData] = useState<ChurnPredictionRow[]>([]);
   const [riskData, setRiskData] = useState<IncidentRiskPredictionRow[]>([]);
   const [campaignData, setCampaignData] = useState<CampaignPredictionRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      try {
-        setLoading(true);
-        const [churn, risk, campaign] = await Promise.all([
-          fetchChurnPredictions(),
-          fetchIncidentRiskPredictions(),
-          fetchCampaignPredictions(),
-        ]);
-        if (!cancelled) {
-          setChurnData(churn);
-          setRiskData(risk);
-          setCampaignData(campaign);
-        }
-      } catch (err) {
-        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load predictions');
-      } finally {
-        if (!cancelled) setLoading(false);
+      setLoading(true);
+      const [churn, risk, campaign] = await Promise.allSettled([
+        fetchChurnPredictions(),
+        fetchIncidentRiskPredictions(),
+        fetchCampaignPredictions(),
+      ]);
+      if (!cancelled) {
+        if (churn.status === 'fulfilled') setChurnData(churn.value);
+        if (risk.status === 'fulfilled') setRiskData(risk.value);
+        if (campaign.status === 'fulfilled') setCampaignData(campaign.value);
+        setLoading(false);
       }
     }
     load();
@@ -482,11 +470,6 @@ export default function InsightsPage() {
     </Box>
   );
 
-  const heroTitle = topTab === 'predictive' ? 'What We Can Predict' : 'What Drives Our Impact';
-  const heroSubtitle = topTab === 'predictive'
-    ? 'Forecasting future outcomes so we can take action before things happen.'
-    : 'We analyzed our data to understand what factors matter most for the outcomes we care about.';
-
   const current = PIPELINES[activeTab];
   const color = PIPELINE_COLORS[activeTab] ?? '#D4603F';
   const strength = modelStrength(current.adjRSquared);
@@ -498,55 +481,13 @@ export default function InsightsPage() {
   }));
 
   return (
-    <Box>
-      {/* Hero */}
-      <Box
-        sx={{
-          background: 'linear-gradient(135deg, #D4603F 0%, #E8935A 50%, #F5C89A 100%)',
-          color: 'white',
-          py: { xs: 5, md: 7 },
-          px: 3,
-          textAlign: 'center',
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography
-            key={heroTitle}
-            variant="h3"
-            component="h1"
-            sx={{
-              fontWeight: 800,
-              mb: 1.5,
-              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              animation: 'fadeIn 0.3s ease',
-              '@keyframes fadeIn': { from: { opacity: 0 }, to: { opacity: 1 } },
-            }}
-          >
-            {heroTitle}
-          </Typography>
-          <Typography
-            key={heroSubtitle}
-            variant="h6"
-            sx={{
-              opacity: 0.95,
-              maxWidth: 600,
-              mx: 'auto',
-              fontWeight: 400,
-              animation: 'fadeIn 0.3s ease',
-            }}
-          >
-            {heroSubtitle}
-          </Typography>
-        </Container>
-      </Box>
+    <Box sx={{ mt: 4 }}>
+      {topTabBar}
 
-      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
-        {topTabBar}
-
-        {topTab === 'explanatory' ? (
-          <ExplanatoryInsightsPage topTabBar={null} />
-        ) : (
-        <>
+      {topTab === 'explanatory' ? (
+        <ExplanatoryInsightsPage topTabBar={null} />
+      ) : (
+      <>
         {/* Pipeline sub-tabs */}
         <Paper sx={{ borderRadius: 3, mb: 5, boxShadow: '0 2px 12px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
           <Tabs
@@ -575,8 +516,6 @@ export default function InsightsPage() {
             <CircularProgress />
           </Box>
         )}
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-
         {/* Key Finding */}
         <Paper
           sx={{
@@ -889,8 +828,7 @@ export default function InsightsPage() {
           </Collapse>
         </Paper>
         </>
-        )}
-      </Container>
+      )}
     </Box>
   );
 }
