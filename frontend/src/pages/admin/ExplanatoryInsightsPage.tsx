@@ -207,7 +207,11 @@ function getFeatureLabel(name: string): string {
   return FEATURE_LABELS[name] ?? name;
 }
 
-export default function ExplanatoryInsightsPage() {
+interface ExplanatoryInsightsPageProps {
+  topTabBar?: React.ReactNode;
+}
+
+export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsightsPageProps = {}) {
   useEffect(() => {
     document.title = 'Insights | Harbor of Hope';
   }, []);
@@ -338,6 +342,9 @@ export default function ExplanatoryInsightsPage() {
       </Box>
 
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+        {/* Predictive/Explanatory switcher (injected from parent) */}
+        {topTabBar}
+
         {/* Topic Tabs */}
         <Paper
           sx={{

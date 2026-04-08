@@ -189,25 +189,22 @@ export default function InsightsPage() {
     setShowTechnical(false);
   };
 
-  // If explanatory, render the original page with the top tab bar above it
+  const topTabBar = (
+    <Paper sx={{ borderRadius: 3, mb: 3, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+      <Tabs
+        value={topTab}
+        onChange={handleTopTabChange}
+        sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '1rem', py: 2 } }}
+      >
+        <Tab value="predictive" icon={<TrendingUpIcon />} iconPosition="start" label="Predictive Models" sx={{ flex: 1, borderBottom: topTab === 'predictive' ? `3px solid ${PIPELINE_COLORS[0]}` : 'none' }} />
+        <Tab value="explanatory" icon={<ScienceIcon />} iconPosition="start" label="Explanatory Models" sx={{ flex: 1, borderBottom: topTab === 'explanatory' ? '3px solid #5B8C7A' : 'none' }} />
+      </Tabs>
+    </Paper>
+  );
+
+  // If explanatory, render the original page with the switcher injected inside it
   if (topTab === 'explanatory') {
-    return (
-      <Box>
-        <Container maxWidth="lg" sx={{ pt: 3 }}>
-          <Paper sx={{ borderRadius: 3, mb: 0, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-            <Tabs
-              value={topTab}
-              onChange={handleTopTabChange}
-              sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '1rem', py: 2 } }}
-            >
-              <Tab value="predictive" icon={<TrendingUpIcon />} iconPosition="start" label="Predictive Models" sx={{ flex: 1 }} />
-              <Tab value="explanatory" icon={<ScienceIcon />} iconPosition="start" label="Explanatory Models" sx={{ flex: 1, borderBottom: '3px solid #5B8C7A' }} />
-            </Tabs>
-          </Paper>
-        </Container>
-        <ExplanatoryInsightsPage />
-      </Box>
-    );
+    return <ExplanatoryInsightsPage topTabBar={topTabBar} />;
   }
 
   // Predictive tab — same layout as explanatory
@@ -245,16 +242,7 @@ export default function InsightsPage() {
 
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
         {/* Top-level Predictive / Explanatory switcher */}
-        <Paper sx={{ borderRadius: 3, mb: 3, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-          <Tabs
-            value={topTab}
-            onChange={handleTopTabChange}
-            sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '1rem', py: 2 } }}
-          >
-            <Tab value="predictive" icon={<TrendingUpIcon />} iconPosition="start" label="Predictive Models" sx={{ flex: 1, borderBottom: `3px solid ${PIPELINE_COLORS[0]}` }} />
-            <Tab value="explanatory" icon={<ScienceIcon />} iconPosition="start" label="Explanatory Models" sx={{ flex: 1 }} />
-          </Tabs>
-        </Paper>
+        {topTabBar}
 
         {/* Pipeline sub-tabs — same style as explanatory page */}
         <Paper sx={{ borderRadius: 3, mb: 5, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
