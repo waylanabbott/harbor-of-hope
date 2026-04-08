@@ -8,6 +8,9 @@ backend/**/obj/
 frontend/node_modules/
 frontend/dist/
 
+# Frontend build output copied into backend (generated)
+backend/HarborOfHope.API/wwwroot/
+
 # Data files (too large for git)
 /data/
 data.zip
