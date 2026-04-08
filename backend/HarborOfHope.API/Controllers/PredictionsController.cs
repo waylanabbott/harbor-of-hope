@@ -22,27 +22,38 @@ public class PredictionsController(AppDbContext db) : ControllerBase
     [HttpGet("churn")]
     public async Task<IActionResult> GetChurnPredictions()
     {
-        var predictions = await (
-            from p in db.DonorChurnPredictions
-            join s in db.Supporters on p.SupporterId equals s.SupporterId into sj
-            from s in sj.DefaultIfEmpty()
-            orderby p.ChurnProbability descending
-            select new
+        var predictions = await db.DonorChurnPredictions
+            .OrderByDescending(p => p.ChurnProbability)
+            .ToListAsync();
+
+        var supporterIds = predictions.Select(p => p.SupporterId).Distinct().ToList();
+        var supporters = await db.Supporters
+            .Where(s => supporterIds.Contains(s.SupporterId))
+            .ToDictionaryAsync(s => s.SupporterId);
+
+        var result = predictions.Select(p =>
+        {
+            supporters.TryGetValue(p.SupporterId, out var s);
+            var name = s?.DisplayName
+                ?? $"{s?.FirstName} {s?.LastName}".Trim()
+                ?? "Unknown";
+            if (string.IsNullOrWhiteSpace(name)) name = "Unknown";
+
+            return new
             {
                 p.Id,
                 p.SupporterId,
-                supporterName = s != null
-                    ? (s.DisplayName ?? ((s.FirstName ?? "") + " " + (s.LastName ?? "")).Trim())
-                    : "Unknown",
-                supporterType = s != null ? s.SupporterType : null,
-                email = s != null ? s.Email : null,
+                supporterName = name,
+                supporterType = s?.SupporterType,
+                email = s?.Email,
                 p.ChurnProbability,
                 p.ChurnPrediction,
                 p.ChurnRiskLevel,
                 p.PredictionTimestamp,
-            }
-        ).ToListAsync();
-        return Ok(predictions);
+            };
+        });
+
+        return Ok(result);
     }
 
     /// <summary>
@@ -52,27 +63,40 @@ public class PredictionsController(AppDbContext db) : ControllerBase
     [HttpGet("incident-risk")]
     public async Task<IActionResult> GetIncidentRiskPredictions()
     {
-        var predictions = await (
-            from p in db.IncidentRiskPredictions
-            join r in db.Residents on p.ResidentId equals r.ResidentId into rj
-            from r in rj.DefaultIfEmpty()
-            join sh in db.Safehouses on (r != null ? r.SafehouseId : 0) equals sh.SafehouseId into shj
-            from sh in shj.DefaultIfEmpty()
-            orderby p.RiskProbability descending
-            select new
+        var predictions = await db.IncidentRiskPredictions
+            .OrderByDescending(p => p.RiskProbability)
+            .ToListAsync();
+
+        var residentIds = predictions.Select(p => p.ResidentId).Distinct().ToList();
+        var residents = await db.Residents
+            .Where(r => residentIds.Contains(r.ResidentId))
+            .ToDictionaryAsync(r => r.ResidentId);
+
+        var safehouseIds = residents.Values.Select(r => r.SafehouseId).Distinct().ToList();
+        var safehouses = await db.Safehouses
+            .Where(s => safehouseIds.Contains(s.SafehouseId))
+            .ToDictionaryAsync(s => s.SafehouseId);
+
+        var result = predictions.Select(p =>
+        {
+            residents.TryGetValue(p.ResidentId, out var r);
+            safehouses.TryGetValue(r?.SafehouseId ?? 0, out var sh);
+
+            return new
             {
                 p.Id,
                 p.ResidentId,
-                residentCode = r != null ? (r.InternalCode ?? r.CaseControlNo ?? ("R-" + r.ResidentId)) : "Unknown",
-                safehouseName = sh != null ? sh.Name : null,
-                caseStatus = r != null ? r.CaseStatus : null,
+                residentCode = r?.InternalCode ?? r?.CaseControlNo ?? $"R-{p.ResidentId}",
+                safehouseName = sh?.Name,
+                caseStatus = r?.CaseStatus,
                 p.RiskProbability,
                 p.RiskPrediction,
                 p.RiskLevel,
                 p.PredictionTimestamp,
-            }
-        ).ToListAsync();
-        return Ok(predictions);
+            };
+        });
+
+        return Ok(result);
     }
 
     /// <summary>
@@ -82,12 +106,20 @@ public class PredictionsController(AppDbContext db) : ControllerBase
     [HttpGet("campaign")]
     public async Task<IActionResult> GetCampaignPredictions()
     {
-        var predictions = await (
-            from cp in db.CampaignPredictions
-            join sp in db.SocialMediaPosts on cp.PostId equals sp.PostId into spj
-            from sp in spj.DefaultIfEmpty()
-            orderby cp.PredictedDonationValuePhp descending
-            select new
+        var predictions = await db.CampaignPredictions
+            .OrderByDescending(cp => cp.PredictedDonationValuePhp)
+            .ToListAsync();
+
+        var postIds = predictions.Select(cp => cp.PostId).Distinct().ToList();
+        var posts = await db.SocialMediaPosts
+            .Where(sp => postIds.Contains(sp.PostId))
+            .ToDictionaryAsync(sp => sp.PostId);
+
+        var result = predictions.Select(cp =>
+        {
+            posts.TryGetValue(cp.PostId, out var sp);
+
+            return new
             {
                 cp.Id,
                 cp.PostId,
@@ -97,17 +129,17 @@ public class PredictionsController(AppDbContext db) : ControllerBase
                 cp.EstimatedDonationValuePhp,
                 cp.PredictedDonationValuePhp,
                 cp.PredictionErrorPhp,
-                // Post features for interactive filtering
-                hasCallToAction = sp != null && sp.HasCallToAction,
-                featuresResidentStory = sp != null && sp.FeaturesResidentStory,
-                isBoosted = sp != null && sp.IsBoosted,
-                boostBudgetPhp = sp != null ? sp.BoostBudgetPhp : 0m,
-                mediaType = sp != null ? sp.MediaType : null,
-                contentTopic = sp != null ? sp.ContentTopic : null,
+                hasCallToAction = sp?.HasCallToAction ?? false,
+                featuresResidentStory = sp?.FeaturesResidentStory ?? false,
+                isBoosted = sp?.IsBoosted ?? false,
+                boostBudgetPhp = sp?.BoostBudgetPhp ?? 0m,
+                mediaType = sp?.MediaType,
+                contentTopic = sp?.ContentTopic,
                 cp.PredictionTimestamp,
-            }
-        ).ToListAsync();
-        return Ok(predictions);
+            };
+        });
+
+        return Ok(result);
     }
 
     // --- Legacy endpoints (still used by SupportersPage batch lookup) ---
