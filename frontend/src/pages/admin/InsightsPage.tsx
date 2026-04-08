@@ -516,7 +516,9 @@ export default function InsightsPage() {
             <CircularProgress />
           </Box>
         )}
-        {/* Key Finding */}
+        {/* Key Finding + Feature Chart — only for campaign tab */}
+        {current.id === 'campaign' && (
+          <>
         <Paper
           sx={{
             p: { xs: 3, md: 4 },
@@ -556,7 +558,6 @@ export default function InsightsPage() {
           </Box>
         </Paper>
 
-        {/* Feature Importance Chart */}
         <Paper sx={{ p: { xs: 2, md: 4 }, mb: 5, borderRadius: 3, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
             What Matters Most
@@ -591,6 +592,8 @@ export default function InsightsPage() {
             </ResponsiveContainer>
           </Box>
         </Paper>
+          </>
+        )}
 
         {/* ─── Pipeline-Specific Interactive Section ─── */}
         {!loading && (
@@ -705,7 +708,9 @@ export default function InsightsPage() {
           </>
         )}
 
-        {/* Recommendations */}
+        {/* Recommendations + Technical Details — only for campaign tab */}
+        {current.id === 'campaign' && (
+          <>
         <Paper sx={{ p: { xs: 3, md: 4 }, mb: 5, borderRadius: 3, boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
             What We Can Do About It
@@ -722,7 +727,6 @@ export default function InsightsPage() {
           </List>
         </Paper>
 
-        {/* Technical Details */}
         <Paper sx={{ borderRadius: 3, boxShadow: '0 2px 12px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
           <Box
             sx={{
@@ -827,6 +831,8 @@ export default function InsightsPage() {
             </Box>
           </Collapse>
         </Paper>
+          </>
+        )}
         </>
       )}
     </Box>
