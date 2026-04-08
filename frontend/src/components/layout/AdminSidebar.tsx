@@ -20,8 +20,8 @@ import PsychologyIcon from '@mui/icons-material/Psychology';
 import HomeIcon from '@mui/icons-material/Home';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ScienceIcon from '@mui/icons-material/Science';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ShareIcon from '@mui/icons-material/Share';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
@@ -81,7 +81,6 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
             height: '100%',
           }}
         >
-          {/* Issue 17: Organization name at top */}
           <Box sx={{ px: 2.5, pt: 2, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
             <Box
               component="img"
@@ -110,7 +109,7 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
                   selected={isActive}
                   onClick={() => {
                     navigate(item.path);
-                    onToggle(); // Close drawer on navigation
+                    onToggle();
                   }}
                   sx={{
                     minHeight: 48,
@@ -180,7 +179,6 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
           height: '100%',
         }}
       >
-        {/* Issue 17: Organization name at top */}
         {!isCollapsed && (
           <>
             <Box sx={{ px: 2.5, pt: 2, pb: 1 }}>

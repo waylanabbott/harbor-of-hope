@@ -35,6 +35,7 @@ public class AppDbContext : DbContext
     public DbSet<EducationPrediction> EducationPredictions => Set<EducationPrediction>();
     public DbSet<DonationForecastPrediction> DonationForecastPredictions => Set<DonationForecastPrediction>();
     public DbSet<SafehousePrediction> SafehousePredictions => Set<SafehousePrediction>();
+    public DbSet<CampaignPrediction> CampaignPredictions => Set<CampaignPrediction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
