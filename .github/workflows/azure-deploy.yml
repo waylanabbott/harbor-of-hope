@@ -49,6 +49,10 @@ jobs:
         run: dotnet publish -c Release -o ./publish
         working-directory: backend/HarborOfHope.API
 
+      # Ensure Vite build output is in the publish folder
+      - name: Copy frontend into publish
+        run: cp -r backend/HarborOfHope.API/wwwroot backend/HarborOfHope.API/publish/wwwroot
+
       # ── Deploy via Zip Deploy using basic auth ──
       - name: Create zip package
         run: cd backend/HarborOfHope.API/publish && zip -r /tmp/deploy.zip .
