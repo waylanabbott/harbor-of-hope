@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using HarborOfHope.API.Data;
 using HarborOfHope.API.Data.Entities;
+using HarborOfHope.API.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace HarborOfHope.API.Controllers;
@@ -343,11 +344,21 @@ public class AuthController(
     public async Task<IActionResult> ListUsers()
     {
         var users = userManager.Users.OrderBy(u => u.Email).ToList();
+        var supporterIds = users
+            .Where(u => u.SupporterId != null)
+            .Select(u => u.SupporterId!.Value)
+            .Distinct()
+            .ToList();
+        var supporters = await appDb.Supporters
+            .Where(s => supporterIds.Contains(s.SupporterId))
+            .ToDictionaryAsync(s => s.SupporterId);
+
         var result = new List<object>();
 
         foreach (var user in users)
         {
             var roles = await userManager.GetRolesAsync(user);
+            supporters.TryGetValue(user.SupporterId ?? 0, out var supporter);
             result.Add(new
             {
                 id = user.Id,
@@ -355,11 +366,33 @@ public class AuthController(
                 roles = roles.ToArray(),
                 emailConfirmed = user.EmailConfirmed,
                 twoFactorEnabled = user.TwoFactorEnabled,
-                supporterId = user.SupporterId
+                supporterId = user.SupporterId,
+                supporterClassification = supporter?.RelationshipType,
+                supporterStatus = supporter?.Status
             });
         }
 
         return Ok(result);
+    }
+
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
+    [HttpPatch("users/{id}/supporter-details")]
+    public async Task<IActionResult> UpdateSupporterDetails(string id, [FromBody] UpdateSupporterDetailsRequest request)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user == null) return NotFound(new { message = "User not found." });
+        if (user.SupporterId == null) return BadRequest(new { message = "User has no linked supporter." });
+
+        var supporter = await appDb.Supporters.FindAsync(user.SupporterId.Value);
+        if (supporter == null) return NotFound(new { message = "Supporter not found." });
+
+        if (request.Classification != null)
+            supporter.RelationshipType = InputSanitizer.Sanitize(request.Classification);
+        if (request.Status != null)
+            supporter.Status = InputSanitizer.Sanitize(request.Status);
+
+        await appDb.SaveChangesAsync();
+        return Ok(new { message = "Supporter details updated.", relationshipType = supporter.RelationshipType, status = supporter.Status });
     }
 
     [Authorize(Policy = AuthPolicies.AdminOnly)]
@@ -396,6 +429,25 @@ public class AuthController(
         if (role == AuthRoles.Admin)
         {
             await userManager.AddToRoleAsync(user, AuthRoles.Admin);
+        }
+
+        // Auto-create and link a supporter profile if classification provided
+        if (!string.IsNullOrWhiteSpace(request.Classification))
+        {
+            var supporter = new Supporter
+            {
+                SupporterType = "Individual",
+                DisplayName = request.Email,
+                Email = request.Email,
+                RelationshipType = InputSanitizer.Sanitize(request.Classification),
+                Status = "Active",
+                AcquisitionChannel = "Admin Created",
+                CreatedAt = DateTime.UtcNow
+            };
+            appDb.Supporters.Add(supporter);
+            await appDb.SaveChangesAsync();
+            user.SupporterId = supporter.SupporterId;
+            await userManager.UpdateAsync(user);
         }
 
         var roles = await userManager.GetRolesAsync(user);
@@ -583,5 +635,6 @@ public class AuthController(
 public record LoginRequest(string Email, string Password, string? TwoFactorCode = null);
 public record RegisterRequest(string Email, string Password);
 public record MfaVerifyRequest(string Code);
-public record CreateUserRequest(string Email, string Password, string Role);
+public record CreateUserRequest(string Email, string Password, string Role, string? Classification = null);
 public record ChangeRoleRequest(string Role);
+public record UpdateSupporterDetailsRequest(string? Classification, string? Status);

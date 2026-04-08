@@ -306,88 +306,56 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
 
   const strength = modelStrength(current?.adjRSquared ?? 0);
 
-  return (
-    <Box>
-      {/* Hero */}
-      <Box
+  // When topTabBar is null, we're rendered inline inside InsightsPage (no hero/container needed)
+  const inline = topTabBar === null;
+
+  const content = (
+    <>
+      {/* Topic Tabs */}
+      <Paper
         sx={{
-          background:
-            'linear-gradient(135deg, #D4603F 0%, #E8935A 50%, #F5C89A 100%)',
-          color: 'white',
-          py: { xs: 5, md: 7 },
-          px: 3,
-          textAlign: 'center',
+          borderRadius: 3,
+          mb: 5,
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          overflow: 'hidden',
         }}
       >
-        <Container maxWidth="md">
-          <Typography
-            variant="h3"
-            component="h1"
-            sx={{
-              fontWeight: 800,
-              mb: 1.5,
-              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            }}
-          >
-            What Drives Our Impact
-          </Typography>
-          <Typography
-            variant="h6"
-            sx={{ opacity: 0.95, maxWidth: 600, mx: 'auto', fontWeight: 400 }}
-          >
-            We analyzed our data to understand what factors matter most for the
-            outcomes we care about. Here are the findings.
-          </Typography>
-        </Container>
-      </Box>
-
-      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
-        {/* Predictive/Explanatory switcher (injected from parent) */}
-        {topTabBar}
-
-        {/* Topic Tabs */}
-        <Paper
+        <Tabs
+          value={activeTab}
+          onChange={(_, v) => {
+            setActiveTab(v);
+            setShowTechnical(false);
+          }}
+          variant="scrollable"
+          scrollButtons="auto"
+          TabIndicatorProps={{
+            sx: {
+              height: 3,
+              borderRadius: '3px 3px 0 0',
+              backgroundColor: PIPELINE_COLORS[activeTab] ?? '#E8735A',
+            },
+          }}
           sx={{
-            borderRadius: 3,
-            mb: 5,
-            boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+            '& .MuiTab-root': {
+              textTransform: 'none',
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              py: 2,
+            },
           }}
         >
-          <Tabs
-            value={activeTab}
-            onChange={(_, v) => {
-              setActiveTab(v);
-              setShowTechnical(false);
-            }}
-            variant="scrollable"
-            scrollButtons="auto"
-            sx={{
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontWeight: 600,
-                fontSize: '0.95rem',
-                py: 2,
-              },
-            }}
-          >
-            {pipelines.map((p, i) => (
-              <Tab
-                key={p.pipelineId}
-                icon={PIPELINE_ICONS[i]}
-                iconPosition="start"
-                label={
-                  PIPELINE_FRIENDLY_NAMES[p.pipelineName] ?? p.pipelineName
-                }
-                sx={{
-                  borderBottom:
-                    activeTab === i
-                      ? `3px solid ${PIPELINE_COLORS[i]}`
-                      : 'none',
-                }}
-              />
-            ))}
-          </Tabs>
-        </Paper>
+          {pipelines.map((p, i) => (
+            <Tab
+              key={p.pipelineId}
+              icon={PIPELINE_ICONS[i]}
+              iconPosition="start"
+              label={
+                PIPELINE_FRIENDLY_NAMES[p.pipelineName] ?? p.pipelineName
+              }
+            />
+          ))}
+        </Tabs>
+      </Paper>
 
         {current && (
           <>
@@ -852,7 +820,38 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
             </Paper>
           </>
         )}
-      </Container>
+    </>
+  );
+
+  return (
+    <>
+      {inline ? content : (
+        <Box>
+          {/* Hero — only shown in standalone mode */}
+          <Box
+            sx={{
+              background: 'linear-gradient(135deg, #D4603F 0%, #E8935A 50%, #F5C89A 100%)',
+              color: 'white',
+              py: { xs: 5, md: 7 },
+              px: 3,
+              textAlign: 'center',
+            }}
+          >
+            <Container maxWidth="md">
+              <Typography variant="h3" component="h1" sx={{ fontWeight: 800, mb: 1.5, textShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+                What Drives Our Impact
+              </Typography>
+              <Typography variant="h6" sx={{ opacity: 0.95, maxWidth: 600, mx: 'auto', fontWeight: 400 }}>
+                We analyzed our data to understand what factors matter most for the outcomes we care about.
+              </Typography>
+            </Container>
+          </Box>
+          <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+            {topTabBar}
+            {content}
+          </Container>
+        </Box>
+      )}
 
       {/* Feature Info Dialog */}
       <Dialog
@@ -878,6 +877,6 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
           </Button>
         </DialogContent>
       </Dialog>
-    </Box>
+    </>
   );
 }

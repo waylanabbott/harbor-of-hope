@@ -35,8 +35,20 @@ import {
   changeUserRole,
   deleteUser,
   linkUserToSupporter,
+  updateSupporterDetails,
 } from '../../lib/usersApi';
 import type { UserItem } from '../../lib/usersApi';
+
+const SUPPORTER_CLASSIFICATIONS = [
+  'Monetary Donor',
+  'Volunteer',
+  'Skills Contributor',
+  'In-Kind Donor',
+  'Social Media Advocate',
+  'Partner',
+] as const;
+
+const SUPPORTER_STATUSES = ['Active', 'Inactive'] as const;
 
 export default function UsersPage() {
   useEffect(() => {
@@ -52,6 +64,7 @@ export default function UsersPage() {
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newRole, setNewRole] = useState('Donor');
+  const [newClassification, setNewClassification] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -85,11 +98,12 @@ export default function UsersPage() {
     try {
       setCreateLoading(true);
       setCreateError(null);
-      await createUser(newEmail, newPassword, newRole);
+      await createUser(newEmail, newPassword, newRole, newClassification || undefined);
       setCreateOpen(false);
       setNewEmail('');
       setNewPassword('');
       setNewRole('Donor');
+      setNewClassification('');
       await loadUsers();
     } catch (err) {
       setCreateError(err instanceof Error ? err.message : 'Failed to create user.');
@@ -142,6 +156,19 @@ export default function UsersPage() {
     }
   };
 
+  const handleSupporterDetailChange = async (
+    user: UserItem,
+    field: 'classification' | 'status',
+    value: string
+  ) => {
+    try {
+      await updateSupporterDetails(user.id, { [field]: value });
+      await loadUsers();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update supporter details.');
+    }
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 1 }}>
@@ -176,6 +203,8 @@ export default function UsersPage() {
                 <TableCell>Role</TableCell>
                 <TableCell>MFA</TableCell>
                 <TableCell>Linked Supporter</TableCell>
+                <TableCell>Classification</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -207,6 +236,44 @@ export default function UsersPage() {
                       <Chip label={`Approved (#${user.supporterId})`} size="small" color="success" variant="outlined" />
                     ) : (
                       <Chip label="Pending" size="small" color="warning" variant="outlined" />
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {user.supporterId ? (
+                      <FormControl size="small" sx={{ minWidth: 140 }}>
+                        <Select
+                          value={user.supporterClassification || ''}
+                          displayEmpty
+                          onChange={(e) => handleSupporterDetailChange(user, 'classification', e.target.value)}
+                          sx={{ fontSize: '0.8125rem' }}
+                        >
+                          <MenuItem value="" disabled><em>Not set</em></MenuItem>
+                          {SUPPORTER_CLASSIFICATIONS.map((c) => (
+                            <MenuItem key={c} value={c}>{c}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">—</Typography>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {user.supporterId ? (
+                      <FormControl size="small" sx={{ minWidth: 100 }}>
+                        <Select
+                          value={user.supporterStatus || ''}
+                          displayEmpty
+                          onChange={(e) => handleSupporterDetailChange(user, 'status', e.target.value)}
+                          sx={{ fontSize: '0.8125rem' }}
+                        >
+                          <MenuItem value="" disabled><em>Not set</em></MenuItem>
+                          {SUPPORTER_STATUSES.map((s) => (
+                            <MenuItem key={s} value={s}>{s}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">—</Typography>
                     )}
                   </TableCell>
                   <TableCell align="right">
@@ -245,7 +312,7 @@ export default function UsersPage() {
               ))}
               {users.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 4 }}>
                     No users found.
                   </TableCell>
                 </TableRow>
@@ -295,6 +362,19 @@ export default function UsersPage() {
             >
               <MenuItem value="Admin">Admin + Donor</MenuItem>
               <MenuItem value="Donor">Donor only</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel>Classification</InputLabel>
+            <Select
+              value={newClassification}
+              label="Classification"
+              onChange={(e) => setNewClassification(e.target.value)}
+            >
+              <MenuItem value=""><em>None (set later)</em></MenuItem>
+              {SUPPORTER_CLASSIFICATIONS.map((c) => (
+                <MenuItem key={c} value={c}>{c}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </DialogContent>
