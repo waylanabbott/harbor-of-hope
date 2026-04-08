@@ -33,8 +33,8 @@ export default function Footer() {
                 src="/logo.png"
                 alt="Harbor of Hope logo"
                 sx={{
-                  height: 84,
-                  width: 84,
+                  height: 100,
+                  width: 100,
                   objectFit: 'contain',
                 }}
               />

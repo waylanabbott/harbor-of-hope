@@ -146,8 +146,8 @@ function AppLayout() {
               src="/logo.png"
               alt="Harbor of Hope logo"
               sx={{
-                height: 76,
-                width: 76,
+                height: 96,
+                width: 96,
                 objectFit: 'contain',
               }}
             />

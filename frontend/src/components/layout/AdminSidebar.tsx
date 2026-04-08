@@ -86,8 +86,8 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
               src="/logo.png"
               alt="Harbor of Hope logo"
               sx={{
-                height: 56,
-                width: 56,
+                height: 72,
+                width: 72,
                 objectFit: 'contain',
               }}
             />
