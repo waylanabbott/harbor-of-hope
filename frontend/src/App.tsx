@@ -15,7 +15,7 @@ import SupportersPage from './pages/admin/SupportersPage';
 import ProcessRecordingsPage from './pages/admin/ProcessRecordingsPage';
 import HomeVisitationsPage from './pages/admin/HomeVisitationsPage';
 import ReportsPage from './pages/admin/ReportsPage';
-import InsightsPage from './pages/admin/InsightsPage';
+
 import UsersPage from './pages/admin/UsersPage';
 import SocialMediaGeneratorPage from './pages/admin/SocialMediaGeneratorPage';
 import DonorDashboard from './pages/donor/DonorDashboard';
@@ -91,14 +91,6 @@ function App() {
           element={
             <ProtectedRoute role="Admin">
               <ReportsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/insights"
-          element={
-            <ProtectedRoute role="Admin">
-              <InsightsPage />
             </ProtectedRoute>
           }
         />

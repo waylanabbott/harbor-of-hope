@@ -4,6 +4,7 @@ Reads supporters + donations from PostgreSQL, engineers RFM features,
 writes modeling table `ml_donor_churn_features` back to the database.
 """
 import pandas as pd
+import numpy as np
 from sqlalchemy import create_engine, text
 from config import CONNECTION_STRING
 
@@ -23,6 +24,9 @@ def run():
 
     reference_date = monetary["donation_date"].max()
 
+    # Sort for per-supporter calculations
+    monetary = monetary.sort_values(["supporter_id", "donation_date"])
+
     # RFM features per supporter
     rfm = monetary.groupby("supporter_id").agg(
         recency=("donation_date", lambda x: (reference_date - x.max()).days),
@@ -30,11 +34,26 @@ def run():
         monetary_total=("amount", "sum"),
         monetary_avg=("amount", "mean"),
         monetary_std=("amount", "std"),
+        last_donation_amount=("amount", "last"),
         first_donation=("donation_date", "min"),
     ).reset_index()
 
     rfm["monetary_std"] = rfm["monetary_std"].fillna(0)
     rfm["tenure_days"] = (reference_date - rfm["first_donation"]).dt.days
+
+    # Average days between donations
+    def avg_gap(group):
+        dates = group.sort_values()
+        if len(dates) < 2:
+            return 0.0
+        gaps = dates.diff().dt.days.dropna()
+        return gaps.mean()
+
+    avg_between = monetary.groupby("supporter_id")["donation_date"].apply(avg_gap).reset_index()
+    avg_between.columns = ["supporter_id", "avg_days_between"]
+    rfm = rfm.merge(avg_between, on="supporter_id", how="left")
+    rfm["avg_days_between"] = rfm["avg_days_between"].fillna(0)
+
     rfm.drop(columns=["first_donation"], inplace=True)
 
     # Merge with supporter demographics

@@ -5,7 +5,6 @@ writes predictions to `incident_risk_predictions` table in PostgreSQL.
 """
 import os, joblib
 import pandas as pd
-import numpy as np
 from datetime import datetime
 from sqlalchemy import create_engine, text
 from config import CONNECTION_STRING, ARTIFACTS_DIR
@@ -21,20 +20,15 @@ def run():
         print("No feature data. Skipping inference.")
         return
 
-    numeric_features = ["is_pwd", "has_special_needs", "sub_cat_physical_abuse",
-                        "sub_cat_sexual_abuse", "sub_cat_trafficked", "sub_cat_at_risk",
-                        "avg_health_score", "avg_sleep", "session_count",
-                        "concerns_flagged_total", "length_of_stay_days"]
-    categorical_features = ["case_status", "sex", "case_category",
-                            "initial_risk_level", "current_risk_level"]
+    numeric_features = ["avg_health_score", "avg_education_attendance",
+                        "avg_education_progress", "session_count",
+                        "avg_session_duration", "visit_count", "length_of_stay"]
+    categorical_features = ["initial_risk_level", "case_category"]
 
-    avail_num = [c for c in numeric_features if c in df.columns]
-    avail_cat = [c for c in categorical_features if c in df.columns]
-
-    for col in avail_cat:
+    for col in categorical_features:
         df[col] = df[col].fillna("Unknown")
 
-    X = df[avail_num + avail_cat]
+    X = df[numeric_features + categorical_features]
 
     predictions = pipe.predict(X)
     probabilities = pipe.predict_proba(X)

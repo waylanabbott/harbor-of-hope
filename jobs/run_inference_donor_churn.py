@@ -5,7 +5,6 @@ writes predictions to `donor_churn_predictions` table in PostgreSQL.
 """
 import os, joblib
 import pandas as pd
-import numpy as np
 from datetime import datetime
 from sqlalchemy import create_engine, text
 from config import CONNECTION_STRING, ARTIFACTS_DIR
@@ -21,9 +20,12 @@ def run():
         print("No feature data. Skipping inference.")
         return
 
-    numeric_features = ["recency", "frequency", "monetary_total", "monetary_avg",
-                        "monetary_std", "tenure_days"]
+    numeric_features = ["frequency", "monetary_avg", "last_donation_amount",
+                        "tenure_days", "avg_days_between"]
     categorical_features = ["supporter_type", "acquisition_channel", "region"]
+
+    for col in categorical_features:
+        df[col] = df[col].fillna("Unknown")
 
     X = df[numeric_features + categorical_features]
 

@@ -19,7 +19,7 @@ import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import HomeIcon from '@mui/icons-material/Home';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import ScienceIcon from '@mui/icons-material/Science';
+
 import ShareIcon from '@mui/icons-material/Share';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -41,7 +41,6 @@ const navItems: NavItem[] = [
   { label: 'Sessions', icon: <PsychologyIcon />, path: '/admin/sessions' },
   { label: 'Visits', icon: <HomeIcon />, path: '/admin/visits' },
   { label: 'Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
-  { label: 'Insights', icon: <ScienceIcon />, path: '/admin/insights' },
   { label: 'Social Media', icon: <ShareIcon />, path: '/admin/social' },
   { label: 'Users', icon: <ManageAccountsIcon />, path: '/admin/users' },
 ];
