@@ -1,133 +1,265 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 /**
- * Full-screen wave wipe transition between pages.
+ * Harbor-themed page transitions.
  *
- * How it works:
- * 1. On route change, a coral-colored wave rises from the bottom with a wavy SVG edge
- * 2. It fully covers the viewport
- * 3. Then it recedes downward, revealing the new page underneath
- *
- * The wave SVG has an organic, water-like shape that fits the Harbor/ocean theme.
+ * Cycles through different nautical transition styles:
+ * 1. Wave Rise   — water rises from the bottom with wavy SVG edge, then drops
+ * 2. Tide Sweep  — wave sweeps left-to-right like a tide rolling in
+ * 3. Ship Sail   — diagonal wipe like a sail cutting across
+ * 4. Ripple      — circular reveal expanding from center
  */
 
-const WAVE_DURATION = 0.5; // seconds for each half (rise + recede)
-const TOTAL_DURATION = WAVE_DURATION * 2 + 0.05; // small overlap
+type TransitionStyle = 'waveRise' | 'tideSweep' | 'sailCut' | 'ripple';
+const STYLES: TransitionStyle[] = ['waveRise', 'tideSweep', 'sailCut', 'ripple'];
+
+const DURATION = 0.9; // total seconds
 
 export default function WaveTransition() {
   const location = useLocation();
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [animating, setAnimating] = useState(false);
   const prevPath = useRef(location.pathname);
+  const styleIndex = useRef(0);
+  const [currentStyle, setCurrentStyle] = useState<TransitionStyle>('waveRise');
+
+  const triggerTransition = useCallback(() => {
+    setCurrentStyle(STYLES[styleIndex.current % STYLES.length]);
+    styleIndex.current += 1;
+    setAnimating(true);
+  }, []);
 
   useEffect(() => {
     if (prevPath.current !== location.pathname) {
       prevPath.current = location.pathname;
-      setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), TOTAL_DURATION * 1000);
-      return () => clearTimeout(timer);
+      triggerTransition();
     }
-  }, [location.pathname]);
+  }, [location.pathname, triggerTransition]);
+
+  if (!animating) return null;
 
   return (
-    <AnimatePresence>
-      {isAnimating && (
-        <>
-          {/* First wave — rises up to cover screen */}
-          <motion.div
-            key="wave-cover"
-            initial={{ y: '100%' }}
-            animate={{ y: '0%' }}
-            exit={{ y: '100%' }}
-            transition={{
-              duration: WAVE_DURATION,
-              ease: [0.76, 0, 0.24, 1], // custom cubic-bezier for water feel
-            }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 9999,
-              pointerEvents: 'none',
-            }}
-          >
-            {/* Wave SVG top edge */}
-            <svg
-              viewBox="0 0 1440 120"
-              preserveAspectRatio="none"
-              style={{
-                position: 'absolute',
-                top: -119,
-                left: 0,
-                width: '100%',
-                height: 120,
-              }}
-            >
-              <path
-                d="M0,60 C180,120 360,0 540,60 C720,120 900,0 1080,60 C1260,120 1440,20 1440,60 L1440,120 L0,120 Z"
-                fill="#D4603F"
-              />
-            </svg>
-            {/* Solid fill below wave */}
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                background: 'linear-gradient(180deg, #D4603F 0%, #C4533A 40%, #3A7D6A 100%)',
-              }}
-            />
-          </motion.div>
-
-          {/* Second wave — slightly delayed, creates depth */}
-          <motion.div
-            key="wave-depth"
-            initial={{ y: '100%' }}
-            animate={{ y: '0%' }}
-            exit={{ y: '100%' }}
-            transition={{
-              duration: WAVE_DURATION,
-              delay: 0.06,
-              ease: [0.76, 0, 0.24, 1],
-            }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              zIndex: 9998,
-              pointerEvents: 'none',
-            }}
-          >
-            <svg
-              viewBox="0 0 1440 120"
-              preserveAspectRatio="none"
-              style={{
-                position: 'absolute',
-                top: -119,
-                left: 0,
-                width: '100%',
-                height: 120,
-              }}
-            >
-              <path
-                d="M0,80 C240,0 480,120 720,40 C960,0 1200,100 1440,80 L1440,120 L0,120 Z"
-                fill="#5B8C7A"
-              />
-            </svg>
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                backgroundColor: '#5B8C7A',
-              }}
-            />
-          </motion.div>
-        </>
+    <>
+      {currentStyle === 'waveRise' && (
+        <WaveRise onComplete={() => setAnimating(false)} />
       )}
-    </AnimatePresence>
+      {currentStyle === 'tideSweep' && (
+        <TideSweep onComplete={() => setAnimating(false)} />
+      )}
+      {currentStyle === 'sailCut' && (
+        <SailCut onComplete={() => setAnimating(false)} />
+      )}
+      {currentStyle === 'ripple' && (
+        <Ripple onComplete={() => setAnimating(false)} />
+      )}
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  1. Wave Rise — water rises up, pauses, drops down                  */
+/* ------------------------------------------------------------------ */
+function WaveRise({ onComplete }: { onComplete: () => void }) {
+  return (
+    <>
+      {/* Primary wave — coral */}
+      <motion.div
+        initial={{ y: '100vh' }}
+        animate={{ y: [  '100vh', '0vh', '0vh', '-100vh'] }}
+        transition={{
+          duration: DURATION,
+          times: [0, 0.4, 0.6, 1],
+          ease: [0.76, 0, 0.24, 1],
+        }}
+        onAnimationComplete={onComplete}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 9999,
+          pointerEvents: 'none',
+          background: 'linear-gradient(180deg, #D4603F 0%, #B84A30 100%)',
+        }}
+      >
+        <svg
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          style={{ position: 'absolute', top: -118, left: 0, width: '100%', height: 120 }}
+        >
+          <path
+            d="M0,60 C180,120 360,0 540,60 C720,120 900,0 1080,60 C1260,120 1440,20 1440,60 L1440,120 L0,120 Z"
+            fill="#D4603F"
+          />
+        </svg>
+      </motion.div>
+      {/* Secondary wave — sage, slightly delayed */}
+      <motion.div
+        initial={{ y: '100vh' }}
+        animate={{ y: ['100vh', '0vh', '0vh', '-100vh'] }}
+        transition={{
+          duration: DURATION,
+          times: [0, 0.4, 0.6, 1],
+          ease: [0.76, 0, 0.24, 1],
+          delay: 0.07,
+        }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 9998,
+          pointerEvents: 'none',
+          backgroundColor: '#5B8C7A',
+        }}
+      >
+        <svg
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          style={{ position: 'absolute', top: -118, left: 0, width: '100%', height: 120 }}
+        >
+          <path
+            d="M0,80 C240,0 480,120 720,40 C960,-20 1200,100 1440,60 L1440,120 L0,120 Z"
+            fill="#5B8C7A"
+          />
+        </svg>
+      </motion.div>
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  2. Tide Sweep — horizontal wave left to right                      */
+/* ------------------------------------------------------------------ */
+function TideSweep({ onComplete }: { onComplete: () => void }) {
+  return (
+    <>
+      <motion.div
+        initial={{ x: '-100vw' }}
+        animate={{ x: ['-100vw', '0vw', '0vw', '100vw'] }}
+        transition={{
+          duration: DURATION,
+          times: [0, 0.4, 0.6, 1],
+          ease: [0.76, 0, 0.24, 1],
+        }}
+        onAnimationComplete={onComplete}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 9999,
+          pointerEvents: 'none',
+          background: 'linear-gradient(90deg, #3A7D6A 0%, #5B8C7A 100%)',
+        }}
+      >
+        {/* Wavy right edge */}
+        <svg
+          viewBox="0 120 120 1440"
+          preserveAspectRatio="none"
+          style={{ position: 'absolute', top: 0, right: -119, width: 120, height: '100%' }}
+        >
+          <path
+            d="M0,0 C60,180 120,360 0,540 C-60,720 120,900 0,1080 C60,1260 0,1440 0,1440 L120,1440 L120,0 Z"
+            fill="#5B8C7A"
+          />
+        </svg>
+      </motion.div>
+      <motion.div
+        initial={{ x: '-100vw' }}
+        animate={{ x: ['-100vw', '0vw', '0vw', '100vw'] }}
+        transition={{
+          duration: DURATION,
+          times: [0, 0.4, 0.6, 1],
+          ease: [0.76, 0, 0.24, 1],
+          delay: 0.06,
+        }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 9998,
+          pointerEvents: 'none',
+          backgroundColor: '#D4603F',
+        }}
+      />
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  3. Sail Cut — diagonal wipe like a sail                            */
+/* ------------------------------------------------------------------ */
+function SailCut({ onComplete }: { onComplete: () => void }) {
+  return (
+    <motion.div
+      initial={{ clipPath: 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)' }}
+      animate={{
+        clipPath: [
+          'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)',       // start: nothing
+          'polygon(0% 0%, 120% 0%, 100% 100%, 0% 100%)',    // full cover (diagonal)
+          'polygon(0% 0%, 120% 0%, 100% 100%, 0% 100%)',    // hold
+          'polygon(120% 0%, 120% 0%, 120% 100%, 100% 100%)',// exit right
+        ],
+      }}
+      transition={{
+        duration: DURATION,
+        times: [0, 0.4, 0.6, 1],
+        ease: [0.76, 0, 0.24, 1],
+      }}
+      onAnimationComplete={onComplete}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 9999,
+        pointerEvents: 'none',
+        background: 'linear-gradient(135deg, #D4603F 0%, #E8935A 50%, #5B8C7A 100%)',
+      }}
+    />
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  4. Ripple — circle expanding from center                           */
+/* ------------------------------------------------------------------ */
+function Ripple({ onComplete }: { onComplete: () => void }) {
+  return (
+    <motion.div
+      initial={{ clipPath: 'circle(0% at 50% 50%)' }}
+      animate={{
+        clipPath: [
+          'circle(0% at 50% 50%)',
+          'circle(75% at 50% 50%)',
+          'circle(75% at 50% 50%)',
+          'circle(150% at 50% 50%)',
+        ],
+        opacity: [1, 1, 1, 0],
+      }}
+      transition={{
+        duration: DURATION,
+        times: [0, 0.4, 0.55, 1],
+        ease: [0.76, 0, 0.24, 1],
+      }}
+      onAnimationComplete={onComplete}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 9999,
+        pointerEvents: 'none',
+        background: 'radial-gradient(circle at 50% 50%, #D4603F 0%, #5B8C7A 70%, #3A7D6A 100%)',
+      }}
+    />
   );
 }
