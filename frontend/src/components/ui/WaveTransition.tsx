@@ -7,15 +7,14 @@ import { motion } from 'framer-motion';
  *
  * Cycles through different nautical transition styles:
  * 1. Wave Rise   — water rises from the bottom with wavy SVG edge, then drops
- * 2. Tide Sweep  — wave sweeps left-to-right like a tide rolling in
- * 3. Ship Sail   — diagonal wipe like a sail cutting across
- * 4. Ripple      — circular reveal expanding from center
+ * 2. Sail Cut    — diagonal wipe like a sail cutting across
+ * 3. Ripple      — circular reveal expanding from center
  */
 
-type TransitionStyle = 'waveRise' | 'tideSweep' | 'sailCut' | 'ripple';
-const STYLES: TransitionStyle[] = ['waveRise', 'tideSweep', 'sailCut', 'ripple'];
+type TransitionStyle = 'waveRise' | 'sailCut' | 'ripple';
+const STYLES: TransitionStyle[] = ['waveRise', 'sailCut', 'ripple'];
 
-const DURATION = 0.9; // total seconds
+const DURATION = 1.2; // total seconds
 
 export default function WaveTransition() {
   const location = useLocation();
@@ -43,9 +42,6 @@ export default function WaveTransition() {
     <>
       {currentStyle === 'waveRise' && (
         <WaveRise onComplete={() => setAnimating(false)} />
-      )}
-      {currentStyle === 'tideSweep' && (
-        <TideSweep onComplete={() => setAnimating(false)} />
       )}
       {currentStyle === 'sailCut' && (
         <SailCut onComplete={() => setAnimating(false)} />
@@ -132,69 +128,7 @@ function WaveRise({ onComplete }: { onComplete: () => void }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  2. Tide Sweep — horizontal wave left to right                      */
-/* ------------------------------------------------------------------ */
-function TideSweep({ onComplete }: { onComplete: () => void }) {
-  return (
-    <>
-      <motion.div
-        initial={{ x: '-100vw' }}
-        animate={{ x: ['-100vw', '0vw', '0vw', '100vw'] }}
-        transition={{
-          duration: DURATION,
-          times: [0, 0.4, 0.6, 1],
-          ease: [0.76, 0, 0.24, 1],
-        }}
-        onAnimationComplete={onComplete}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 9999,
-          pointerEvents: 'none',
-          background: 'linear-gradient(90deg, #3A7D6A 0%, #5B8C7A 100%)',
-        }}
-      >
-        {/* Wavy right edge */}
-        <svg
-          viewBox="0 120 120 1440"
-          preserveAspectRatio="none"
-          style={{ position: 'absolute', top: 0, right: -119, width: 120, height: '100%' }}
-        >
-          <path
-            d="M0,0 C60,180 120,360 0,540 C-60,720 120,900 0,1080 C60,1260 0,1440 0,1440 L120,1440 L120,0 Z"
-            fill="#5B8C7A"
-          />
-        </svg>
-      </motion.div>
-      <motion.div
-        initial={{ x: '-100vw' }}
-        animate={{ x: ['-100vw', '0vw', '0vw', '100vw'] }}
-        transition={{
-          duration: DURATION,
-          times: [0, 0.4, 0.6, 1],
-          ease: [0.76, 0, 0.24, 1],
-          delay: 0.06,
-        }}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: 9998,
-          pointerEvents: 'none',
-          backgroundColor: '#D4603F',
-        }}
-      />
-    </>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  3. Sail Cut — diagonal wipe like a sail                            */
+/*  2. Sail Cut — diagonal wipe like a sail                            */
 /* ------------------------------------------------------------------ */
 function SailCut({ onComplete }: { onComplete: () => void }) {
   return (
