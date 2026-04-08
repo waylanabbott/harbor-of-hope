@@ -15,7 +15,7 @@ import SupportersPage from './pages/admin/SupportersPage';
 import ProcessRecordingsPage from './pages/admin/ProcessRecordingsPage';
 import HomeVisitationsPage from './pages/admin/HomeVisitationsPage';
 import ReportsPage from './pages/admin/ReportsPage';
-import ExplanatoryInsightsPage from './pages/admin/ExplanatoryInsightsPage';
+import InsightsPage from './pages/admin/InsightsPage';
 import UsersPage from './pages/admin/UsersPage';
 import DonorDashboard from './pages/donor/DonorDashboard';
 import DonorHistoryPage from './pages/donor/DonorHistoryPage';
@@ -97,7 +97,7 @@ function App() {
           path="/admin/insights"
           element={
             <ProtectedRoute role="Admin">
-              <ExplanatoryInsightsPage />
+              <InsightsPage />
             </ProtectedRoute>
           }
         />
