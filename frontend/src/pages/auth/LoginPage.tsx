@@ -103,7 +103,7 @@ function LoginPage() {
                 width: 64,
                 borderRadius: '50%',
                 objectFit: 'cover',
-                clipPath: 'circle(46% at 56% 42%)',
+                clipPath: 'circle(50% at 54% 40%)',
               }}
             />
             <Typography
