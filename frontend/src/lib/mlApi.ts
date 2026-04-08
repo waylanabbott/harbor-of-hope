@@ -5,30 +5,42 @@ import { apiFetch } from './api';
 export interface ChurnPredictionRow {
   id: number;
   supporterId: number;
+  supporterName: string;
+  supporterType: string | null;
+  email: string | null;
   churnProbability: number;
   churnPrediction: number;
   churnRiskLevel: string;
   predictionTimestamp: string;
 }
 
-export interface SocialMediaPredictionRow {
+export interface IncidentRiskPredictionRow {
   id: number;
-  postId: number;
-  predictedEngagementRate: number;
-  actualEngagementRate: number;
-  residual: number;
-  recommendation: string;
+  residentId: number;
+  residentCode: string;
+  safehouseName: string | null;
+  caseStatus: string | null;
+  riskProbability: number;
+  riskPrediction: number;
+  riskLevel: string;
   predictionTimestamp: string;
 }
 
-export interface CounselingPredictionRow {
+export interface CampaignPredictionRow {
   id: number;
-  recordingId: number;
-  residentId: number;
-  predictedImprovement: number;
-  actualImprovement: number;
-  sessionType: string;
-  effectivenessLabel: string;
+  postId: number;
+  platform: string;
+  campaignName: string | null;
+  postType: string;
+  estimatedDonationValuePhp: number;
+  predictedDonationValuePhp: number;
+  predictionErrorPhp: number;
+  hasCallToAction: boolean;
+  featuresResidentStory: boolean;
+  isBoosted: boolean;
+  boostBudgetPhp: number;
+  mediaType: string | null;
+  contentTopic: string | null;
   predictionTimestamp: string;
 }
 
@@ -38,10 +50,10 @@ export function fetchChurnPredictions(): Promise<ChurnPredictionRow[]> {
   return apiFetch<ChurnPredictionRow[]>('/predictions/churn');
 }
 
-export function fetchSocialMediaPredictions(): Promise<SocialMediaPredictionRow[]> {
-  return apiFetch<SocialMediaPredictionRow[]>('/predictions/social-media');
+export function fetchIncidentRiskPredictions(): Promise<IncidentRiskPredictionRow[]> {
+  return apiFetch<IncidentRiskPredictionRow[]>('/predictions/incident-risk');
 }
 
-export function fetchCounselingPredictions(): Promise<CounselingPredictionRow[]> {
-  return apiFetch<CounselingPredictionRow[]>('/predictions/counseling');
+export function fetchCampaignPredictions(): Promise<CampaignPredictionRow[]> {
+  return apiFetch<CampaignPredictionRow[]>('/predictions/campaign');
 }

@@ -37,3 +37,4 @@ Thumbs.db
 # ML notebook generated plots
 ml-pipelines/notebooks/*.png
 jobs/__pycache__/
+backend/HarborOfHope.API/publish/
