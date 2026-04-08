@@ -13,6 +13,7 @@ import {
   DialogTitle,
   IconButton,
 } from '@mui/material';
+import { motion } from 'framer-motion';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   ResponsiveContainer,
@@ -27,21 +28,21 @@ import {
 } from 'recharts';
 import { fetchImpactSnapshots } from '../../lib/publicApi';
 import type { ImpactSnapshot } from '../../types/PublicImpact';
-
-/* buildSummary removed — replaced Recent Updates with Stories of Hope */
+import AnimateOnScroll, { StaggerContainer, StaggerItem } from '../../components/ui/AnimateOnScroll';
+import AnimatedCounter from '../../components/ui/AnimatedCounter';
 
 const paperSx = {
   p: { xs: 3, md: 4 },
   borderRadius: 4,
   boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
   cursor: 'pointer',
-  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   height: '100%',
   display: 'flex',
   flexDirection: 'column' as const,
   '&:hover': {
-    transform: 'translateY(-3px)',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+    transform: 'translateY(-4px)',
+    boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
   },
 };
 
@@ -87,13 +88,11 @@ export default function PublicImpactPage() {
     )
     .sort((a, b) => (a.month ?? '').localeCompare(b.month ?? ''));
 
-  // Only keep entries where the specific metric has meaningful data (> 0.01)
   const hasValue = (v: number | null | undefined, min = 0.01) => v != null && v > min;
   const healthData = chartData.filter((d) => hasValue(d.avgHealthScore));
   const donationsData = chartData.filter((d) => hasValue(d.donationsTotal));
   const educationData = chartData.filter((d) => hasValue(d.educationProgress));
 
-  // Total residents is nearly constant — compute a single stat instead of charting
   const residentsWithData = chartData.filter((d) => d.totalResidents != null && d.totalResidents > 0);
   const currentResidents = residentsWithData.length > 0
     ? residentsWithData[residentsWithData.length - 1].totalResidents
@@ -143,7 +142,7 @@ export default function PublicImpactPage() {
           variant="h1"
           sx={{ fontWeight: 800, color: '#D4603F', fontSize: { xs: '4rem', md: '5.5rem' }, lineHeight: 1 }}
         >
-          {currentResidents}
+          <AnimatedCounter value={currentResidents ?? 0} duration={2000} />
         </Typography>
         <Typography variant="h6" sx={{ mt: 2, color: '#6B6B6B', fontWeight: 500 }}>
           Active Residents
@@ -208,16 +207,22 @@ export default function PublicImpactPage() {
         }}
       >
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Typography
-            variant="h3"
-            component="h1"
-            sx={{ fontWeight: 800, mb: 1.5, textShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            Public Impact Dashboard
-          </Typography>
-          <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 400, maxWidth: 600 }}>
-            Anonymized data showing Harbor of Hope&apos;s impact over time.
-          </Typography>
+            <Typography
+              variant="h3"
+              component="h1"
+              sx={{ fontWeight: 800, mb: 1.5, textShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+            >
+              Public Impact Dashboard
+            </Typography>
+            <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 400, maxWidth: 600 }}>
+              Anonymized data showing Harbor of Hope&apos;s impact over time.
+            </Typography>
+          </motion.div>
         </Container>
       </Box>
 
@@ -228,49 +233,51 @@ export default function PublicImpactPage() {
           </Alert>
         )}
 
-        {/* Charts — 2x2 grid with generous gaps */}
-        <Box
-          sx={{
+        {/* Charts — 2x2 grid */}
+        <StaggerContainer
+          staggerDelay={0.15}
+          style={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-            gap: { xs: 4, md: 5 },
-            mb: { xs: 8, md: 10 },
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+            gap: '32px',
+            marginBottom: '64px',
           }}
         >
           {charts.map((chart) => (
-            <Paper
-              key={chart.title}
-              sx={{
-                ...paperSx,
-                ...(chart.isStatCard ? { cursor: 'default', '&:hover': { transform: 'none', boxShadow: paperSx.boxShadow } } : {}),
-              }}
-              onClick={
-                chart.isStatCard
-                  ? undefined
-                  : () => setExpandedChart({ title: chart.title, content: chart.render(500) })
-              }
-            >
-              <Typography
-                variant="h6"
-                component="h2"
-                sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}
+            <StaggerItem key={chart.title}>
+              <Paper
+                sx={{
+                  ...paperSx,
+                  ...(chart.isStatCard ? { cursor: 'default', '&:hover': { transform: 'none', boxShadow: paperSx.boxShadow } } : {}),
+                }}
+                onClick={
+                  chart.isStatCard
+                    ? undefined
+                    : () => setExpandedChart({ title: chart.title, content: chart.render(500) })
+                }
               >
-                {chart.title}
-              </Typography>
-              <Box sx={{ flex: 1, minHeight: 280 }}>
-                {chart.isStatCard ? chart.render(0) : chart.render(280)}
-              </Box>
-              {!chart.isStatCard && (
                 <Typography
-                  variant="caption"
-                  sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}
+                  variant="h6"
+                  component="h2"
+                  sx={{ mb: 3, fontWeight: 700, color: '#2D2D2D' }}
                 >
-                  Click to expand
+                  {chart.title}
                 </Typography>
-              )}
-            </Paper>
+                <Box sx={{ flex: 1, minHeight: 280 }}>
+                  {chart.isStatCard ? chart.render(0) : chart.render(280)}
+                </Box>
+                {!chart.isStatCard && (
+                  <Typography
+                    variant="caption"
+                    sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}
+                  >
+                    Click to expand
+                  </Typography>
+                )}
+              </Paper>
+            </StaggerItem>
           ))}
-        </Box>
+        </StaggerContainer>
 
         {/* Expanded Chart Dialog */}
         <Dialog
@@ -298,25 +305,28 @@ export default function PublicImpactPage() {
 
         {/* Success Stories */}
         <Box>
-          <Typography
-            variant="h4"
-            component="h2"
-            sx={{ mb: 2, fontWeight: 700, color: '#2D2D2D', textAlign: 'center' }}
-          >
-            Stories of Hope
-          </Typography>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{ textAlign: 'center', maxWidth: 600, mx: 'auto', mb: 5 }}
-          >
-            Every number represents a life changed. Here are some of the journeys our residents have taken — names changed to protect their privacy.
-          </Typography>
-          <Box
-            sx={{
+          <AnimateOnScroll variant="slideUp">
+            <Typography
+              variant="h4"
+              component="h2"
+              sx={{ mb: 2, fontWeight: 700, color: '#2D2D2D', textAlign: 'center' }}
+            >
+              Stories of Hope
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ textAlign: 'center', maxWidth: 600, mx: 'auto', mb: 5 }}
+            >
+              Every number represents a life changed. Here are some of the journeys our residents have taken — names changed to protect their privacy.
+            </Typography>
+          </AnimateOnScroll>
+          <StaggerContainer
+            staggerDelay={0.1}
+            style={{
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
-              gap: { xs: 3, md: 4 },
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '28px',
             }}
           >
             {[
@@ -363,71 +373,73 @@ export default function PublicImpactPage() {
                 color: '#5B8C7A',
               },
             ].map((story) => (
-              <Card
-                key={story.name}
-                sx={{
-                  borderRadius: 4,
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                  border: 'none',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  borderTop: `4px solid ${story.color}`,
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                  },
-                }}
-              >
-                <CardContent
+              <StaggerItem key={story.name}>
+                <Card
                   sx={{
-                    p: 4,
-                    flex: 1,
+                    borderRadius: 4,
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+                    border: 'none',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    height: '100%',
+                    borderTop: `4px solid ${story.color}`,
+                    '&:hover': {
+                      transform: 'translateY(-6px)',
+                      boxShadow: '0 16px 48px rgba(0,0,0,0.12)',
+                    },
                   }}
                 >
-                  <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-                      <Typography
-                        variant="subtitle1"
-                        component="h3"
-                        sx={{ fontWeight: 700, color: '#2D2D2D' }}
-                      >
-                        {story.name}
-                      </Typography>
-                      <Box
-                        sx={{
-                          px: 1.5,
-                          py: 0.25,
-                          borderRadius: 2,
-                          backgroundColor: `${story.color}18`,
-                          color: story.color,
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                        }}
-                      >
-                        {story.tag}
+                  <CardContent
+                    sx={{
+                      p: 4,
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                        <Typography
+                          variant="subtitle1"
+                          component="h3"
+                          sx={{ fontWeight: 700, color: '#2D2D2D' }}
+                        >
+                          {story.name}
+                        </Typography>
+                        <Box
+                          sx={{
+                            px: 1.5,
+                            py: 0.25,
+                            borderRadius: 2,
+                            backgroundColor: `${story.color}18`,
+                            color: story.color,
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                          }}
+                        >
+                          {story.tag}
+                        </Box>
                       </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: 'text.secondary', lineHeight: 1.8, fontStyle: 'italic' }}
+                      >
+                        &ldquo;{story.quote}&rdquo;
+                      </Typography>
                     </Box>
                     <Typography
-                      variant="body2"
-                      sx={{ color: 'text.secondary', lineHeight: 1.8, fontStyle: 'italic' }}
+                      variant="caption"
+                      sx={{ mt: 3, display: 'block', color: story.color, fontWeight: 600 }}
                     >
-                      &ldquo;{story.quote}&rdquo;
+                      {story.type}
                     </Typography>
-                  </Box>
-                  <Typography
-                    variant="caption"
-                    sx={{ mt: 3, display: 'block', color: story.color, fontWeight: 600 }}
-                  >
-                    {story.type}
-                  </Typography>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
             ))}
-          </Box>
+          </StaggerContainer>
         </Box>
       </Container>
     </Box>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link as RouterLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   AppBar,
   Toolbar,
@@ -31,6 +32,7 @@ import AdminSidebar from './AdminSidebar';
 import FontSizeSelector from '../ui/DarkModeToggle';
 import Footer from './Footer';
 import CookieConsentBanner from '../ui/CookieConsentBanner';
+import WaveTransition from '../ui/WaveTransition';
 
 const adminPageNames: Record<string, string> = {
   '/admin/dashboard': 'Dashboard',
@@ -96,6 +98,9 @@ function AppLayout() {
         },
       }}
     >
+      {/* Harbor wave page transition */}
+      <WaveTransition />
+
       {/* Skip to main content link for accessibility */}
       <Box
         component="a"
@@ -396,7 +401,17 @@ function AppLayout() {
                 {adminPageNames[location.pathname] ?? 'Page'}
               </Typography>
             </Breadcrumbs>
-            <Outlet />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={location.pathname}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                <Outlet />
+              </motion.div>
+            </AnimatePresence>
           </Box>
         </Box>
       ) : (
@@ -407,7 +422,17 @@ function AppLayout() {
           disableGutters
           sx={{ flex: 1 }}
         >
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </Container>
       )}
 

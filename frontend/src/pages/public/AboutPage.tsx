@@ -9,6 +9,7 @@ import {
   Divider,
   Avatar,
 } from '@mui/material';
+import { motion } from 'framer-motion';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import SecurityIcon from '@mui/icons-material/Security';
 import ChurchIcon from '@mui/icons-material/Church';
@@ -16,6 +17,7 @@ import PsychologyIcon from '@mui/icons-material/Psychology';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
+import AnimateOnScroll, { StaggerContainer, StaggerItem } from '../../components/ui/AnimateOnScroll';
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -134,91 +136,99 @@ function ProgramCard({ program, index }: { program: ProgramSection; index: numbe
   const isReversed = index % 2 === 1;
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        borderRadius: 4,
-        overflow: 'hidden',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-        display: 'flex',
-        flexDirection: {
-          xs: 'column',
-          md: isReversed ? 'row-reverse' : 'row',
-        },
-        mb: 6,
-      }}
-    >
-      <Box
+    <AnimateOnScroll variant={isReversed ? 'slideLeft' : 'slideRight'} duration={0.7}>
+      <Paper
+        elevation={0}
         sx={{
-          flex: '0 0 40%',
-          minHeight: { xs: 260, md: 360 },
-          bgcolor: '#f0ebe6',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          borderRadius: 4,
           overflow: 'hidden',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+          display: 'flex',
+          flexDirection: {
+            xs: 'column',
+            md: isReversed ? 'row-reverse' : 'row',
+          },
+          mb: 6,
+          transition: 'box-shadow 0.3s ease',
+          '&:hover': {
+            boxShadow: '0 12px 40px rgba(0,0,0,0.1)',
+          },
         }}
       >
         <Box
-          component="img"
-          src={program.image}
-          alt={program.title}
-          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-            e.currentTarget.style.display = 'none';
-          }}
           sx={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </Box>
-
-      <Box sx={{ flex: 1, p: { xs: 3, md: 5 }, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-          <Avatar sx={{ bgcolor: program.color, width: 44, height: 44 }}>
-            {program.icon}
-          </Avatar>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: '#2D2D2D' }}>
-            {program.title}
-          </Typography>
-        </Box>
-
-        <Paper
-          elevation={0}
-          sx={{
-            bgcolor: 'rgba(91,140,122,0.06)',
-            borderLeft: `4px solid ${program.color}`,
-            p: 2.5,
-            mb: 3,
-            borderRadius: 2,
+            flex: '0 0 40%',
+            minHeight: { xs: 260, md: 360 },
+            bgcolor: '#f0ebe6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
           }}
         >
-          <Typography
-            variant="body2"
-            sx={{ fontStyle: 'italic', color: 'text.secondary', lineHeight: 1.7 }}
-          >
-            {program.quote}
-          </Typography>
-        </Paper>
+          <Box
+            component="img"
+            src={program.image}
+            alt={program.title}
+            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+              e.currentTarget.style.display = 'none';
+            }}
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transition: 'transform 0.5s ease',
+              '&:hover': { transform: 'scale(1.05)' },
+            }}
+          />
+        </Box>
 
-        {program.description.map((para, i) => (
-          <Typography
-            key={i}
-            variant="body1"
-            sx={{ color: 'text.secondary', lineHeight: 1.8, mb: i < program.description.length - 1 ? 2 : 0 }}
-          >
-            {para}
-          </Typography>
-        ))}
+        <Box sx={{ flex: 1, p: { xs: 3, md: 5 }, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+            <Avatar sx={{ bgcolor: program.color, width: 44, height: 44 }}>
+              {program.icon}
+            </Avatar>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: '#2D2D2D' }}>
+              {program.title}
+            </Typography>
+          </Box>
 
-        {program.note && (
-          <Typography variant="caption" sx={{ mt: 2, color: 'text.disabled', fontStyle: 'italic' }}>
-            {program.note}
-          </Typography>
-        )}
-      </Box>
-    </Paper>
+          <Paper
+            elevation={0}
+            sx={{
+              bgcolor: 'rgba(91,140,122,0.06)',
+              borderLeft: `4px solid ${program.color}`,
+              p: 2.5,
+              mb: 3,
+              borderRadius: 2,
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ fontStyle: 'italic', color: 'text.secondary', lineHeight: 1.7 }}
+            >
+              {program.quote}
+            </Typography>
+          </Paper>
+
+          {program.description.map((para, i) => (
+            <Typography
+              key={i}
+              variant="body1"
+              sx={{ color: 'text.secondary', lineHeight: 1.8, mb: i < program.description.length - 1 ? 2 : 0 }}
+            >
+              {para}
+            </Typography>
+          ))}
+
+          {program.note && (
+            <Typography variant="caption" sx={{ mt: 2, color: 'text.disabled', fontStyle: 'italic' }}>
+              {program.note}
+            </Typography>
+          )}
+        </Box>
+      </Paper>
+    </AnimateOnScroll>
   );
 }
 
@@ -258,97 +268,115 @@ export default function AboutPage() {
         }}
       >
         <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
-          <Typography
-            variant="h3"
-            component="h1"
-            sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '2rem', md: '3rem' }, textShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            About Harbor of Hope
-          </Typography>
-          <Typography
-            variant="h6"
-            component="p"
-            sx={{ opacity: 0.93, maxWidth: 640, mx: 'auto', lineHeight: 1.7, textShadow: '0 1px 6px rgba(0,0,0,0.2)' }}
+            <Typography
+              variant="h3"
+              component="h1"
+              sx={{ fontWeight: 800, mb: 2, fontSize: { xs: '2rem', md: '3rem' }, textShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+            >
+              About Harbor of Hope
+            </Typography>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            We are Harbor of Hope: full of hope, love and new beginnings. Our focus
-            is progress in all aspects of life. We treat each other as family where
-            each individual is seen, heard and loved. We create fun memories, we
-            fight for justice and we acknowledge God in all we do.
-          </Typography>
+            <Typography
+              variant="h6"
+              component="p"
+              sx={{ opacity: 0.93, maxWidth: 640, mx: 'auto', lineHeight: 1.7, textShadow: '0 1px 6px rgba(0,0,0,0.2)' }}
+            >
+              We are Harbor of Hope: full of hope, love and new beginnings. Our focus
+              is progress in all aspects of life. We treat each other as family where
+              each individual is seen, heard and loved. We create fun memories, we
+              fight for justice and we acknowledge God in all we do.
+            </Typography>
+          </motion.div>
         </Container>
       </Box>
 
       {/* Programs and Services Grid */}
       <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
-        <Typography
-          variant="h4"
-          component="h2"
-          sx={{ textAlign: 'center', fontWeight: 700, mb: 2, color: '#2D2D2D' }}
-        >
-          Our Programs and Services
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ textAlign: 'center', mb: 8, color: 'text.secondary', maxWidth: 640, mx: 'auto', lineHeight: 1.7 }}
-        >
-          Harbor of Hope addresses the whole person — physical, emotional, social,
-          and spiritual — so every girl can heal and thrive.
-        </Typography>
+        <AnimateOnScroll variant="slideUp">
+          <Typography
+            variant="h4"
+            component="h2"
+            sx={{ textAlign: 'center', fontWeight: 700, mb: 2, color: '#2D2D2D' }}
+          >
+            Our Programs and Services
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ textAlign: 'center', mb: 8, color: 'text.secondary', maxWidth: 640, mx: 'auto', lineHeight: 1.7 }}
+          >
+            Harbor of Hope addresses the whole person — physical, emotional, social,
+            and spiritual — so every girl can heal and thrive.
+          </Typography>
+        </AnimateOnScroll>
 
         {/* Quick-glance icon cards */}
-        <Box
-          sx={{
+        <StaggerContainer
+          staggerDelay={0.08}
+          style={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr', md: 'repeat(6, 1fr)' },
-            gap: 3,
-            mb: 8,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: '24px',
+            marginBottom: '64px',
           }}
         >
           {PROGRAMS.map((p) => (
-            <Card
-              key={p.title}
-              sx={{
-                textAlign: 'center',
-                borderRadius: 3,
-                boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-                transition: 'transform .2s, box-shadow .2s',
-                '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 6px 24px rgba(0,0,0,0.1)' },
-                cursor: 'pointer',
-              }}
-              onClick={() => {
-                document.getElementById(p.title.toLowerCase().replace(/\s+/g, '-'))?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              <Box
+            <StaggerItem key={p.title}>
+              <Card
                 sx={{
-                  height: 160,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  bgcolor: 'rgba(240, 235, 230, 0.85)',
-                  background:
-                    'radial-gradient(circle at 30% 20%, rgba(212,96,63,0.10), transparent 55%), radial-gradient(circle at 70% 80%, rgba(91,140,122,0.10), transparent 55%)',
+                  textAlign: 'center',
+                  borderRadius: 3,
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                  transition: 'transform .3s ease, box-shadow .3s ease',
+                  '&:hover': { transform: 'translateY(-6px) scale(1.02)', boxShadow: '0 12px 32px rgba(0,0,0,0.12)' },
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  document.getElementById(p.title.toLowerCase().replace(/\s+/g, '-'))?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                <Avatar
+                <Box
                   sx={{
-                    bgcolor: p.color,
-                    width: 76,
-                    height: 76,
-                    boxShadow: '0 10px 26px rgba(0,0,0,0.12)',
+                    height: 160,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: 'rgba(240, 235, 230, 0.85)',
+                    background:
+                      'radial-gradient(circle at 30% 20%, rgba(212,96,63,0.10), transparent 55%), radial-gradient(circle at 70% 80%, rgba(91,140,122,0.10), transparent 55%)',
                   }}
                 >
-                  <Box sx={{ fontSize: 36, display: 'flex', alignItems: 'center' }}>{p.icon}</Box>
-                </Avatar>
-              </Box>
-              <CardContent sx={{ py: 2 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#2D2D2D', fontSize: '0.85rem' }}>
-                  {p.title}
-                </Typography>
-              </CardContent>
-            </Card>
+                  <Avatar
+                    sx={{
+                      bgcolor: p.color,
+                      width: 76,
+                      height: 76,
+                      boxShadow: '0 10px 26px rgba(0,0,0,0.12)',
+                      transition: 'transform 0.3s ease',
+                      '.MuiCard-root:hover &': { transform: 'scale(1.1)' },
+                    }}
+                  >
+                    <Box sx={{ fontSize: 36, display: 'flex', alignItems: 'center' }}>{p.icon}</Box>
+                  </Avatar>
+                </Box>
+                <CardContent sx={{ py: 2 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#2D2D2D', fontSize: '0.85rem' }}>
+                    {p.title}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </StaggerItem>
           ))}
-        </Box>
+        </StaggerContainer>
 
         {/* Detailed sections */}
         {PROGRAMS.map((p, idx) => (
@@ -361,132 +389,148 @@ export default function AboutPage() {
       {/* Testimonials */}
       <Box sx={{ bgcolor: '#FFF8F0', py: { xs: 8, md: 12 } }}>
         <Container maxWidth="lg">
-          <Typography
-            variant="h4"
-            component="h2"
-            sx={{ textAlign: 'center', fontWeight: 700, mb: 6, color: '#2D2D2D' }}
-          >
-            Voices of Hope
-          </Typography>
-          <Box
-            sx={{
+          <AnimateOnScroll variant="slideUp">
+            <Typography
+              variant="h4"
+              component="h2"
+              sx={{ textAlign: 'center', fontWeight: 700, mb: 6, color: '#2D2D2D' }}
+            >
+              Voices of Hope
+            </Typography>
+          </AnimateOnScroll>
+          <StaggerContainer
+            staggerDelay={0.12}
+            style={{
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
-              gap: 4,
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: '32px',
             }}
           >
             {TESTIMONIALS.map((t, i) => (
-              <Paper
-                key={i}
-                elevation={0}
-                sx={{
-                  p: 4,
-                  borderRadius: 4,
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  position: 'relative',
-                }}
-              >
-                <FormatQuoteIcon
-                  sx={{ fontSize: 40, color: 'rgba(212,96,63,0.15)', position: 'absolute', top: 16, left: 16 }}
-                />
-                <Typography
-                  variant="body2"
-                  sx={{ fontStyle: 'italic', color: 'text.secondary', lineHeight: 1.8, mb: 2, mt: 2 }}
+              <StaggerItem key={i}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 4,
+                    borderRadius: 4,
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    height: '100%',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 12px 40px rgba(0,0,0,0.1)',
+                    },
+                  }}
                 >
-                  &ldquo;{t.text}&rdquo;
-                </Typography>
-                <Divider sx={{ mb: 1.5 }} />
-                <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600 }}>
-                  &mdash; {t.attribution}
-                </Typography>
-              </Paper>
+                  <FormatQuoteIcon
+                    sx={{ fontSize: 40, color: 'rgba(212,96,63,0.15)', position: 'absolute', top: 16, left: 16 }}
+                  />
+                  <Typography
+                    variant="body2"
+                    sx={{ fontStyle: 'italic', color: 'text.secondary', lineHeight: 1.8, mb: 2, mt: 2 }}
+                  >
+                    &ldquo;{t.text}&rdquo;
+                  </Typography>
+                  <Divider sx={{ mb: 1.5 }} />
+                  <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600 }}>
+                    &mdash; {t.attribution}
+                  </Typography>
+                </Paper>
+              </StaggerItem>
             ))}
-          </Box>
+          </StaggerContainer>
         </Container>
       </Box>
 
       {/* Get to Know Us */}
       <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'white' }}>
         <Container maxWidth="md">
-          <Box
-            component="img"
-            src="/about/get-to-know.jpg"
-            alt="Get to know Harbor of Hope"
-            sx={{
-              width: '100%',
-              maxWidth: 520,
-              mx: 'auto',
-              mb: { xs: 5, md: 6 },
-              display: 'block',
-              aspectRatio: '1 / 1.15',
-              objectFit: 'cover',
-              borderRadius: '999px',
-            }}
-          />
-          <Typography
-            variant="h4"
-            component="h2"
-            sx={{
-              mb: 4,
-              fontWeight: 800,
-              color: '#E8735A',
-              fontFamily: '"Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive',
-              letterSpacing: 0.5,
-            }}
-          >
-            Get to know Us
-          </Typography>
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '12px 1fr' },
-              gap: { xs: 2, sm: 3 },
-              alignItems: 'start',
-            }}
-          >
+          <AnimateOnScroll variant="scale" duration={0.8}>
             <Box
+              component="img"
+              src="/about/get-to-know.jpg"
+              alt="Get to know Harbor of Hope"
               sx={{
-                width: 8,
-                height: { xs: 56, sm: 72 },
-                bgcolor: '#E8735A',
-                borderRadius: 8,
-                mx: { xs: 0, sm: 0 },
+                width: '100%',
+                maxWidth: 520,
+                mx: 'auto',
+                mb: { xs: 5, md: 6 },
+                display: 'block',
+                aspectRatio: '1 / 1.15',
+                objectFit: 'cover',
+                borderRadius: '999px',
               }}
             />
+          </AnimateOnScroll>
+          <AnimateOnScroll variant="slideUp" delay={0.1}>
+            <Typography
+              variant="h4"
+              component="h2"
+              sx={{
+                mb: 4,
+                fontWeight: 800,
+                color: '#E8735A',
+                fontFamily: '"Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive',
+                letterSpacing: 0.5,
+              }}
+            >
+              Get to know Us
+            </Typography>
+          </AnimateOnScroll>
 
-            <Box>
-              <Typography
-                variant="h6"
-                component="p"
+          <AnimateOnScroll variant="slideUp" delay={0.2}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: '12px 1fr' },
+                gap: { xs: 2, sm: 3 },
+                alignItems: 'start',
+              }}
+            >
+              <Box
                 sx={{
-                  fontWeight: 800,
-                  color: '#2D2D2D',
-                  lineHeight: 1.6,
-                  mb: 4,
-                  fontSize: { xs: '1.05rem', sm: '1.2rem' },
+                  width: 8,
+                  height: { xs: 56, sm: 72 },
+                  bgcolor: '#E8735A',
+                  borderRadius: 8,
+                  mx: { xs: 0, sm: 0 },
                 }}
-              >
-                Harbor of Hope is a 501c3 organization (EIN 81-3220618) created to meet the needs of children-survivors of sexual abuse and sex trafficking in Central America by providing a safe haven and professional rehabilitation services so children can successfully reintegrate back into family life and society.
-              </Typography>
+              />
 
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
-                  There is a great need for residential shelters in Central America for children who are trapped in abuse or who are sexually trafficked. Harbor of Hope has stepped up to fill the need for female survivors between the ages of 8 to 18.
+              <Box>
+                <Typography
+                  variant="h6"
+                  component="p"
+                  sx={{
+                    fontWeight: 800,
+                    color: '#2D2D2D',
+                    lineHeight: 1.6,
+                    mb: 4,
+                    fontSize: { xs: '1.05rem', sm: '1.2rem' },
+                  }}
+                >
+                  Harbor of Hope is a 501c3 organization (EIN 81-3220618) created to meet the needs of children-survivors of sexual abuse and sex trafficking in Central America by providing a safe haven and professional rehabilitation services so children can successfully reintegrate back into family life and society.
                 </Typography>
 
-                <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
-                  Harbor of Hope has two residential style shelters, that caters to up to 20 children each. The children are rescued by the local police department or anti-trafficking agents who refer the children through the Department of Social Welfare and Development (DSWD) to Harbor of Hope. The social worker in the sanctuary will assist the child in transitioning into their new environment.
-                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
+                    There is a great need for residential shelters in Central America for children who are trapped in abuse or who are sexually trafficked. Harbor of Hope has stepped up to fill the need for female survivors between the ages of 8 to 18.
+                  </Typography>
 
-                <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
-                  Once in the home, the children will be provided with counseling, medical services, daily needs and an individualized education. Partners of Harbor of Hope will be working toward justice for each child in order to ensure a safe reintegration into society. Harbor of Hope believes that the family unit is the ideal place for any child and will coordinate with the DSWD to find suitable families for each child. Whether a child is placed with their birth family, a foster family or an adoptive family, Harbor of Hope will provide family counseling to assist in the transition.
-                </Typography>
+                  <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
+                    Harbor of Hope has two residential style shelters, that caters to up to 20 children each. The children are rescued by the local police department or anti-trafficking agents who refer the children through the Department of Social Welfare and Development (DSWD) to Harbor of Hope. The social worker in the sanctuary will assist the child in transitioning into their new environment.
+                  </Typography>
+
+                  <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
+                    Once in the home, the children will be provided with counseling, medical services, daily needs and an individualized education. Partners of Harbor of Hope will be working toward justice for each child in order to ensure a safe reintegration into society. Harbor of Hope believes that the family unit is the ideal place for any child and will coordinate with the DSWD to find suitable families for each child. Whether a child is placed with their birth family, a foster family or an adoptive family, Harbor of Hope will provide family counseling to assist in the transition.
+                  </Typography>
+                </Box>
               </Box>
             </Box>
-          </Box>
+          </AnimateOnScroll>
         </Container>
       </Box>
     </Box>
