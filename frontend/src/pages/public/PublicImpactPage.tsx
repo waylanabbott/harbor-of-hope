@@ -28,22 +28,7 @@ import {
 import { fetchImpactSnapshots } from '../../lib/publicApi';
 import type { ImpactSnapshot } from '../../types/PublicImpact';
 
-function buildSummary(snapshot: ImpactSnapshot): string {
-  const parts: string[] = [];
-  if (snapshot.totalResidents != null && snapshot.totalResidents > 0)
-    parts.push(`${snapshot.totalResidents} residents active`);
-  if (snapshot.avgHealthScore != null && snapshot.avgHealthScore > 0)
-    parts.push(`avg health score ${snapshot.avgHealthScore.toFixed(2)}`);
-  if (snapshot.educationProgress != null && snapshot.educationProgress > 0)
-    parts.push(`education progress ${snapshot.educationProgress.toFixed(1)}%`);
-  if (snapshot.donationsTotal != null && snapshot.donationsTotal > 0)
-    parts.push(
-      `$${snapshot.donationsTotal.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} in donations`
-    );
-  return parts.length > 0
-    ? parts.join(' \u00B7 ')
-    : snapshot.summaryText ?? 'No detailed metrics available for this period.';
-}
+/* buildSummary removed — replaced Recent Updates with Stories of Hope */
 
 const paperSx = {
   p: { xs: 3, md: 4 },
@@ -102,12 +87,22 @@ export default function PublicImpactPage() {
     )
     .sort((a, b) => (a.month ?? '').localeCompare(b.month ?? ''));
 
-  const recentSnapshots = snapshots.slice(0, 6);
+  // Only keep entries where the specific metric has meaningful data (> 0.01)
+  const hasValue = (v: number | null | undefined, min = 0.01) => v != null && v > min;
+  const healthData = chartData.filter((d) => hasValue(d.avgHealthScore));
+  const donationsData = chartData.filter((d) => hasValue(d.donationsTotal));
+  const educationData = chartData.filter((d) => hasValue(d.educationProgress));
+
+  // Total residents is nearly constant — compute a single stat instead of charting
+  const residentsWithData = chartData.filter((d) => d.totalResidents != null && d.totalResidents > 0);
+  const currentResidents = residentsWithData.length > 0
+    ? residentsWithData[residentsWithData.length - 1].totalResidents
+    : 0;
 
   function renderHealthChart(height: number) {
     return (
       <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={chartData}>
+        <LineChart data={healthData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
           <YAxis tick={{ fill: '#6B6B6B' }} />
@@ -121,7 +116,7 @@ export default function PublicImpactPage() {
   function renderDonationsChart(height: number) {
     return (
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={chartData}>
+        <BarChart data={donationsData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
           <YAxis tick={{ fill: '#6B6B6B' }} />
@@ -132,24 +127,38 @@ export default function PublicImpactPage() {
     );
   }
 
-  function renderResidentsChart(height: number) {
+  function renderResidentsCard() {
     return (
-      <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
-          <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
-          <YAxis tick={{ fill: '#6B6B6B' }} />
-          <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }} />
-          <Line type="monotone" dataKey="totalResidents" stroke="#D4603F" name="Total Residents" strokeWidth={2.5} dot={{ r: 3, fill: '#D4603F' }} activeDot={{ r: 5 }} />
-        </LineChart>
-      </ResponsiveContainer>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+          minHeight: 280,
+        }}
+      >
+        <Typography
+          variant="h1"
+          sx={{ fontWeight: 800, color: '#D4603F', fontSize: { xs: '4rem', md: '5.5rem' }, lineHeight: 1 }}
+        >
+          {currentResidents}
+        </Typography>
+        <Typography variant="h6" sx={{ mt: 2, color: '#6B6B6B', fontWeight: 500 }}>
+          Active Residents
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary', textAlign: 'center', maxWidth: 260 }}>
+          Girls currently living in our safe homes across Central America
+        </Typography>
+      </Box>
     );
   }
 
   function renderEducationChart(height: number) {
     return (
       <ResponsiveContainer width="100%" height={height}>
-        <LineChart data={chartData}>
+        <LineChart data={educationData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#6B6B6B' }} angle={-45} textAnchor="end" height={60} />
           <YAxis tick={{ fill: '#6B6B6B' }} />
@@ -160,10 +169,10 @@ export default function PublicImpactPage() {
     );
   }
 
-  const charts = [
+  const charts: { title: string; render: (height: number) => ReactNode; isStatCard?: boolean }[] = [
     { title: 'Average Health Score Over Time', render: renderHealthChart },
     { title: 'Monthly Donations', render: renderDonationsChart },
-    { title: 'Total Residents Over Time', render: renderResidentsChart },
+    { title: 'Residents in Our Care', render: renderResidentsCard as any, isStatCard: true },
     { title: 'Education Progress', render: renderEducationChart },
   ];
 
@@ -231,9 +240,14 @@ export default function PublicImpactPage() {
           {charts.map((chart) => (
             <Paper
               key={chart.title}
-              sx={paperSx}
-              onClick={() =>
-                setExpandedChart({ title: chart.title, content: chart.render(500) })
+              sx={{
+                ...paperSx,
+                ...(chart.isStatCard ? { cursor: 'default', '&:hover': { transform: 'none', boxShadow: paperSx.boxShadow } } : {}),
+              }}
+              onClick={
+                chart.isStatCard
+                  ? undefined
+                  : () => setExpandedChart({ title: chart.title, content: chart.render(500) })
               }
             >
               <Typography
@@ -243,13 +257,17 @@ export default function PublicImpactPage() {
               >
                 {chart.title}
               </Typography>
-              <Box sx={{ flex: 1, minHeight: 280 }}>{chart.render(280)}</Box>
-              <Typography
-                variant="caption"
-                sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}
-              >
-                Click to expand
-              </Typography>
+              <Box sx={{ flex: 1, minHeight: 280 }}>
+                {chart.isStatCard ? chart.render(0) : chart.render(280)}
+              </Box>
+              {!chart.isStatCard && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: 'block', mt: 2, textAlign: 'center', color: 'text.secondary' }}
+                >
+                  Click to expand
+                </Typography>
+              )}
             </Paper>
           ))}
         </Box>
@@ -278,80 +296,139 @@ export default function PublicImpactPage() {
           )}
         </Dialog>
 
-        {/* Recent Updates — 3-column grid, equal-height cards */}
-        {recentSnapshots.length > 0 && (
-          <Box>
-            <Typography
-              variant="h4"
-              component="h2"
-              sx={{ mb: 5, fontWeight: 700, color: '#2D2D2D', textAlign: 'center' }}
-            >
-              Recent Updates
-            </Typography>
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
-                gap: { xs: 3, md: 4 },
-              }}
-            >
-              {recentSnapshots.map((snapshot, index) => (
-                <Card
-                  key={index}
+        {/* Success Stories */}
+        <Box>
+          <Typography
+            variant="h4"
+            component="h2"
+            sx={{ mb: 2, fontWeight: 700, color: '#2D2D2D', textAlign: 'center' }}
+          >
+            Stories of Hope
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ textAlign: 'center', maxWidth: 600, mx: 'auto', mb: 5 }}
+          >
+            Every number represents a life changed. Here are some of the journeys our residents have taken — names changed to protect their privacy.
+          </Typography>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
+              gap: { xs: 3, md: 4 },
+            }}
+          >
+            {[
+              {
+                name: 'Maria, 16',
+                type: 'Family Reunification',
+                quote: 'After 18 months of counseling and education support, Maria was reunited with her family. She now attends school regularly and dreams of becoming a nurse.',
+                tag: 'Reintegrated',
+                color: '#5B8C7A',
+              },
+              {
+                name: 'Ana, 14',
+                type: 'Foster Care',
+                quote: 'Ana arrived with a critical risk level and no school history. Through 24 counseling sessions and tutoring, her education progress reached 87%. She was placed with a loving foster family in 2025.',
+                tag: 'Reintegrated',
+                color: '#5B8C7A',
+              },
+              {
+                name: 'Rosa, 17',
+                type: 'Independent Living',
+                quote: 'Rosa completed a vocational training program while at Harbor of Hope. She now lives independently, works at a local bakery, and mentors younger residents on weekends.',
+                tag: 'Independent',
+                color: '#26A69A',
+              },
+              {
+                name: 'Lucia, 13',
+                type: 'Education Milestone',
+                quote: 'When Lucia arrived, she could barely read. After two years of dedicated support, she scored in the top 10% of her class and received a scholarship for secondary school.',
+                tag: 'Thriving',
+                color: '#E8935A',
+              },
+              {
+                name: 'Carmen, 15',
+                type: 'Health Recovery',
+                quote: 'Carmen\'s health score improved from 1.2 to 4.5 over 12 months. With consistent medical care and nutrition support, she gained the strength to participate in sports for the first time.',
+                tag: 'Recovering',
+                color: '#9B59B6',
+              },
+              {
+                name: 'Isabella, 12',
+                type: 'Family Reunification',
+                quote: 'After her family completed counseling and home visits confirmed a safe environment, Isabella returned home. Regular follow-up visits show she is happy, healthy, and attending school every day.',
+                tag: 'Reintegrated',
+                color: '#5B8C7A',
+              },
+            ].map((story) => (
+              <Card
+                key={story.name}
+                sx={{
+                  borderRadius: 4,
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+                  border: 'none',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderTop: `4px solid ${story.color}`,
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                  },
+                }}
+              >
+                <CardContent
                   sx={{
-                    borderRadius: 4,
-                    boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
-                    border: 'none',
-                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    p: 4,
+                    flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                    },
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <CardContent
-                    sx={{
-                      p: 4,
-                      flex: 1,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Box>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
                       <Typography
                         variant="subtitle1"
                         component="h3"
-                        sx={{ fontWeight: 700, color: '#2D2D2D', mb: 1.5, lineHeight: 1.4 }}
+                        sx={{ fontWeight: 700, color: '#2D2D2D' }}
                       >
-                        {snapshot.headline ?? 'Update'}
+                        {story.name}
                       </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: 'text.secondary', lineHeight: 1.7 }}
+                      <Box
+                        sx={{
+                          px: 1.5,
+                          py: 0.25,
+                          borderRadius: 2,
+                          backgroundColor: `${story.color}18`,
+                          color: story.color,
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                        }}
                       >
-                        {buildSummary(snapshot)}
-                      </Typography>
+                        {story.tag}
+                      </Box>
                     </Box>
-                    {snapshot.snapshotDate && (
-                      <Typography
-                        variant="caption"
-                        sx={{ mt: 3, display: 'block', color: '#D4603F', fontWeight: 600 }}
-                      >
-                        {new Date(snapshot.snapshotDate).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                        })}
-                      </Typography>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </Box>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: 'text.secondary', lineHeight: 1.8, fontStyle: 'italic' }}
+                    >
+                      &ldquo;{story.quote}&rdquo;
+                    </Typography>
+                  </Box>
+                  <Typography
+                    variant="caption"
+                    sx={{ mt: 3, display: 'block', color: story.color, fontWeight: 600 }}
+                  >
+                    {story.type}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
           </Box>
-        )}
+        </Box>
       </Container>
     </Box>
   );

@@ -21,6 +21,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -190,24 +192,51 @@ export default function InsightsPage() {
   };
 
   const topTabBar = (
-    <Paper sx={{ borderRadius: 3, mb: 3, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-      <Tabs
+    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+      <ToggleButtonGroup
         value={topTab}
-        onChange={handleTopTabChange}
-        sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '1rem', py: 2 } }}
+        exclusive
+        onChange={(_, v) => { if (v) handleTopTabChange(null, v); }}
+        sx={{
+          bgcolor: 'white',
+          borderRadius: 3,
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          border: 'none',
+          '& .MuiToggleButton-root': {
+            border: 'none',
+            textTransform: 'none',
+            fontWeight: 600,
+            fontSize: '1rem',
+            px: 4,
+            py: 1.5,
+            gap: 1,
+            borderRadius: '24px !important',
+            color: '#6B6B6B',
+            '&.Mui-selected': {
+              bgcolor: '#D4603F',
+              color: 'white',
+              '&:hover': { bgcolor: '#C0543A' },
+            },
+          },
+        }}
       >
-        <Tab value="predictive" icon={<TrendingUpIcon />} iconPosition="start" label="Predictive Models" sx={{ flex: 1, borderBottom: topTab === 'predictive' ? `3px solid ${PIPELINE_COLORS[0]}` : 'none' }} />
-        <Tab value="explanatory" icon={<ScienceIcon />} iconPosition="start" label="Explanatory Models" sx={{ flex: 1, borderBottom: topTab === 'explanatory' ? '3px solid #5B8C7A' : 'none' }} />
-      </Tabs>
-    </Paper>
+        <ToggleButton value="predictive">
+          <TrendingUpIcon fontSize="small" /> Predictive Models
+        </ToggleButton>
+        <ToggleButton value="explanatory">
+          <ScienceIcon fontSize="small" /> Explanatory Models
+        </ToggleButton>
+      </ToggleButtonGroup>
+    </Box>
   );
 
-  // If explanatory, render the original page with the switcher injected inside it
-  if (topTab === 'explanatory') {
-    return <ExplanatoryInsightsPage topTabBar={topTabBar} />;
-  }
+  // Hero text changes smoothly based on tab
+  const heroTitle = topTab === 'predictive' ? 'What We Can Predict' : 'What Drives Our Impact';
+  const heroSubtitle = topTab === 'predictive'
+    ? 'Forecasting future outcomes so we can take action before things happen.'
+    : 'We analyzed our data to understand what factors matter most for the outcomes we care about.';
 
-  // Predictive tab — same layout as explanatory
+  // Predictive tab data
   const current = PREDICTIVE_PIPELINES[activeTab];
   const color = PIPELINE_COLORS[activeTab] ?? '#D4603F';
   const strength = modelStrength(current.adjRSquared);
@@ -220,7 +249,7 @@ export default function InsightsPage() {
 
   return (
     <Box>
-      {/* Hero */}
+      {/* Shared Hero — always mounted, text transitions smoothly */}
       <Box
         sx={{
           background: 'linear-gradient(135deg, #D4603F 0%, #E8935A 50%, #F5C89A 100%)',
@@ -231,11 +260,32 @@ export default function InsightsPage() {
         }}
       >
         <Container maxWidth="md">
-          <Typography variant="h3" component="h1" sx={{ fontWeight: 800, mb: 1.5, textShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-            What We Can Predict
+          <Typography
+            key={heroTitle}
+            variant="h3"
+            component="h1"
+            sx={{
+              fontWeight: 800,
+              mb: 1.5,
+              textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+              animation: 'fadeIn 0.3s ease',
+              '@keyframes fadeIn': { from: { opacity: 0 }, to: { opacity: 1 } },
+            }}
+          >
+            {heroTitle}
           </Typography>
-          <Typography variant="h6" sx={{ opacity: 0.95, maxWidth: 600, mx: 'auto', fontWeight: 400 }}>
-            Forecasting future outcomes so we can take action before things happen.
+          <Typography
+            key={heroSubtitle}
+            variant="h6"
+            sx={{
+              opacity: 0.95,
+              maxWidth: 600,
+              mx: 'auto',
+              fontWeight: 400,
+              animation: 'fadeIn 0.3s ease',
+            }}
+          >
+            {heroSubtitle}
           </Typography>
         </Container>
       </Box>
@@ -244,22 +294,33 @@ export default function InsightsPage() {
         {/* Top-level Predictive / Explanatory switcher */}
         {topTabBar}
 
-        {/* Pipeline sub-tabs — same style as explanatory page */}
-        <Paper sx={{ borderRadius: 3, mb: 5, boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+        {/* Explanatory tab — render inline instead of navigating away */}
+        {topTab === 'explanatory' ? (
+          <ExplanatoryInsightsPage topTabBar={null} />
+        ) : (
+        <>
+        {/* Pipeline sub-tabs */}
+        <Paper sx={{ borderRadius: 3, mb: 5, boxShadow: '0 2px 12px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
           <Tabs
             value={activeTab}
             onChange={(_, v) => { setActiveTab(v); setShowTechnical(false); }}
             variant="scrollable"
             scrollButtons="auto"
+            TabIndicatorProps={{
+              sx: {
+                height: 3,
+                borderRadius: '3px 3px 0 0',
+                backgroundColor: PIPELINE_COLORS[activeTab] ?? '#D4603F',
+              },
+            }}
             sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '0.95rem', py: 2 } }}
           >
-            {PREDICTIVE_PIPELINES.map((p, i) => (
+            {PREDICTIVE_PIPELINES.map((p) => (
               <Tab
                 key={p.name}
                 icon={p.icon}
                 iconPosition="start"
                 label={p.friendlyName}
-                sx={{ borderBottom: activeTab === i ? `3px solid ${PIPELINE_COLORS[i]}` : 'none' }}
               />
             ))}
           </Tabs>
@@ -465,6 +526,8 @@ export default function InsightsPage() {
             </Box>
           </Collapse>
         </Paper>
+        </>
+        )}
       </Container>
     </Box>
   );
