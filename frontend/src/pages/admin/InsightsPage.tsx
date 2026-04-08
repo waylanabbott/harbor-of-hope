@@ -38,6 +38,7 @@ import {
   CartesianGrid,
   Cell,
 } from 'recharts';
+import ExplanatoryInsightsPage from './ExplanatoryInsightsPage';
 
 interface Driver {
   name: string;
@@ -231,11 +232,41 @@ export default function InsightsPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [technicalOpen, setTechnicalOpen] = useState<Record<number, boolean>>({});
 
-  const filtered = PIPELINES.filter((p) => p.type === category);
-  const color = COLORS[category];
+  const filtered = PIPELINES.filter((p) => p.type === 'predictive');
+
+  // If explanatory tab selected, render the original full explanatory page
+  if (category === 'explanatory') {
+    return (
+      <Box>
+        {/* Top-level tab switcher */}
+        <Container maxWidth="lg" sx={{ pt: 3 }}>
+          <Paper
+            sx={{
+              borderRadius: 3,
+              mb: 0,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+            }}
+          >
+            <Tabs
+              value={category}
+              onChange={(_, v) => { setCategory(v); setExpandedId(null); }}
+              sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '1rem', py: 2 } }}
+            >
+              <Tab value="predictive" icon={<TrendingUpIcon />} iconPosition="start" label="Predictive Models" sx={{ flex: 1 }} />
+              <Tab value="explanatory" icon={<ScienceIcon />} iconPosition="start" label="Explanatory Models" sx={{ flex: 1, borderBottom: `3px solid ${COLORS.explanatory}` }} />
+            </Tabs>
+          </Paper>
+        </Container>
+        <ExplanatoryInsightsPage />
+      </Box>
+    );
+  }
+
+  const color = COLORS.predictive;
 
   return (
     <Box>
+      {/* Hero */}
       <Box
         sx={{
           background:
@@ -256,20 +287,20 @@ export default function InsightsPage() {
               textShadow: '0 2px 8px rgba(0,0,0,0.15)',
             }}
           >
-            Machine Learning Insights
+            Predictive ML Insights
           </Typography>
           <Typography
             variant="h6"
             sx={{ opacity: 0.95, maxWidth: 600, mx: 'auto', fontWeight: 400 }}
           >
-            Data-driven findings from our ML pipelines — what we can predict and
-            what factors drive outcomes.
+            Forecasting future outcomes — which donors will churn, which
+            residents are ready, how much we&apos;ll receive in donations.
           </Typography>
         </Container>
       </Box>
 
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
-        {/* Category Tabs */}
+        {/* Tab switcher */}
         <Paper
           sx={{
             borderRadius: 3,
@@ -279,76 +310,12 @@ export default function InsightsPage() {
         >
           <Tabs
             value={category}
-            onChange={(_, v) => {
-              setCategory(v);
-              setExpandedId(null);
-            }}
-            sx={{
-              '& .MuiTab-root': {
-                textTransform: 'none',
-                fontWeight: 600,
-                fontSize: '1rem',
-                py: 2,
-              },
-            }}
+            onChange={(_, v) => { setCategory(v); setExpandedId(null); }}
+            sx={{ '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: '1rem', py: 2 } }}
           >
-            <Tab
-              value="predictive"
-              icon={<TrendingUpIcon />}
-              iconPosition="start"
-              label="Predictive Models"
-              sx={{
-                flex: 1,
-                borderBottom:
-                  category === 'predictive'
-                    ? `3px solid ${COLORS.predictive}`
-                    : 'none',
-              }}
-            />
-            <Tab
-              value="explanatory"
-              icon={<ScienceIcon />}
-              iconPosition="start"
-              label="Explanatory Models"
-              sx={{
-                flex: 1,
-                borderBottom:
-                  category === 'explanatory'
-                    ? `3px solid ${COLORS.explanatory}`
-                    : 'none',
-              }}
-            />
+            <Tab value="predictive" icon={<TrendingUpIcon />} iconPosition="start" label="Predictive Models" sx={{ flex: 1, borderBottom: `3px solid ${COLORS.predictive}` }} />
+            <Tab value="explanatory" icon={<ScienceIcon />} iconPosition="start" label="Explanatory Models" sx={{ flex: 1 }} />
           </Tabs>
-        </Paper>
-
-        {/* Category Description */}
-        <Paper
-          sx={{
-            p: 3,
-            mb: 4,
-            borderRadius: 3,
-            backgroundColor: `${color}08`,
-            border: `1px solid ${color}25`,
-            boxShadow: 'none',
-          }}
-        >
-          <Typography variant="body1" color="text.secondary">
-            {category === 'predictive' ? (
-              <>
-                <strong>Predictive models</strong> forecast future outcomes —
-                which donors will churn, which residents are ready for
-                reintegration, how much we&apos;ll receive in donations. Use
-                these to take action before things happen.
-              </>
-            ) : (
-              <>
-                <strong>Explanatory models</strong> help us understand why
-                things happen — what makes counseling effective, how funding
-                allocation affects outcomes. Use these to inform strategy and
-                resource decisions.
-              </>
-            )}
-          </Typography>
         </Paper>
 
         {/* Pipeline Cards */}
