@@ -159,9 +159,8 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
         '& .MuiDrawer-paper': {
           width: drawerWidth,
           boxSizing: 'border-box',
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
+          position: 'relative',
+          height: '100%',
           transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,

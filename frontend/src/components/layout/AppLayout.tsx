@@ -80,7 +80,7 @@ function AppLayout() {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
+        ...(isAdminRoute ? { height: '100vh', overflow: 'hidden' } : { minHeight: '100vh' }),
         position: 'relative',
         '&::before': {
           content: '""',
@@ -367,7 +367,7 @@ function AppLayout() {
       </AppBar>
 
       {isAdminRoute ? (
-        <Box sx={{ display: 'flex', flex: 1 }}>
+        <Box sx={{ display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' }}>
           {/* On mobile, AdminSidebar renders as temporary overlay; on desktop, inline persistent */}
           <AdminSidebar
             open={sidebarOpen}
@@ -437,7 +437,7 @@ function AppLayout() {
         </Container>
       )}
 
-      <Footer />
+      {!isAdminRoute && <Footer />}
       <CookieConsentBanner />
 
       {/* Mobile navigation drawer -- for public/donor routes */}
