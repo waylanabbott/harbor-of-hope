@@ -90,7 +90,7 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
                 width: 56,
                 borderRadius: '50%',
                 objectFit: 'cover',
-                clipPath: 'circle(34% at 50% 50%)',
+                clipPath: 'circle(46% at 56% 42%)',
               }}
             />
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>

@@ -151,7 +151,7 @@ function AppLayout() {
                 borderRadius: '50%',
                 objectFit: 'cover',
                 // Tight crop to remove large white padding in source image
-                clipPath: 'circle(34% at 50% 50%)',
+                clipPath: 'circle(46% at 56% 42%)',
               }}
             />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>

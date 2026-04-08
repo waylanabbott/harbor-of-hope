@@ -70,7 +70,7 @@ function RegisterPage() {
                 width: 64,
                 borderRadius: '50%',
                 objectFit: 'cover',
-                clipPath: 'circle(34% at 50% 50%)',
+                clipPath: 'circle(46% at 56% 42%)',
               }}
             />
             <Typography
