@@ -5,7 +5,6 @@ import {
   Typography,
   Card,
   CardContent,
-  CardMedia,
   Paper,
   Divider,
   Avatar,
@@ -320,16 +319,28 @@ export default function AboutPage() {
                 document.getElementById(p.title.toLowerCase().replace(/\s+/g, '-'))?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              <CardMedia
-                component="div"
+              <Box
                 sx={{
                   height: 160,
-                  bgcolor: '#f0ebe6',
-                  backgroundImage: `url(${p.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: 'rgba(240, 235, 230, 0.85)',
+                  background:
+                    'radial-gradient(circle at 30% 20%, rgba(212,96,63,0.10), transparent 55%), radial-gradient(circle at 70% 80%, rgba(91,140,122,0.10), transparent 55%)',
                 }}
-              />
+              >
+                <Avatar
+                  sx={{
+                    bgcolor: p.color,
+                    width: 76,
+                    height: 76,
+                    boxShadow: '0 10px 26px rgba(0,0,0,0.12)',
+                  }}
+                >
+                  <Box sx={{ fontSize: 36, display: 'flex', alignItems: 'center' }}>{p.icon}</Box>
+                </Avatar>
+              </Box>
               <CardContent sx={{ py: 2 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#2D2D2D', fontSize: '0.85rem' }}>
                   {p.title}
@@ -397,42 +408,85 @@ export default function AboutPage() {
       </Box>
 
       {/* Get to Know Us */}
-      <Box
-        sx={{
-          position: 'relative',
-          py: { xs: 10, md: 14 },
-          textAlign: 'center',
-          overflow: 'hidden',
-          backgroundImage: 'url(/hero-2.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(45,45,45,0.80)',
-            pointerEvents: 'none',
-          },
-        }}
-      >
-        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
-          <Typography variant="h4" component="h2" sx={{ fontWeight: 700, color: 'white', mb: 3 }}>
-            Get to Know Us
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'white' }}>
+        <Container maxWidth="md">
+          <Box
+            component="img"
+            src="/about/get-to-know.jpg"
+            alt="Get to know Harbor of Hope"
+            sx={{
+              width: '100%',
+              maxWidth: 520,
+              mx: 'auto',
+              mb: { xs: 5, md: 6 },
+              display: 'block',
+              aspectRatio: '1 / 1.15',
+              objectFit: 'cover',
+              borderRadius: '999px',
+            }}
+          />
+          <Typography
+            variant="h4"
+            component="h2"
+            sx={{
+              mb: 4,
+              fontWeight: 800,
+              color: '#E8735A',
+              fontFamily: '"Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive',
+              letterSpacing: 0.5,
+            }}
+          >
+            Get to know Us
           </Typography>
-          <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.8, maxWidth: 600, mx: 'auto', mb: 2 }}>
-            Harbor of Hope is a sanctuary for girls who are survivors of trafficking.
-            Our dedicated staff work around the clock to provide safety, healing, and
-            a path toward a brighter future. Every program, every meal, every prayer
-            is designed to restore hope and dignity.
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.85)', lineHeight: 1.8, maxWidth: 600, mx: 'auto' }}>
-            We believe that every child deserves to be seen, heard, and loved. If you
-            share that belief, we invite you to learn how you can support our mission
-            through donations, volunteering, or simply spreading the word.
-          </Typography>
+
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '12px 1fr' },
+              gap: { xs: 2, sm: 3 },
+              alignItems: 'start',
+            }}
+          >
+            <Box
+              sx={{
+                width: 8,
+                height: { xs: 56, sm: 72 },
+                bgcolor: '#E8735A',
+                borderRadius: 8,
+                mx: { xs: 0, sm: 0 },
+              }}
+            />
+
+            <Box>
+              <Typography
+                variant="h6"
+                component="p"
+                sx={{
+                  fontWeight: 800,
+                  color: '#2D2D2D',
+                  lineHeight: 1.6,
+                  mb: 4,
+                  fontSize: { xs: '1.05rem', sm: '1.2rem' },
+                }}
+              >
+                Harbor of Hope is a 501c3 organization (EIN 81-3220618) created to meet the needs of children-survivors of sexual abuse and sex trafficking in Central America by providing a safe haven and professional rehabilitation services so children can successfully reintegrate back into family life and society.
+              </Typography>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
+                  There is a great need for residential shelters in Central America for children who are trapped in abuse or who are sexually trafficked. Harbor of Hope has stepped up to fill the need for female survivors between the ages of 8 to 18.
+                </Typography>
+
+                <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
+                  Harbor of Hope has two residential style shelters, that caters to up to 20 children each. The children are rescued by the local police department or anti-trafficking agents who refer the children through the Department of Social Welfare and Development (DSWD) to Harbor of Hope. The social worker in the sanctuary will assist the child in transitioning into their new environment.
+                </Typography>
+
+                <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.9, fontSize: '1.05rem' }}>
+                  Once in the home, the children will be provided with counseling, medical services, daily needs and an individualized education. Partners of Harbor of Hope will be working toward justice for each child in order to ensure a safe reintegration into society. Harbor of Hope believes that the family unit is the ideal place for any child and will coordinate with the DSWD to find suitable families for each child. Whether a child is placed with their birth family, a foster family or an adoptive family, Harbor of Hope will provide family counseling to assist in the transition.
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
         </Container>
       </Box>
     </Box>
