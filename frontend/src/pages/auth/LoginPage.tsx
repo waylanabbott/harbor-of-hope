@@ -98,7 +98,13 @@ function LoginPage() {
               component="img"
               src="/logo.png"
               alt="Harbor of Hope logo"
-              sx={{ height: 36, width: 36, borderRadius: '50%', transform: 'scale(1.42)' }}
+              sx={{
+                height: 64,
+                width: 64,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                clipPath: 'circle(34% at 50% 50%)',
+              }}
             />
             <Typography
               variant="h5"

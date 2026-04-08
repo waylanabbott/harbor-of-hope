@@ -32,7 +32,14 @@ export default function Footer() {
                 component="img"
                 src="/logo.png"
                 alt="Harbor of Hope logo"
-                sx={{ height: 48, width: 48, borderRadius: '50%', transform: 'scale(1.42)' }}
+                sx={{
+                  height: 84,
+                  width: 84,
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  // Tight crop to remove large white padding in source image
+                  clipPath: 'circle(34% at 50% 50%)',
+                }}
               />
               <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>
                 Harbor of Hope
@@ -98,7 +105,14 @@ export default function Footer() {
             component="img"
             src="/logo.png"
             alt=""
-            sx={{ height: 24, width: 24, borderRadius: '50%', opacity: 0.6, transform: 'scale(1.42)' }}
+            sx={{
+              height: 38,
+              width: 38,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              clipPath: 'circle(34% at 50% 50%)',
+              opacity: 0.6,
+            }}
           />
           <Typography
             variant="body2"

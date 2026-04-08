@@ -328,19 +328,19 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
           }}
           variant="scrollable"
           scrollButtons="auto"
-          TabIndicatorProps={{
-            sx: {
-              height: 3,
-              borderRadius: '3px 3px 0 0',
-              backgroundColor: PIPELINE_COLORS[activeTab] ?? '#E8735A',
-            },
-          }}
           sx={{
             '& .MuiTab-root': {
               textTransform: 'none',
               fontWeight: 600,
               fontSize: '0.95rem',
               py: 2,
+            },
+          }}
+          TabIndicatorProps={{
+            sx: {
+              height: 3,
+              borderRadius: '3px 3px 0 0',
+              backgroundColor: PIPELINE_COLORS[activeTab] ?? '#E8735A',
             },
           }}
         >

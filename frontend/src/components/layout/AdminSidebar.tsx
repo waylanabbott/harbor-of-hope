@@ -85,7 +85,13 @@ export default function AdminSidebar({ open, onToggle, isMobile = false }: Admin
               component="img"
               src="/logo.png"
               alt="Harbor of Hope logo"
-              sx={{ height: 32, width: 32, borderRadius: '50%', transform: 'scale(1.42)' }}
+              sx={{
+                height: 56,
+                width: 56,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                clipPath: 'circle(34% at 50% 50%)',
+              }}
             />
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               Harbor of Hope
