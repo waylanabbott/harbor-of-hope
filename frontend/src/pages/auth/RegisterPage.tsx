@@ -68,9 +68,7 @@ function RegisterPage() {
               sx={{
                 height: 64,
                 width: 64,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                clipPath: 'circle(50% at 54% 40%)',
+                objectFit: 'contain',
               }}
             />
             <Typography

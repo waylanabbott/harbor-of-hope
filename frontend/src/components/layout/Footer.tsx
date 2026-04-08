@@ -35,10 +35,7 @@ export default function Footer() {
                 sx={{
                   height: 84,
                   width: 84,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  // Tight crop to remove large white padding in source image
-                  clipPath: 'circle(50% at 54% 40%)',
+                  objectFit: 'contain',
                 }}
               />
               <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>
@@ -108,9 +105,7 @@ export default function Footer() {
             sx={{
               height: 38,
               width: 38,
-              borderRadius: '50%',
-              objectFit: 'cover',
-              clipPath: 'circle(50% at 54% 40%)',
+              objectFit: 'contain',
               opacity: 0.6,
             }}
           />

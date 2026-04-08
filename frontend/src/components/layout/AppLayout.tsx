@@ -148,10 +148,7 @@ function AppLayout() {
               sx={{
                 height: 76,
                 width: 76,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                // Tight crop to remove large white padding in source image
-                clipPath: 'circle(50% at 54% 40%)',
+                objectFit: 'contain',
               }}
             />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
