@@ -37,6 +37,10 @@ public class AppDbContext : DbContext
     public DbSet<SafehousePrediction> SafehousePredictions => Set<SafehousePrediction>();
     public DbSet<CampaignPrediction> CampaignPredictions => Set<CampaignPrediction>();
 
+    // Explanatory insight tables (pre-computed by Python jobs/)
+    public DbSet<ExplanatoryInsight> ExplanatoryInsights => Set<ExplanatoryInsight>();
+    public DbSet<ExplanatoryFeature> ExplanatoryFeatures => Set<ExplanatoryFeature>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

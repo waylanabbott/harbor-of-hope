@@ -43,4 +43,16 @@ if __name__ == "__main__":
         print(f"  FAILED: Campaign Effectiveness — {e}")
         traceback.print_exc()
 
+    # Explanatory insights (runs all 4 analyses, writes to explanatory_insights + explanatory_features)
+    import run_explanatory_insights
+    print(f"\n{'='*50}")
+    print(f"  Explanatory Insights (4 pipelines)")
+    print(f"{'='*50}")
+    try:
+        run_explanatory_insights.run()
+        print(f"  Done: Explanatory Insights")
+    except Exception as e:
+        print(f"  FAILED: Explanatory Insights — {e}")
+        traceback.print_exc()
+
     print("\nAll pipelines complete.")
