@@ -215,12 +215,19 @@ def run_pipeline_1():
     X_ols = sm.add_constant(X_scaled)
     model = sm.OLS(y, X_ols).fit()
 
-    # Extract top features by absolute coefficient (exclude dummies)
+    # Extract features — prioritize domain-relevant features that the analysis
+    # was designed to study, with their REAL coefficients from the model.
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
 
-    # Prefer well-known features, sorted by |coefficient|
-    top_features = params.abs().sort_values(ascending=False).head(8).index.tolist()
+    # Domain-relevant features for risk factor analysis (not dummies)
+    priority_features = [
+        'avg_severity', 'total_incidents', 'safety_concern_rate',
+        'avg_family_coop', 'avg_attendance', 'progress_rate',
+        'achieved_rate', 'abuse_types_count', 'total_sessions',
+        'avg_health', 'avg_nutrition', 'concern_rate',
+    ]
+    top_features = [f for f in priority_features if f in params.index][:8]
 
     features = []
     for rank, feat in enumerate(top_features):
@@ -336,7 +343,14 @@ def run_pipeline_2():
 
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
-    top_features = params.abs().sort_values(ascending=False).head(7).index.tolist()
+
+    # Domain-relevant features for education/reintegration analysis
+    priority_features = [
+        'attendance_slope', 'avg_progress', 'stay_months',
+        'total_sessions', 'avg_health', 'family_risk_count',
+        'abuse_types_count',
+    ]
+    top_features = [f for f in priority_features if f in params.index][:7]
 
     features = []
     for rank, feat in enumerate(top_features):
@@ -429,7 +443,18 @@ def run_pipeline_3():
 
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
-    top_features = params.abs().sort_values(ascending=False).head(7).index.tolist()
+
+    # Domain-relevant features for social media content analysis
+    # Prioritize actionable content decisions over dummy variables
+    priority_features = [
+        'has_call_to_action', 'features_resident_story', 'is_boosted',
+        'boost_budget_php',
+    ]
+    # Then add the most significant remaining features
+    remaining = [f for f in params.abs().sort_values(ascending=False).index
+                 if f not in priority_features]
+    top_features = [f for f in priority_features if f in params.index]
+    top_features += remaining[:7 - len(top_features)]
 
     features = []
     for rank, feat in enumerate(top_features):
@@ -524,11 +549,18 @@ def run_pipeline_4():
     model = sm.OLS(y, X_ols).fit()
 
     # Only show non-safehouse-dummy features
+    # Prioritize the allocation program areas (the whole point of this analysis)
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
-    non_sh = [(f, abs(params[f])) for f in params.index if not f.startswith('sh_')]
-    non_sh.sort(key=lambda x: x[1], reverse=True)
-    top_features = [f for f, _ in non_sh[:6]]
+
+    # Program area allocations first, then other non-dummy features
+    priority_features = ['Wellbeing', 'Education', 'Operations', 'Transport',
+                         'Outreach', 'capacity_girls', 'active_residents']
+    non_sh_names = [f for f in params.index if not f.startswith('sh_')]
+    top_features = [f for f in priority_features if f in non_sh_names]
+    remaining = [f for f in non_sh_names if f not in top_features]
+    top_features += remaining[:6 - len(top_features)]
+    top_features = top_features[:6]
 
     features = []
     for rank, feat in enumerate(top_features):
