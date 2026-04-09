@@ -214,11 +214,6 @@ const FEATURE_GLOSSARY: Record<string, { title: string; description: string }> =
     description:
       'Donations allocated to health, nutrition, and psychological support at this safehouse that month.',
   },
-  'Wellbeing Funding': {
-    title: 'Wellbeing Funding',
-    description:
-      'Donations allocated to health, nutrition, and psychological support at this safehouse that month.',
-  },
   'Operations Funding': {
     title: 'Operations Funding',
     description:
