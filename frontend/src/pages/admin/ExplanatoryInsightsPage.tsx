@@ -273,10 +273,11 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
   const color = PIPELINE_COLORS[activeTab] ?? '#5B8C7A';
 
   const driversChartData =
-    current?.topFeatures?.slice(0, 6).map((f) => ({
+    current?.topFeatures?.slice(0, 8).map((f) => ({
       name: getFeatureLabel(f.name),
       rawName: f.name,
       coefficient: Number(f.coefficient.toFixed(3)),
+      pValue: f.pValue,
       isSignificant: f.isSignificant,
       interpretation: f.interpretation,
       direction: f.direction,
@@ -424,7 +425,7 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
               </Box>
             </Paper>
 
-            {/* What Matters Most — bar chart with friendly labels */}
+            {/* What Matters Most — adaptive visualization based on significance */}
             <Paper
               sx={{
                 p: { xs: 2, md: 4 },
@@ -436,87 +437,190 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
               <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
                 What Matters Most
               </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mb: 3 }}
-              >
-                Longer bars = stronger influence. Green bars increase the
-                outcome, coral bars decrease it. Click any bar to learn more.
-              </Typography>
-              <Box sx={{ height: 340 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={driversChartData}
-                    layout="vertical"
-                    margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
-                  >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="#E0D6CC"
-                    />
-                    <XAxis type="number" domain={['auto', 'auto']} hide />
-                    <YAxis
-                      type="category"
-                      dataKey="name"
-                      width={180}
-                      tick={{ fontSize: 13, fill: '#333', fontWeight: 500 }}
-                    />
-                    <RechartsTooltip
-                      content={({ active, payload }) => {
-                        if (!active || !payload || payload.length === 0)
-                          return null;
-                        const row = payload[0]?.payload as
-                          | {
-                              name: string;
-                              rawName: string;
-                              interpretation: string;
-                              direction: string;
-                            }
-                          | undefined;
-                        if (!row) return null;
-                        return (
-                          <Paper
+
+              {(() => {
+                const sigFeatures = driversChartData.filter((d) => d.isSignificant);
+                const nonSigFeatures = driversChartData.filter((d) => !d.isSignificant);
+                const sigCount = sigFeatures.length;
+
+                // 0 significant: informational callout
+                if (sigCount === 0) {
+                  return (
+                    <Box sx={{ py: 4, textAlign: 'center' }}>
+                      <Typography variant="body1" color="text.secondary" sx={{ mb: 2, maxWidth: 500, mx: 'auto' }}>
+                        With {current.sampleSize} observations, no individual factor reached statistical significance (p &lt; 0.05).
+                        This is common with small samples — it doesn&apos;t mean nothing matters, just that we can&apos;t be confident with this data alone.
+                      </Typography>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, mt: 3, mb: 2, color: '#6B6B6B' }}>
+                        Strongest Associations (not statistically significant)
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, maxWidth: 500, mx: 'auto' }}>
+                        {driversChartData.slice(0, 4).map((d) => (
+                          <Box
+                            key={d.rawName}
                             sx={{
-                              p: 2,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 2,
+                              p: 1.5,
                               borderRadius: 2,
-                              maxWidth: 300,
-                              boxShadow: '0 6px 18px rgba(0,0,0,0.14)',
+                              bgcolor: 'rgba(0,0,0,0.02)',
                             }}
                           >
-                            <Typography
-                              variant="subtitle2"
-                              sx={{ fontWeight: 700, mb: 0.5 }}
-                            >
-                              {row.name}
+                            <Box sx={{
+                              width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                              bgcolor: d.coefficient > 0 ? '#5B8C7A' : '#E8735A',
+                              opacity: 0.5,
+                            }} />
+                            <Box sx={{ flex: 1 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 600 }}>{d.name}</Typography>
+                              <Typography variant="caption" color="text.secondary">{d.interpretation}</Typography>
+                            </Box>
+                            <Typography variant="caption" sx={{ color: '#999', whiteSpace: 'nowrap' }}>
+                              p = {d.pValue?.toFixed(3) ?? '—'}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {row.interpretation}
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+                  );
+                }
+
+                // 1-2 significant: highlight cards + muted list
+                if (sigCount <= 2) {
+                  return (
+                    <Box sx={{ pt: 1 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                        {sigCount === 1 ? 'One factor' : 'Two factors'} reached statistical significance (p &lt; 0.05).
+                      </Typography>
+                      {/* Significant features as prominent cards */}
+                      <Box sx={{ display: 'flex', gap: 3, mb: 4, flexWrap: 'wrap' }}>
+                        {sigFeatures.map((d) => (
+                          <Box
+                            key={d.rawName}
+                            sx={{
+                              flex: '1 1 280px',
+                              p: 3,
+                              borderRadius: 3,
+                              border: `2px solid ${d.coefficient > 0 ? '#5B8C7A' : '#E8735A'}`,
+                              bgcolor: d.coefficient > 0 ? 'rgba(91,140,122,0.06)' : 'rgba(232,115,90,0.06)',
+                            }}
+                          >
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                              <Box sx={{
+                                width: 12, height: 12, borderRadius: '50%',
+                                bgcolor: d.coefficient > 0 ? '#5B8C7A' : '#E8735A',
+                              }} />
+                              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                                {d.name}
+                              </Typography>
+                              <Chip label="significant" size="small" color="success" sx={{ ml: 'auto', height: 22, fontSize: '0.7rem' }} />
+                            </Box>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                              {d.interpretation}
                             </Typography>
-                          </Paper>
-                        );
-                      }}
-                    />
-                    <Bar
-                      dataKey="coefficient"
-                      radius={[6, 6, 6, 6]}
-                      cursor="pointer"
-                      onClick={(data: any) => {
-                        const name = data?.payload?.rawName;
-                        if (typeof name === 'string' && name.length > 0)
-                          openFeatureInfo(name);
-                      }}
-                    >
-                      {driversChartData.map((entry, index) => (
-                        <Cell
-                          key={index}
-                          fill={entry.coefficient > 0 ? '#5B8C7A' : '#E8735A'}
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </Box>
+                            <Box sx={{ display: 'flex', gap: 3 }}>
+                              <Typography variant="caption" sx={{ color: '#666' }}>
+                                Coefficient: <strong>{d.coefficient > 0 ? '+' : ''}{d.coefficient.toFixed(3)}</strong>
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#666' }}>
+                                p-value: <strong>{d.pValue?.toFixed(4) ?? '—'}</strong>
+                              </Typography>
+                            </Box>
+                          </Box>
+                        ))}
+                      </Box>
+                      {/* Non-significant features as muted list */}
+                      {nonSigFeatures.length > 0 && (
+                        <>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#999', mb: 1.5 }}>
+                            Not statistically significant
+                          </Typography>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            {nonSigFeatures.map((d) => (
+                              <Box
+                                key={d.rawName}
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 2,
+                                  p: 1,
+                                  borderRadius: 1.5,
+                                  bgcolor: 'rgba(0,0,0,0.015)',
+                                }}
+                              >
+                                <Box sx={{
+                                  width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
+                                  bgcolor: d.coefficient > 0 ? '#5B8C7A' : '#E8735A',
+                                  opacity: 0.35,
+                                }} />
+                                <Typography variant="body2" sx={{ color: '#999', flex: 1 }}>{d.name}</Typography>
+                                <Typography variant="caption" sx={{ color: '#bbb' }}>
+                                  p = {d.pValue?.toFixed(2) ?? '—'}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Box>
+                        </>
+                      )}
+                    </Box>
+                  );
+                }
+
+                // 3+ significant: bar chart (data supports it)
+                return (
+                  <>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                      Longer bars = stronger influence. Green bars increase the outcome, coral bars decrease it.
+                      {sigCount < driversChartData.length && ` ${sigCount} of ${driversChartData.length} factors are statistically significant.`}
+                    </Typography>
+                    <Box sx={{ height: 340 }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={driversChartData}
+                          layout="vertical"
+                          margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="#E0D6CC" />
+                          <XAxis type="number" domain={['auto', 'auto']} hide />
+                          <YAxis type="category" dataKey="name" width={180}
+                            tick={{ fontSize: 13, fill: '#333', fontWeight: 500 }} />
+                          <RechartsTooltip
+                            content={({ active, payload }) => {
+                              if (!active || !payload || payload.length === 0) return null;
+                              const row = payload[0]?.payload as
+                                | { name: string; rawName: string; interpretation: string; isSignificant: boolean }
+                                | undefined;
+                              if (!row) return null;
+                              return (
+                                <Paper sx={{ p: 2, borderRadius: 2, maxWidth: 300, boxShadow: '0 6px 18px rgba(0,0,0,0.14)' }}>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                                    {row.name} {row.isSignificant && '(significant)'}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">{row.interpretation}</Typography>
+                                </Paper>
+                              );
+                            }}
+                          />
+                          <Bar dataKey="coefficient" radius={[6, 6, 6, 6]} cursor="pointer"
+                            onClick={(data: any) => {
+                              const name = data?.payload?.rawName;
+                              if (typeof name === 'string' && name.length > 0) openFeatureInfo(name);
+                            }}
+                          >
+                            {driversChartData.map((entry, index) => (
+                              <Cell key={index}
+                                fill={entry.coefficient > 0 ? '#5B8C7A' : '#E8735A'}
+                                opacity={entry.isSignificant ? 1 : 0.3}
+                              />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </>
+                );
+              })()}
             </Paper>
 
             {/* Recommendations — open by default, prominent */}
