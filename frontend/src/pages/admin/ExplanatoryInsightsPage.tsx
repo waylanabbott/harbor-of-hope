@@ -35,10 +35,10 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import SchoolIcon from '@mui/icons-material/School';
+import HomeIcon from '@mui/icons-material/Home';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import CampaignIcon from '@mui/icons-material/Campaign';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import SchoolIcon from '@mui/icons-material/School';
 import {
   ResponsiveContainer,
   BarChart,
@@ -57,149 +57,187 @@ import {
 const PIPELINE_COLORS = ['#E8735A', '#5B8C7A', '#9B59B6', '#26A69A'];
 
 const PIPELINE_ICONS = [
-  <WarningAmberIcon key="risk" />,
-  <SchoolIcon key="edu" />,
+  <HomeIcon key="visit" />,
+  <FavoriteIcon key="counsel" />,
   <CampaignIcon key="social" />,
-  <AccountBalanceIcon key="fund" />,
+  <SchoolIcon key="edu" />,
 ];
 
-// Friendly names for tab labels
 const PIPELINE_FRIENDLY_NAMES: Record<string, string> = {
-  'Risk Factors': 'What Drives Risk',
-  'Education & Reintegration': 'Path to Reintegration',
-  'Social Media & Donations': 'What Drives Donations',
-  'Funding & Outcomes': 'How Funding Creates Impact',
+  'Home Visit Outcome Drivers': 'Visit Success Factors',
+  'Counseling Session Effectiveness': 'Session Effectiveness',
+  'Social Media Engagement Factors': 'What Drives Engagement',
+  'Safehouse Resources & Health Outcomes': 'Resources & Health',
 };
 
-// Plain-English labels for feature names
 const FEATURE_LABELS: Record<string, string> = {
-  avg_severity: 'Incident Severity',
-  total_incidents: 'Number of Incidents',
-  safety_concern_rate: 'Safety Concerns in Visits',
-  avg_family_coop: 'Family Cooperation',
-  avg_attendance: 'School Attendance',
-  progress_rate: 'Counseling Progress',
-  attendance_slope: 'Attendance Trend',
-  avg_progress: 'Education Progress',
-  stay_months: 'Length of Stay',
-  total_sessions: 'Counseling Sessions',
-  family_risk_count: 'Family Risk Factors',
-  has_call_to_action: 'Has Call-to-Action',
-  features_resident_story: 'Resident Story Featured',
-  is_boosted: 'Boosted Post',
-  boost_budget_php: 'Boost Budget',
-  Wellbeing: 'Wellbeing Spending',
-  Education: 'Education Spending',
-  Operations: 'Operations Spending',
-  Transport: 'Transport Spending',
-  capacity_girls: 'Safehouse Capacity',
-  active_residents: 'Active Residents',
+  'Family Cooperation': 'Family Cooperation',
+  'Safety Concerns Noted': 'Safety Concerns',
+  'Family Members Present': 'Family Members Present',
+  'Visit Sequence Number': 'Visit Number',
+  'Individual Session (vs Group)': 'Individual Session',
+  'Session Duration (minutes)': 'Session Duration',
+  'Session Sequence Number': 'Session Number',
+  'Concerns Flagged': 'Concerns Flagged',
+  'Referral Made': 'Referral Made',
+  'Starting Emotional State': 'Starting Emotion',
+  'Call-to-Action Included': 'Call-to-Action',
+  'Resident Story Featured': 'Resident Story',
+  'Post Boosted (paid)': 'Boosted Post',
+  'Number of Hashtags': 'Hashtag Count',
+  'Caption Length': 'Caption Length',
+  'Posting Hour': 'Post Time',
+  'Counseling Sessions': 'Counseling Sessions',
+  'Home Visits': 'Home Visits',
+  'Incidents Reported': 'Incidents',
+  'Active Residents': 'Active Residents',
+  'Education Funding': 'Education Funding',
+  'Wellbeing Funding': 'Wellbeing Funding',
+  'Operations Funding': 'Operations Funding',
+  'Transport Funding': 'Transport Funding',
+  'Outreach Funding': 'Outreach Funding',
+  'Maintenance Funding': 'Maintenance Funding',
 };
 
 const FEATURE_GLOSSARY: Record<string, { title: string; description: string }> = {
-  avg_severity: {
-    title: 'Average Incident Severity',
+  // Pipeline 1 — Home Visits
+  'Family Cooperation': {
+    title: 'Family Cooperation Level',
     description:
-      'The average seriousness level of incidents reported for a resident. Higher means more severe incidents overall.',
+      'How cooperative the family was during the home visit, rated from Uncooperative (1) to Highly Cooperative (4). Higher cooperation strongly predicts better visit outcomes.',
   },
-  total_incidents: {
-    title: 'Total Incidents',
+  'Safety Concerns Noted': {
+    title: 'Safety Concerns',
     description:
-      'The number of incident reports associated with a resident. More incidents indicate higher risk.',
+      'Whether the social worker noted safety concerns during the visit. When present, visits are less likely to have favorable outcomes.',
   },
-  safety_concern_rate: {
-    title: 'Safety Concerns in Home Visits',
+  'Family Members Present': {
+    title: 'Family Members Present',
     description:
-      'The percentage of home visits where safety concerns were noted. Higher means concerns were flagged more often.',
+      'The number of family members who attended the visit. More family involvement reflects engagement with the reintegration process.',
   },
-  avg_family_coop: {
-    title: 'Family Cooperation Score',
+  'Visit Sequence Number': {
+    title: 'Visit Number in Series',
     description:
-      'How cooperative the family is during home visits. Higher means more cooperative families, which supports better outcomes.',
+      'How many visits have occurred for this resident so far. Later visits may benefit from an established relationship between the social worker and family.',
   },
-  avg_attendance: {
-    title: 'School Attendance Rate',
+  // Pipeline 2 — Counseling
+  'Individual Session (vs Group)': {
+    title: 'Individual vs Group Session',
     description:
-      'The average attendance rate across education records. Higher means the resident attends school more consistently.',
+      'Whether the session was one-on-one (Individual) or in a group setting. Individual sessions allow personalized attention.',
   },
-  progress_rate: {
-    title: 'Counseling Progress Rate',
+  'Session Duration (minutes)': {
+    title: 'Session Duration',
     description:
-      'The share of counseling sessions where staff noted progress. Higher means more frequent progress.',
+      'How long the counseling session lasted in minutes. Longer sessions provide more time for processing and support.',
   },
-  attendance_slope: {
-    title: 'Attendance Trend',
+  'Session Sequence Number': {
+    title: 'Session Number in Series',
     description:
-      'Whether school attendance is improving or declining over time. Positive means attendance is trending upward.',
+      'How many sessions this resident has had so far. Cumulative sessions can build trust and enable deeper work.',
   },
-  avg_progress: {
-    title: 'Average Education Progress',
+  'Concerns Flagged': {
+    title: 'Concerns Flagged',
     description:
-      'The average progress percentage in education records. Higher means stronger educational growth.',
+      'Whether the counselor flagged concerns during the session. Flagged concerns may indicate the resident is in a more difficult state.',
   },
-  stay_months: {
-    title: 'Length of Stay',
+  'Referral Made': {
+    title: 'Referral Made',
     description:
-      'How long the resident has been in the program (in months). Longer stays provide more time for services and recovery.',
+      'Whether the session resulted in a referral to a specialist. Referrals connect residents with additional support services.',
   },
-  total_sessions: {
-    title: 'Total Counseling Sessions',
+  'Starting Emotional State': {
+    title: 'Starting Emotional State',
     description:
-      'The total number of counseling sessions a resident has received. More sessions generally support better outcomes.',
+      'The resident\'s emotional state at the start of the session (0\u20135 scale: Distressed to Happy). Residents starting in worse states have more room for improvement, so this is included as a control variable.',
   },
-  family_risk_count: {
-    title: 'Family Risk Factors',
+  // Pipeline 3 — Social Media
+  'Call-to-Action Included': {
+    title: 'Call-to-Action in Post',
     description:
-      'A count of family risk indicators (solo parent, indigenous, parent with disability, informal settler, etc.).',
+      'Whether the social media post includes a clear ask (donate, share, sign up, etc.). CTAs drive audience interaction.',
   },
-  has_call_to_action: {
-    title: 'Has a Call-to-Action',
+  'Resident Story Featured': {
+    title: 'Resident Story Featured',
     description:
-      'Whether the social media post clearly asks the audience to take action (donate, share, sign up, etc.).',
+      'Whether the post includes an anonymized story about a resident. Personal stories increase empathy and engagement.',
   },
-  features_resident_story: {
-    title: 'Features a Resident Story',
+  'Post Boosted (paid)': {
+    title: 'Boosted / Paid Post',
     description:
-      'Whether the post includes an anonymized story about a resident, which increases empathy and giving.',
+      'Whether the post was paid-promoted to reach a larger audience. Boosting increases reach but may change the engagement rate.',
   },
-  is_boosted: {
-    title: 'Boosted Post',
-    description: 'Whether the post was paid/boosted to reach more people.',
-  },
-  boost_budget_php: {
-    title: 'Boost Budget (PHP)',
+  'Number of Hashtags': {
+    title: 'Hashtag Count',
     description:
-      'The amount spent to promote the post. Higher investment means more paid reach.',
+      'How many hashtags were included in the post. Hashtags increase discoverability but overuse can reduce impact.',
   },
-  Wellbeing: {
-    title: 'Wellbeing Allocation',
+  'Caption Length': {
+    title: 'Caption Length',
     description:
-      'Amount allocated to wellbeing spending (health, nutrition, psychological support) for a safehouse each month.',
+      'Character count of the post caption. Longer captions can tell a richer story but may lose casual scrollers.',
   },
-  Education: {
-    title: 'Education Allocation',
+  'Posting Hour': {
+    title: 'Time of Day Posted',
     description:
-      'Amount allocated to education spending for a safehouse each month.',
+      'The hour the post was published (0-23). Posting time affects how many followers see the content in their feed.',
   },
-  Operations: {
-    title: 'Operations Allocation',
+  // Pipeline 4 — Safehouse Resources
+  'Counseling Sessions': {
+    title: 'Monthly Counseling Sessions',
     description:
-      'Amount allocated to operations/overhead for a safehouse each month.',
+      'Number of counseling sessions conducted at the safehouse that month. More sessions indicate higher counseling intensity.',
   },
-  Transport: {
-    title: 'Transport Allocation',
+  'Home Visits': {
+    title: 'Monthly Home Visits',
     description:
-      'Amount allocated to transport spending for a safehouse each month.',
+      'Number of home visits conducted for residents of this safehouse that month. Visits support family engagement.',
   },
-  capacity_girls: {
-    title: 'Safehouse Capacity',
+  'Incidents Reported': {
+    title: 'Monthly Incidents',
     description:
-      'The designed capacity of the safehouse (how many girls it can serve).',
+      'Number of incident reports filed at the safehouse that month. Higher counts may indicate behavioral challenges.',
   },
-  active_residents: {
+  'Active Residents': {
     title: 'Active Residents',
     description:
-      'How many residents are active in a safehouse during a given month.',
+      'How many residents are active in a safehouse during a given month. More residents may strain resources.',
+  },
+  'Education Funding': {
+    title: 'Education Funding',
+    description:
+      'Donations allocated to education programs at this safehouse that month.',
+  },
+  'Wellbeing Funding': {
+    title: 'Wellbeing Funding',
+    description:
+      'Donations allocated to health, nutrition, and psychological support at this safehouse that month.',
+  },
+  'Wellbeing Funding': {
+    title: 'Wellbeing Funding',
+    description:
+      'Donations allocated to health, nutrition, and psychological support at this safehouse that month.',
+  },
+  'Operations Funding': {
+    title: 'Operations Funding',
+    description:
+      'Donations allocated to general operations and overhead at this safehouse that month.',
+  },
+  'Transport Funding': {
+    title: 'Transport Funding',
+    description:
+      'Donations allocated to transportation for this safehouse that month.',
+  },
+  'Outreach Funding': {
+    title: 'Outreach Funding',
+    description:
+      'Donations allocated to outreach and community engagement at this safehouse that month.',
+  },
+  'Maintenance Funding': {
+    title: 'Maintenance Funding',
+    description:
+      'Donations allocated to facility maintenance at this safehouse that month.',
   },
 };
 
@@ -348,11 +386,10 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
     setFeatureInfoOpen(true);
   }
 
-  // Strength label for R²
   function modelStrength(r2: number): { label: string; color: string } {
-    if (r2 >= 0.7) return { label: 'Strong', color: '#5B8C7A' };
-    if (r2 >= 0.4) return { label: 'Moderate', color: '#E8935A' };
-    return { label: 'Weak', color: '#E8735A' };
+    if (r2 >= 0.5) return { label: 'Strong', color: '#5B8C7A' };
+    if (r2 >= 0.15) return { label: 'Moderate', color: '#E8935A' };
+    return { label: 'Exploratory', color: '#999' };
   }
 
   const strength = modelStrength(current?.adjRSquared ?? 0);
@@ -808,6 +845,15 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
                     </Card>
                   </Box>
 
+                  <Alert severity="warning" sx={{ mb: 2, borderRadius: 2 }}>
+                    <Typography variant="body2">
+                      Coefficients describe <strong>correlations in historical data</strong>, not proven
+                      cause-and-effect. These patterns help identify what to investigate further, not what
+                      to assume as fact. Surprising signs can reflect confounding, selection effects, or
+                      limited sample sizes.
+                    </Typography>
+                  </Alert>
+
                   {/* Coefficients table */}
                   <TableContainer>
                     <Table size="small">
@@ -826,7 +872,7 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
                             Direction
                           </TableCell>
                           <TableCell sx={{ fontWeight: 700 }}>
-                            What It Means
+                            Statistical note
                           </TableCell>
                         </TableRow>
                       </TableHead>
