@@ -123,8 +123,8 @@ export default function LandingPage() {
             <Button
               variant="contained"
               size="large"
-              href="#donate"
-              aria-label="Support our mission - scroll to learn more"
+              href="/login"
+              aria-label="Support our mission - log in to get started"
               sx={{
                 px: 6,
                 py: 1.8,
@@ -454,7 +454,7 @@ export default function LandingPage() {
               <Button
                 variant="contained"
                 size="large"
-                href="mailto:donate@harborofhope.org"
+                href="/register"
                 sx={{
                   px: 6,
                   py: 1.8,

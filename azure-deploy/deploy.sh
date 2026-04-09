@@ -16,9 +16,9 @@ set -euo pipefail
 ###############################################################################
 
 # ── Configuration ──────────────────────────────────────────────────────────────
-RESOURCE_GROUP="${RESOURCE_GROUP:-harborofhope-rg}"
-LOCATION="${LOCATION:-eastus}"
-APP_NAME="${APP_NAME:-harborofhope}"
+RESOURCE_GROUP="${RESOURCE_GROUP:-harbor-hope-rg}"
+LOCATION="${LOCATION:-westus2}"
+APP_NAME="${APP_NAME:-harbor-of-hope}"
 FLASK_APP_NAME="${FLASK_APP_NAME:-harborofhope-ml}"
 DB_SERVER_NAME="${DB_SERVER_NAME:-harborofhope-db}"
 DB_ADMIN_USER="${DB_ADMIN_USER:-hohadmin}"
@@ -127,6 +127,7 @@ az webapp config appsettings set \
   --name "$APP_NAME" \
   --settings \
     MlApiUrl="https://${FLASK_APP_NAME}.azurewebsites.net" \
+    FrontendUrl="https://${APP_NAME}.azurewebsites.net" \
     ASPNETCORE_ENVIRONMENT=Production \
   --output none
 
