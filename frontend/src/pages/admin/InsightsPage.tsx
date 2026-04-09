@@ -765,12 +765,6 @@ export default function InsightsPage() {
                 </Card>
                 <Card variant="outlined" sx={{ borderRadius: 2 }}>
                   <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                    <Typography variant="overline" color="text.secondary">Adj. R²</Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 700, color }}>{current.adjRSquared.toFixed(2)}</Typography>
-                  </CardContent>
-                </Card>
-                <Card variant="outlined" sx={{ borderRadius: 2 }}>
-                  <CardContent sx={{ textAlign: 'center', py: 2 }}>
                     <Typography variant="overline" color="text.secondary">Sample Size</Typography>
                     <Typography variant="h5" sx={{ fontWeight: 700, color }}>{current.sampleSize}</Typography>
                   </CardContent>
