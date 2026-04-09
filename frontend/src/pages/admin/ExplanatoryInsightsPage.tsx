@@ -282,13 +282,19 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
       direction: f.direction,
     })) ?? [];
 
+  // Look up feature info: first try glossary (raw keys), then check chart data
+  // for the interpretation from the database
+  const chartEntry = driversChartData.find(
+    (d) => d.rawName === featureInfoKey || d.name === featureInfoKey
+  );
   const featureInfo =
     FEATURE_GLOSSARY[featureInfoKey] ??
     (featureInfoKey
       ? {
-          title: getFeatureLabel(featureInfoKey),
+          title: chartEntry?.name ?? getFeatureLabel(featureInfoKey),
           description:
-            'Click any bar or label in the chart to learn what this factor means.',
+            chartEntry?.interpretation ??
+            `${chartEntry?.direction ?? 'Affects'} the outcome (coefficient: ${chartEntry?.coefficient ?? '—'})`,
         }
       : null);
 
