@@ -37,116 +37,63 @@ def parse_duration_months(s):
 def to_bool_int(series):
     return series.map({True: 1, False: 0, 'True': 1, 'False': 0}).fillna(0).astype(int)
 
-# Feature-name -> plain-English interpretation templates
-INTERPRETATIONS = {
-    # Pipeline 1
-    'avg_severity': ('More severe incidents are linked to {} risk levels', 'risk'),
-    'total_incidents': ('More incidents are linked to {} risk levels', 'risk'),
-    'safety_concern_rate': ('More safety concerns during home visits are linked to {} risk', 'risk'),
-    'avg_family_coop': ('Better family cooperation is linked to {} risk', 'risk'),
-    'avg_attendance': ('Better school attendance is linked to {} risk', 'risk'),
-    'progress_rate': ('More counseling progress notes are linked to {} risk', 'risk'),
-    'achieved_rate': ('More goals achieved in intervention plans are linked to {} risk', 'risk'),
-    'abuse_types_count': ('More abuse categories show a link to {} risk', 'risk'),
-    'concern_rate': ('Higher concern flags in counseling linked to {} risk', 'risk'),
-    'total_sessions': ('More counseling sessions are linked to {} outcomes', 'general'),
-    'total_visits': ('More home visits are linked to {} outcomes', 'general'),
-    'total_plans': ('More intervention plans are linked to {} outcomes', 'general'),
-    'avg_health': ('Better health scores are linked to {} outcomes', 'general'),
-    'avg_nutrition': ('Better nutrition scores are linked to {} outcomes', 'general'),
-    'avg_sleep': ('Better sleep quality is linked to {} outcomes', 'general'),
-    'avg_energy': ('Higher energy levels are linked to {} outcomes', 'general'),
-    'avg_progress': ('Higher school progress is linked to {} outcomes', 'general'),
-    'age_months': ('Age at admission is linked to {} outcomes', 'general'),
-    'stay_months': ('Longer stays are linked to {} outcomes', 'general'),
-    'family_risk_count': ('More family risk factors are linked to {} outcomes', 'general'),
-    'is_pwd': ('PWD status is linked to {} outcomes', 'general'),
-    'has_special_needs': ('Special needs status is linked to {} outcomes', 'general'),
-    'family_is_4ps': ('4Ps program membership is linked to {} outcomes', 'general'),
-    'edu_count': ('More education records are linked to {} outcomes', 'general'),
-    'attendance_std': ('More variable attendance is linked to {} outcomes', 'general'),
-    'avg_session_min': ('Longer session durations are linked to {} outcomes', 'general'),
 
-    # Pipeline 2
-    'attendance_slope': ('Improving attendance over time is linked to {} reintegration completion', 'odds'),
-    'progress_slope': ('Improving progress over time is linked to {} completion rates', 'odds'),
-    'max_progress': ('Higher peak progress is linked to {} completion rates', 'odds'),
-    'edu_months': ('More months in education is linked to {} completion rates', 'odds'),
-
-    # Pipeline 3
-    'has_call_to_action': ('Clear calls-to-action are linked to {} donation value', 'value'),
-    'features_resident_story': ('Resident stories are linked to {} donation value', 'value'),
-    'is_boosted': ('Boosted posts are linked to {} donation value', 'value'),
-    'boost_budget_php': ('More boost budget is linked to {} donation value', 'value'),
-
-    # Pipeline 4
-    'Wellbeing': ('More wellbeing funding is linked to {} health scores', 'value'),
-    'Education': ('More education funding is linked to {} health scores', 'value'),
-    'Operations': ('Operations funding shows a link to {} health scores', 'value'),
-    'Transport': ('Transport funding shows a link to {} health scores', 'value'),
-    'capacity_girls': ('Safehouse capacity is linked to {} health scores', 'value'),
-    'active_residents': ('More active residents can {} average scores', 'capacity'),
+# Friendly display names for features
+FRIENDLY_NAMES = {
+    'avg_severity': 'Incident Severity',
+    'total_incidents': 'Number of Incidents',
+    'safety_concern_rate': 'Safety Concerns in Visits',
+    'avg_family_coop': 'Family Cooperation',
+    'avg_attendance': 'School Attendance',
+    'progress_rate': 'Counseling Progress',
+    'achieved_rate': 'Intervention Goals Achieved',
+    'abuse_types_count': 'Number of Abuse Types',
+    'concern_rate': 'Counseling Concern Rate',
+    'total_sessions': 'Total Counseling Sessions',
+    'avg_health': 'Average Health Score',
+    'avg_nutrition': 'Average Nutrition Score',
+    'attendance_slope': 'Attendance Trend',
+    'progress_slope': 'Progress Trend',
+    'avg_progress': 'Average School Progress',
+    'max_progress': 'Peak School Progress',
+    'edu_months': 'Months in Education',
+    'stay_months': 'Length of Stay',
+    'total_visits': 'Total Home Visits',
+    'family_risk_count': 'Family Risk Factors',
+    'has_call_to_action': 'Has Call-to-Action',
+    'features_resident_story': 'Features Resident Story',
+    'is_boosted': 'Is Boosted Post',
+    'boost_budget_php': 'Boost Budget (PHP)',
+    'Wellbeing': 'Wellbeing Funding',
+    'Education': 'Education Funding',
+    'Operations': 'Operations Funding',
+    'Transport': 'Transport Funding',
+    'capacity_girls': 'Safehouse Capacity',
+    'active_residents': 'Active Residents',
 }
 
-# Domain-correct expected directions: True = positive coef expected
-# This ensures interpretations make logical sense regardless of noisy data
-EXPECTED_POSITIVE = {
-    'avg_severity': True,      # more severe → higher risk
-    'total_incidents': True,   # more incidents → higher risk
-    'safety_concern_rate': True, # more safety concerns → higher risk
-    'abuse_types_count': True, # more abuse types → higher risk
-    'concern_rate': True,      # more counseling concerns → higher risk
-    'family_risk_count': True, # more family risk → higher risk
-    'avg_family_coop': False,  # better cooperation → lower risk
-    'avg_attendance': False,   # better attendance → lower risk
-    'progress_rate': False,    # more progress → lower risk
-    'achieved_rate': False,    # more goals achieved → lower risk
-    'avg_health': False,       # better health → lower risk
-    'avg_nutrition': False,    # better nutrition → lower risk
-    'avg_sleep': False,        # better sleep → lower risk
-    'avg_energy': False,       # higher energy → lower risk
-    'total_sessions': False,   # more sessions → lower risk (more support)
-    'total_visits': False,     # more visits → lower risk
-    'attendance_slope': True,  # improving attendance → higher completion
-    'progress_slope': True,    # improving progress → higher completion
-    'max_progress': True,      # higher peak → higher completion
-    'edu_months': True,        # more months → higher completion
-    'has_call_to_action': True,  # CTA → higher donation value
-    'features_resident_story': True, # story → higher donation
-    'is_boosted': True,        # boosted → higher donation
-    'boost_budget_php': True,  # more budget → higher donation
-    'Wellbeing': True,         # more wellbeing funding → higher scores
-    'Education': True,         # more education funding → higher scores
-}
+def friendly(name):
+    return FRIENDLY_NAMES.get(name, name.replace('_', ' ').title())
 
-def interpret_feature(name, coef):
-    """Generate a domain-correct interpretation string for a feature."""
-    template_info = INTERPRETATIONS.get(name)
-    if template_info:
-        template, kind = template_info
-        # Use domain-correct direction, not raw coefficient sign
-        expected_pos = EXPECTED_POSITIVE.get(name)
-        if expected_pos is not None:
-            if kind == 'risk':
-                word = 'higher' if expected_pos else 'lower'
-            elif kind == 'odds':
-                word = 'higher' if expected_pos else 'lower'
-            elif kind == 'capacity':
-                word = 'raise' if expected_pos else 'lower'
-            else:
-                word = 'higher' if expected_pos else 'lower'
-        else:
-            # Fallback to coefficient sign for features without domain expectation
-            if kind == 'risk':
-                word = 'higher' if coef > 0 else 'lower'
-            elif kind == 'capacity':
-                word = 'lower' if coef < 0 else 'raise'
-            else:
-                word = 'higher' if coef > 0 else 'lower'
-        return template.format(word)
+
+def interpret_coef(name, coef, context):
+    """Generate honest interpretation from the actual coefficient sign."""
     direction = 'higher' if coef > 0 else 'lower'
-    clean = name.replace('_', ' ').title()
-    return f'{clean} is associated with {direction} outcomes'
+    fn = friendly(name)
+
+    if context == 'risk':
+        return f'{fn} is associated with {direction} risk levels'
+    elif context == 'completion':
+        word = 'higher' if coef > 0 else 'lower'
+        return f'{fn} is associated with {word} reintegration completion'
+    elif context == 'donation':
+        word = 'higher' if coef > 0 else 'lower'
+        return f'{fn} is associated with {word} donation value'
+    elif context == 'health':
+        word = 'higher' if coef > 0 else 'lower'
+        return f'{fn} is associated with {word} health scores'
+    else:
+        return f'{fn} is associated with {direction} outcomes'
 
 
 # ── Pipeline 1: Risk Factors ────────────────────────────────────────────
@@ -178,15 +125,10 @@ def run_pipeline_1():
     edu_agg = education.groupby('resident_id').agg(
         avg_attendance=('attendance_rate', 'mean'),
         avg_progress=('progress_percent', 'mean'),
-        edu_count=('education_record_id', 'count'),
-        attendance_std=('attendance_rate', 'std')
     ).reset_index()
 
     health_agg = health.groupby('resident_id').agg(
         avg_health=('general_health_score', 'mean'),
-        avg_nutrition=('nutrition_score', 'mean'),
-        avg_sleep=('sleep_quality_score', 'mean'),
-        avg_energy=('energy_level_score', 'mean')
     ).reset_index()
 
     inc = incidents.copy()
@@ -201,8 +143,6 @@ def run_pipeline_1():
     sess['progress_flag'] = to_bool_int(sess['progress_noted'])
     session_agg = sess.groupby('resident_id').agg(
         total_sessions=('recording_id', 'count'),
-        avg_session_min=('session_duration_minutes', 'mean'),
-        concern_rate=('concern_flag', 'mean'),
         progress_rate=('progress_flag', 'mean')
     ).reset_index()
 
@@ -211,40 +151,37 @@ def run_pipeline_1():
     vis['coop_score'] = vis['family_cooperation_level'].map(
         {'Cooperative': 3, 'Neutral': 2, 'Uncooperative': 1}).fillna(2)
     visit_agg = vis.groupby('resident_id').agg(
-        total_visits=('visitation_id', 'count'),
         avg_family_coop=('coop_score', 'mean'),
         safety_concern_rate=('safety_flag', 'mean')
     ).reset_index()
 
     int_agg = interventions.groupby('resident_id').agg(
-        total_plans=('plan_id', 'count'),
         achieved_rate=('status', lambda x: (x == 'Achieved').mean())
     ).reset_index()
 
-    keep_cols = ['resident_id', 'current_risk_level', 'case_category',
-                 'age_months', 'stay_months', 'abuse_types_count',
-                 'family_risk_count', 'is_pwd', 'has_special_needs',
-                 'family_is_4ps', 'referral_source', 'safehouse_id']
-    df1 = r1[keep_cols].copy()
-    df1['family_is_4ps'] = to_bool_int(df1['family_is_4ps'])
+    # Keep only core domain features — no category dummies to avoid overfitting
+    # with small sample (n≈60)
+    df1 = r1[['resident_id', 'current_risk_level', 'abuse_types_count',
+              'family_risk_count']].copy()
 
     for agg in [edu_agg, health_agg, incident_agg, session_agg, visit_agg, int_agg]:
         df1 = df1.merge(agg, on='resident_id', how='left')
 
-    count_fill = ['total_incidents', 'total_sessions', 'total_visits', 'total_plans']
-    df1[count_fill] = df1[count_fill].fillna(0)
-    rate_fill = ['concern_rate', 'progress_rate', 'safety_concern_rate',
-                 'achieved_rate', 'avg_severity']
-    df1[rate_fill] = df1[rate_fill].fillna(0)
+    df1['total_incidents'] = df1['total_incidents'].fillna(0)
+    df1['total_sessions'] = df1['total_sessions'].fillna(0)
+    for col in ['progress_rate', 'safety_concern_rate', 'achieved_rate', 'avg_severity']:
+        df1[col] = df1[col].fillna(0)
 
     risk_map = {'Low': 1, 'Medium': 2, 'High': 3, 'Critical': 4}
     df1['risk_numeric'] = df1['current_risk_level'].map(risk_map)
     df1 = df1.dropna(subset=['risk_numeric'])
 
-    df1 = pd.get_dummies(df1, columns=['case_category', 'referral_source'], drop_first=True, dtype=int)
+    feature_cols = ['avg_severity', 'total_incidents', 'safety_concern_rate',
+                    'avg_family_coop', 'avg_attendance', 'progress_rate',
+                    'achieved_rate', 'abuse_types_count', 'avg_health',
+                    'family_risk_count', 'total_sessions']
+    feature_cols = [c for c in feature_cols if c in df1.columns]
 
-    feature_cols = [c for c in df1.columns if c not in
-                    ['resident_id', 'current_risk_level', 'risk_numeric', 'safehouse_id']]
     X = df1[feature_cols].copy().apply(pd.to_numeric, errors='coerce')
     y = df1['risk_numeric'].copy()
     mask = X.notna().all(axis=1)
@@ -257,37 +194,24 @@ def run_pipeline_1():
     X_ols = sm.add_constant(X_scaled)
     model = sm.OLS(y, X_ols).fit()
 
-    # Extract features — prioritize domain-relevant features that the analysis
-    # was designed to study, with their REAL coefficients from the model.
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
 
-    # Domain-relevant features for risk factor analysis (not dummies)
-    priority_features = [
-        'avg_severity', 'total_incidents', 'safety_concern_rate',
-        'avg_family_coop', 'avg_attendance', 'progress_rate',
-        'achieved_rate', 'abuse_types_count', 'total_sessions',
-        'avg_health', 'avg_nutrition', 'concern_rate',
-    ]
-    top_features = [f for f in priority_features if f in params.index][:8]
+    # Sort by absolute coefficient size — show what matters most
+    sorted_features = params.abs().sort_values(ascending=False).index.tolist()
+    top_features = sorted_features[:8]
 
     features = []
     for rank, feat in enumerate(top_features):
         coef = float(params[feat])
         pv = float(pvals[feat])
-        # Use domain-correct direction
-        expected = EXPECTED_POSITIVE.get(feat)
-        if expected is not None:
-            direction = 'Increases risk' if expected else 'Decreases risk'
-        else:
-            direction = 'Increases risk' if coef > 0 else 'Decreases risk'
         features.append({
             'pipeline_id': 1,
-            'feature_name': feat,
-            'coefficient': round(abs(coef), 4) if expected is not None and (coef > 0) != expected else round(coef, 4),
+            'feature_name': friendly(feat),
+            'coefficient': round(coef, 4),
             'p_value': round(pv, 4),
-            'direction': direction,
-            'interpretation': interpret_feature(feat, coef),
+            'direction': 'Increases risk' if coef > 0 else 'Decreases risk',
+            'interpretation': interpret_coef(feat, coef, 'risk'),
             'is_significant': pv < 0.05,
             'feature_rank': rank + 1,
         })
@@ -300,20 +224,46 @@ def run_pipeline_1():
         'r_squared': round(float(model.rsquared), 4),
         'adj_r_squared': round(float(model.rsquared_adj), 4),
         'sample_size': int(len(y)),
-        'key_insight': (
-            "Residents tend to be higher-risk when incidents are more frequent/severe "
-            "and when family support is lower. Higher school attendance and counseling "
-            "progress show up as protective factors."
-        ),
+        'key_insight': _summarize_key_findings(params, pvals, 'risk'),
         'recommendations_json': json.dumps([
-            "If incidents increase, review the resident's plan early (don't wait for escalation)",
-            "Prioritize family engagement where cooperation is low",
-            "Treat a drop in school attendance as an early warning sign",
+            "Monitor incident frequency and severity as early-warning signals",
+            "Invest in family engagement — cooperation levels matter",
+            "Use attendance trends as a proxy for overall wellbeing",
         ]),
         'prediction_timestamp': datetime.utcnow().isoformat(),
     }
 
     return insight, features
+
+
+def _summarize_key_findings(params, pvals, context):
+    """Generate key insight from actual significant features."""
+    sig = pvals[pvals < 0.05].index.tolist()
+    if not sig:
+        top = params.abs().nlargest(3).index.tolist()
+        names = ', '.join(friendly(f) for f in top)
+        return (f"No features reached statistical significance (p < 0.05) with this "
+                f"sample size. The strongest associations were with {names}. "
+                f"A larger sample may reveal clearer patterns.")
+
+    increasing = [friendly(f) for f in sig if params[f] > 0]
+    decreasing = [friendly(f) for f in sig if params[f] < 0]
+
+    parts = []
+    if context == 'risk':
+        if increasing:
+            parts.append(f"{', '.join(increasing)} {'are' if len(increasing) > 1 else 'is'} "
+                        f"significantly associated with higher risk")
+        if decreasing:
+            parts.append(f"{', '.join(decreasing)} {'are' if len(decreasing) > 1 else 'is'} "
+                        f"significantly associated with lower risk (protective)")
+    else:
+        if increasing:
+            parts.append(f"{', '.join(increasing)} significantly increase the outcome")
+        if decreasing:
+            parts.append(f"{', '.join(decreasing)} significantly decrease the outcome")
+
+    return '. '.join(parts) + '.'
 
 
 # ── Pipeline 2: Education → Reintegration ────────────────────────────────
@@ -340,45 +290,37 @@ def run_pipeline_2():
             'avg_attendance': g['attendance_rate'].mean(),
             'avg_progress': g['progress_percent'].mean(),
             'max_progress': g['progress_percent'].max(),
-            'attendance_std': g['attendance_rate'].std(),
             'edu_months': len(g),
         })
     ).reset_index()
 
     health_avg = health.groupby('resident_id').agg(
         avg_health=('general_health_score', 'mean'),
-        avg_nutrition=('nutrition_score', 'mean')
     ).reset_index()
 
     sess_count = sessions.groupby('resident_id')['recording_id'].count().reset_index()
     sess_count.columns = ['resident_id', 'total_sessions']
 
     r2 = residents.copy()
-    r2['age_months'] = r2['age_upon_admission'].apply(parse_duration_months)
     r2['stay_months'] = r2['length_of_stay'].apply(parse_duration_months)
-    r2_bool = [c for c in r2.columns if c.startswith('sub_cat_') or c in ['is_pwd', 'has_special_needs']]
+    r2_bool = [c for c in r2.columns if c.startswith('sub_cat_')]
     for col in r2_bool:
         r2[col] = to_bool_int(r2[col])
-    r2['abuse_types_count'] = r2[[c for c in r2.columns if c.startswith('sub_cat_')]].sum(axis=1)
-    r2['family_risk_count'] = r2[['family_solo_parent', 'family_indigenous',
-                                   'family_parent_pwd', 'family_informal_settler']].apply(
-        lambda row: sum(to_bool_int(pd.Series(row))), axis=1)
+    r2['abuse_types_count'] = r2[r2_bool].sum(axis=1)
 
-    df2 = r2[['resident_id', 'reintegration_status', 'age_months', 'stay_months',
-               'abuse_types_count', 'has_special_needs', 'family_risk_count']].copy()
+    df2 = r2[['resident_id', 'reintegration_status', 'stay_months',
+               'abuse_types_count']].copy()
     df2 = df2.merge(edu_traj, on='resident_id', how='left')
     df2 = df2.merge(health_avg, on='resident_id', how='left')
     df2 = df2.merge(sess_count, on='resident_id', how='left')
     df2['total_sessions'] = df2['total_sessions'].fillna(0)
-    df2['attendance_std'] = df2['attendance_std'].fillna(0)
 
     df2['reint_completed'] = (df2['reintegration_status'] == 'Completed').astype(int)
-    df2 = df2.dropna(subset=['avg_attendance', 'avg_health', 'age_months', 'stay_months'])
+    df2 = df2.dropna(subset=['avg_attendance', 'avg_health', 'stay_months'])
 
     feature_cols = ['attendance_slope', 'progress_slope', 'avg_attendance', 'avg_progress',
-                    'max_progress', 'attendance_std', 'edu_months', 'avg_health',
-                    'avg_nutrition', 'total_sessions', 'age_months', 'stay_months',
-                    'abuse_types_count', 'has_special_needs', 'family_risk_count']
+                    'max_progress', 'edu_months', 'avg_health',
+                    'total_sessions', 'stay_months', 'abuse_types_count']
     X = df2[feature_cols].copy()
     y = df2['reint_completed'].copy()
 
@@ -387,18 +329,17 @@ def run_pipeline_2():
 
     print("  Fitting Logistic Regression...")
     X_sm = sm.add_constant(X_scaled)
-    model = sm.Logit(y, X_sm).fit(disp=0)
+    try:
+        model = sm.Logit(y, X_sm).fit(disp=0, maxiter=100)
+    except Exception:
+        # Fallback to regularized if perfect separation
+        model = sm.Logit(y, X_sm).fit_regularized(disp=0)
 
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
 
-    # Domain-relevant features for education/reintegration analysis
-    priority_features = [
-        'attendance_slope', 'avg_progress', 'stay_months',
-        'total_sessions', 'avg_health', 'family_risk_count',
-        'abuse_types_count',
-    ]
-    top_features = [f for f in priority_features if f in params.index][:7]
+    sorted_features = params.abs().sort_values(ascending=False).index.tolist()
+    top_features = sorted_features[:7]
 
     features = []
     for rank, feat in enumerate(top_features):
@@ -406,11 +347,11 @@ def run_pipeline_2():
         pv = float(pvals[feat])
         features.append({
             'pipeline_id': 2,
-            'feature_name': feat,
+            'feature_name': friendly(feat),
             'coefficient': round(coef, 4),
             'p_value': round(pv, 4),
             'direction': 'Increases odds' if coef > 0 else 'Decreases odds',
-            'interpretation': interpret_feature(feat, coef),
+            'interpretation': interpret_coef(feat, coef, 'completion'),
             'is_significant': pv < 0.05,
             'feature_rank': rank + 1,
         })
@@ -421,15 +362,12 @@ def run_pipeline_2():
         'target_variable': 'Reintegration Completed (binary)',
         'model_type': 'Logistic Regression (statsmodels)',
         'r_squared': round(float(model.prsquared), 4),
-        'adj_r_squared': round(float(model.prsquared), 4),  # pseudo-R² used for both
+        'adj_r_squared': round(float(model.prsquared), 4),
         'sample_size': int(len(y)),
-        'key_insight': (
-            "Residents who show steady improvement in school (attendance trend and "
-            "progress) are more likely to complete reintegration."
-        ),
+        'key_insight': _summarize_key_findings(params, pvals, 'completion'),
         'recommendations_json': json.dumps([
             "Track school attendance month-to-month; a sustained drop should trigger support",
-            "Set simple progress checkpoints (e.g., minimum progress %) to prompt plan reviews",
+            "Set progress checkpoints to prompt plan reviews",
             "Focus on consistent attendance, not just a high average",
         ]),
         'prediction_timestamp': datetime.utcnow().isoformat(),
@@ -443,7 +381,6 @@ def run_pipeline_2():
 def run_pipeline_3():
     print("  Loading data...")
     social_media = pd.read_sql("SELECT * FROM social_media_posts", engine)
-    donations = pd.read_sql("SELECT * FROM donations", engine)
 
     sm_df = social_media.copy()
     for col in ['has_call_to_action', 'is_boosted', 'features_resident_story']:
@@ -452,35 +389,17 @@ def run_pipeline_3():
     sm_df['boost_budget_php'] = pd.to_numeric(sm_df['boost_budget_php'], errors='coerce').fillna(0)
     sm_df['estimated_donation_value_php'] = pd.to_numeric(
         sm_df['estimated_donation_value_php'], errors='coerce').fillna(0)
-    sm_df['donation_referrals'] = pd.to_numeric(sm_df['donation_referrals'], errors='coerce').fillna(0)
-
-    don_by_post = donations.dropna(subset=['referral_post_id']).groupby('referral_post_id').agg(
-        actual_donation_count=('donation_id', 'count'),
-        actual_donation_value=('estimated_value', 'sum')
-    ).reset_index()
-    don_by_post.columns = ['post_id', 'actual_donation_count', 'actual_donation_value']
-    sm_df = sm_df.merge(don_by_post, on='post_id', how='left')
-    sm_df['actual_donation_count'] = sm_df['actual_donation_count'].fillna(0)
-    sm_df['actual_donation_value'] = sm_df['actual_donation_value'].fillna(0)
+    sm_df['caption_length'] = pd.to_numeric(sm_df['caption_length'], errors='coerce').fillna(0)
+    sm_df['num_hashtags'] = pd.to_numeric(sm_df['num_hashtags'], errors='coerce').fillna(0)
+    sm_df['post_hour'] = pd.to_numeric(sm_df['post_hour'], errors='coerce').fillna(12)
 
     sm_df['log_donation_value'] = np.log1p(sm_df['estimated_donation_value_php'])
 
-    cat_cols = ['platform', 'post_type', 'media_type', 'sentiment_tone', 'content_topic']
-    df3 = pd.get_dummies(sm_df, columns=cat_cols, drop_first=True, dtype=int)
-
-    exclude = ['post_id', 'platform_post_id', 'post_url', 'created_at', 'caption',
-               'hashtags', 'call_to_action_type', 'campaign_name',
-               'estimated_donation_value_php', 'donation_referrals',
-               'log_donation_value', 'actual_donation_count', 'actual_donation_value',
-               'impressions', 'reach', 'likes', 'comments', 'shares', 'saves',
-               'click_throughs', 'video_views', 'engagement_rate', 'profile_visits',
-               'follower_count_at_post', 'watch_time_seconds', 'avg_view_duration_seconds',
-               'subscriber_count_at_post', 'forwards', 'day_of_week']
-
-    feature_cols = [c for c in df3.columns if c not in exclude
-                    and df3[c].dtype in ['int64', 'float64', 'int32', 'uint8', 'int8']]
-    X = df3[feature_cols].copy().apply(pd.to_numeric, errors='coerce').fillna(0)
-    y = df3['log_donation_value'].copy()
+    # Use only actionable content features — no engagement metrics (those are outcomes)
+    feature_cols = ['has_call_to_action', 'features_resident_story', 'is_boosted',
+                    'boost_budget_php', 'caption_length', 'num_hashtags', 'post_hour']
+    X = sm_df[feature_cols].copy().fillna(0)
+    y = sm_df['log_donation_value'].copy()
 
     scaler = StandardScaler()
     X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns, index=X.index)
@@ -492,17 +411,8 @@ def run_pipeline_3():
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
 
-    # Domain-relevant features for social media content analysis
-    # Prioritize actionable content decisions over dummy variables
-    priority_features = [
-        'has_call_to_action', 'features_resident_story', 'is_boosted',
-        'boost_budget_php',
-    ]
-    # Then add the most significant remaining features
-    remaining = [f for f in params.abs().sort_values(ascending=False).index
-                 if f not in priority_features]
-    top_features = [f for f in priority_features if f in params.index]
-    top_features += remaining[:7 - len(top_features)]
+    sorted_features = params.abs().sort_values(ascending=False).index.tolist()
+    top_features = sorted_features[:7]
 
     features = []
     for rank, feat in enumerate(top_features):
@@ -510,11 +420,11 @@ def run_pipeline_3():
         pv = float(pvals[feat])
         features.append({
             'pipeline_id': 3,
-            'feature_name': feat,
+            'feature_name': friendly(feat),
             'coefficient': round(coef, 4),
             'p_value': round(pv, 4),
             'direction': 'Increases' if coef > 0 else 'Decreases',
-            'interpretation': interpret_feature(feat, coef),
+            'interpretation': interpret_coef(feat, coef, 'donation'),
             'is_significant': pv < 0.05,
             'feature_rank': rank + 1,
         })
@@ -527,15 +437,11 @@ def run_pipeline_3():
         'r_squared': round(float(model.rsquared), 4),
         'adj_r_squared': round(float(model.rsquared_adj), 4),
         'sample_size': int(len(y)),
-        'key_insight': (
-            "Posts perform best when they ask clearly for support (CTA), share a real "
-            "story, and use boosting strategically."
-        ),
+        'key_insight': _summarize_key_findings(params, pvals, 'donation'),
         'recommendations_json': json.dumps([
-            "Make every fundraising post include a clear call-to-action (what to do next)",
-            "Share resident stories regularly (set a simple weekly target)",
-            "Use boost budget on posts that match the highest-performing formats",
-            "Run small weekly tests (two topics, same format) and keep the winner",
+            "Include a clear call-to-action in every fundraising post",
+            "Share resident stories regularly — they drive engagement",
+            "Use boost budget on posts that match highest-performing formats",
         ]),
         'prediction_timestamp': datetime.utcnow().isoformat(),
     }
@@ -575,13 +481,14 @@ def run_pipeline_4():
     df4[area_cols + ['total_allocation']] = df4[area_cols + ['total_allocation']].fillna(0)
     df4 = df4.dropna(subset=['avg_health_score'])
 
-    sh_info = safehouses[['safehouse_id', 'capacity_girls', 'region']].copy()
+    sh_info = safehouses[['safehouse_id', 'capacity_girls']].copy()
     df4 = df4.merge(sh_info, on='safehouse_id', how='left')
 
+    # Use safehouse fixed effects to control for between-safehouse differences
     df4 = pd.get_dummies(df4, columns=['safehouse_id'], drop_first=True, dtype=int, prefix='sh')
 
     exclude = ['metric_id', 'month_start', 'month_end', 'avg_health_score',
-               'avg_education_progress', 'notes', 'region', 'total_allocation']
+               'avg_education_progress', 'notes', 'total_allocation']
     feature_cols = [c for c in df4.columns if c not in exclude
                     and df4[c].dtype in ['int64', 'float64', 'int32', 'uint8', 'int8']]
     X = df4[feature_cols].copy().apply(pd.to_numeric, errors='coerce').fillna(0)
@@ -590,25 +497,20 @@ def run_pipeline_4():
     scaler = StandardScaler()
     non_dummy_cols = [c for c in X.columns if not c.startswith('sh_')]
     X_sc = X.copy()
-    X_sc[non_dummy_cols] = scaler.fit_transform(X[non_dummy_cols])
+    if non_dummy_cols:
+        X_sc[non_dummy_cols] = scaler.fit_transform(X[non_dummy_cols])
 
     print("  Fitting OLS with safehouse fixed effects...")
     X_ols = sm.add_constant(X_sc)
     model = sm.OLS(y, X_ols).fit()
 
     # Only show non-safehouse-dummy features
-    # Prioritize the allocation program areas (the whole point of this analysis)
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
 
-    # Program area allocations first, then other non-dummy features
-    priority_features = ['Wellbeing', 'Education', 'Operations', 'Transport',
-                         'Outreach', 'capacity_girls', 'active_residents']
-    non_sh_names = [f for f in params.index if not f.startswith('sh_')]
-    top_features = [f for f in priority_features if f in non_sh_names]
-    remaining = [f for f in non_sh_names if f not in top_features]
-    top_features += remaining[:6 - len(top_features)]
-    top_features = top_features[:6]
+    non_sh = [f for f in params.index if not f.startswith('sh_')]
+    sorted_non_sh = sorted(non_sh, key=lambda f: abs(params[f]), reverse=True)
+    top_features = sorted_non_sh[:6]
 
     features = []
     for rank, feat in enumerate(top_features):
@@ -616,14 +518,18 @@ def run_pipeline_4():
         pv = float(pvals[feat])
         features.append({
             'pipeline_id': 4,
-            'feature_name': feat,
+            'feature_name': friendly(feat),
             'coefficient': round(coef, 4),
             'p_value': round(pv, 4),
             'direction': 'Increases' if coef > 0 else 'Decreases',
-            'interpretation': interpret_feature(feat, coef),
+            'interpretation': interpret_coef(feat, coef, 'health'),
             'is_significant': pv < 0.05,
             'feature_rank': rank + 1,
         })
+
+    # Build key insight from non-dummy significant features
+    non_sh_params = params[non_sh]
+    non_sh_pvals = pvals[non_sh]
 
     insight = {
         'pipeline_id': 4,
@@ -633,10 +539,7 @@ def run_pipeline_4():
         'r_squared': round(float(model.rsquared), 4),
         'adj_r_squared': round(float(model.rsquared_adj), 4),
         'sample_size': int(len(y)),
-        'key_insight': (
-            "When a safehouse puts more funding into wellbeing and education, health "
-            "outcomes tend to improve (within that same safehouse over time)."
-        ),
+        'key_insight': _summarize_key_findings(non_sh_params, non_sh_pvals, 'health'),
         'recommendations_json': json.dumps([
             "Protect wellbeing and education funding when budgets are tight",
             "Try small, planned budget shifts for 1\u20132 months and watch outcomes",
@@ -669,8 +572,8 @@ def run():
             insight, features = fn()
             all_insights.append(insight)
             all_features.extend(features)
-            print(f"  Done: R\u00b2={insight['r_squared']}, n={insight['sample_size']}, "
-                  f"{len(features)} features")
+            print(f"  Done: R\u00b2={insight['r_squared']}, Adj R\u00b2={insight['adj_r_squared']}, "
+                  f"n={insight['sample_size']}, {len(features)} features")
         except Exception as e:
             print(f"  FAILED: {name} \u2014 {e}")
             traceback.print_exc()
