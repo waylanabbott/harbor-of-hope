@@ -83,6 +83,9 @@ def interpret_coef(name, coef, context):
 
     if context == 'risk':
         return f'{fn} is associated with {direction} risk levels'
+    elif context == 'improvement':
+        word = 'more' if coef > 0 else 'less'
+        return f'{fn} is associated with {word} risk improvement'
     elif context == 'completion':
         word = 'higher' if coef > 0 else 'lower'
         return f'{fn} is associated with {word} reintegration completion'
@@ -159,10 +162,9 @@ def run_pipeline_1():
         achieved_rate=('status', lambda x: (x == 'Achieved').mean())
     ).reset_index()
 
-    # Keep only core domain features — no category dummies to avoid overfitting
-    # with small sample (n≈60)
-    df1 = r1[['resident_id', 'current_risk_level', 'abuse_types_count',
-              'family_risk_count']].copy()
+    # Merge aggregated features
+    df1 = r1[['resident_id', 'initial_risk_level', 'current_risk_level',
+              'abuse_types_count', 'family_risk_count']].copy()
 
     for agg in [edu_agg, health_agg, incident_agg, session_agg, visit_agg, int_agg]:
         df1 = df1.merge(agg, on='resident_id', how='left')
@@ -172,18 +174,24 @@ def run_pipeline_1():
     for col in ['progress_rate', 'safety_concern_rate', 'achieved_rate', 'avg_severity']:
         df1[col] = df1[col].fillna(0)
 
+    # Target: risk improvement = initial_risk - current_risk
+    # Positive = resident improved (risk went down), Negative = worsened
     risk_map = {'Low': 1, 'Medium': 2, 'High': 3, 'Critical': 4}
-    df1['risk_numeric'] = df1['current_risk_level'].map(risk_map)
-    df1 = df1.dropna(subset=['risk_numeric'])
+    df1['initial_risk'] = df1['initial_risk_level'].map(risk_map)
+    df1['current_risk'] = df1['current_risk_level'].map(risk_map)
+    df1['risk_improvement'] = df1['initial_risk'] - df1['current_risk']
+    df1 = df1.dropna(subset=['risk_improvement'])
 
-    feature_cols = ['avg_severity', 'total_incidents', 'safety_concern_rate',
-                    'avg_family_coop', 'avg_attendance', 'progress_rate',
-                    'achieved_rate', 'abuse_types_count', 'avg_health',
-                    'family_risk_count', 'total_sessions']
+    print(f"  Risk improvement stats: mean={df1['risk_improvement'].mean():.2f}, "
+          f"std={df1['risk_improvement'].std():.2f}, range=[{df1['risk_improvement'].min()}, {df1['risk_improvement'].max()}]")
+
+    # Use features that services can influence — cap at 6 for n≈60
+    feature_cols = ['total_incidents', 'avg_health', 'progress_rate',
+                    'avg_attendance', 'total_sessions', 'achieved_rate']
     feature_cols = [c for c in feature_cols if c in df1.columns]
 
     X = df1[feature_cols].copy().apply(pd.to_numeric, errors='coerce')
-    y = df1['risk_numeric'].copy()
+    y = df1['risk_improvement'].copy()
     mask = X.notna().all(axis=1)
     X, y = X.loc[mask], y.loc[mask]
 
@@ -197,12 +205,10 @@ def run_pipeline_1():
     params = model.params.drop('const', errors='ignore')
     pvals = model.pvalues.drop('const', errors='ignore')
 
-    # Sort by absolute coefficient size — show what matters most
     sorted_features = params.abs().sort_values(ascending=False).index.tolist()
-    top_features = sorted_features[:8]
 
     features = []
-    for rank, feat in enumerate(top_features):
+    for rank, feat in enumerate(sorted_features):
         coef = float(params[feat])
         pv = float(pvals[feat])
         features.append({
@@ -210,25 +216,25 @@ def run_pipeline_1():
             'feature_name': friendly(feat),
             'coefficient': round(coef, 4),
             'p_value': round(pv, 4),
-            'direction': 'Increases risk' if coef > 0 else 'Decreases risk',
-            'interpretation': interpret_coef(feat, coef, 'risk'),
+            'direction': 'Helps improvement' if coef > 0 else 'Hinders improvement',
+            'interpretation': interpret_coef(feat, coef, 'improvement'),
             'is_significant': pv < 0.05,
             'feature_rank': rank + 1,
         })
 
     insight = {
         'pipeline_id': 1,
-        'pipeline_name': 'Resident Risk Factor Analysis',
-        'target_variable': 'Current Risk Level (1=Low, 4=Critical)',
+        'pipeline_name': 'Resident Risk Improvement Analysis',
+        'target_variable': 'Risk Improvement (initial risk - current risk)',
         'model_type': 'OLS Linear Regression',
         'r_squared': round(float(model.rsquared), 4),
         'adj_r_squared': round(float(model.rsquared_adj), 4),
         'sample_size': int(len(y)),
-        'key_insight': _summarize_key_findings(params, pvals, 'risk'),
+        'key_insight': _summarize_key_findings(params, pvals, 'improvement'),
         'recommendations_json': json.dumps([
-            "Monitor incident frequency and severity as early-warning signals",
-            "Invest in family engagement — cooperation levels matter",
-            "Use attendance trends as a proxy for overall wellbeing",
+            "Monitor incident frequency — fewer incidents correlate with better outcomes",
+            "Track health scores as an early indicator of progress",
+            "Consistent counseling sessions support risk reduction over time",
         ]),
         'prediction_timestamp': datetime.utcnow().isoformat(),
     }
@@ -257,6 +263,27 @@ def _summarize_key_findings(params, pvals, context):
         if decreasing:
             parts.append(f"{', '.join(decreasing)} {'are' if len(decreasing) > 1 else 'is'} "
                         f"significantly associated with lower risk (protective)")
+    elif context == 'improvement':
+        if increasing:
+            parts.append(f"{', '.join(increasing)} {'are' if len(increasing) > 1 else 'is'} "
+                        f"significantly associated with greater risk improvement")
+        if decreasing:
+            parts.append(f"{', '.join(decreasing)} {'are' if len(decreasing) > 1 else 'is'} "
+                        f"significantly associated with less improvement")
+    elif context == 'donation':
+        if increasing:
+            parts.append(f"{', '.join(increasing)} {'are' if len(increasing) > 1 else 'is'} "
+                        f"significantly associated with higher donation value")
+        if decreasing:
+            parts.append(f"{', '.join(decreasing)} {'are' if len(decreasing) > 1 else 'is'} "
+                        f"significantly associated with lower donation value")
+    elif context == 'health':
+        if increasing:
+            parts.append(f"{', '.join(increasing)} {'are' if len(increasing) > 1 else 'is'} "
+                        f"significantly associated with better health outcomes")
+        if decreasing:
+            parts.append(f"{', '.join(decreasing)} {'are' if len(decreasing) > 1 else 'is'} "
+                        f"significantly associated with lower health outcomes")
     else:
         if increasing:
             parts.append(f"{', '.join(increasing)} significantly increase the outcome")
