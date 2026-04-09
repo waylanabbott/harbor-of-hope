@@ -12,16 +12,22 @@ import { motion } from 'framer-motion';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import SchoolIcon from '@mui/icons-material/School';
 import PublicIcon from '@mui/icons-material/Public';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { fetchPublicStats } from '../../lib/publicApi';
 import type { PublicStats } from '../../types/PublicImpact';
 import AnimateOnScroll, { StaggerContainer, StaggerItem } from '../../components/ui/AnimateOnScroll';
 import AnimatedCounter from '../../components/ui/AnimatedCounter';
 
 export default function LandingPage() {
+  const { isAuthenticated, authSession } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<PublicStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [statsLoaded, setStatsLoaded] = useState(false);
+
+  const isAdminOrDonor = isAuthenticated &&
+    (authSession.roles.includes('Admin') || authSession.roles.includes('Donor'));
 
   useEffect(() => {
     document.title = 'Home | Harbor of Hope';
@@ -123,8 +129,8 @@ export default function LandingPage() {
             <Button
               variant="contained"
               size="large"
-              href="/login"
-              aria-label="Support our mission - log in to get started"
+              onClick={() => navigate(isAdminOrDonor ? '/donor/donations' : '/login')}
+              aria-label="Support our mission"
               sx={{
                 px: 6,
                 py: 1.8,
@@ -454,7 +460,7 @@ export default function LandingPage() {
               <Button
                 variant="contained"
                 size="large"
-                href="/register"
+                onClick={() => navigate(isAdminOrDonor ? '/donor/donations' : '/register')}
                 sx={{
                   px: 6,
                   py: 1.8,
