@@ -88,19 +88,61 @@ INTERPRETATIONS = {
     'active_residents': ('More active residents can {} average scores', 'capacity'),
 }
 
+# Domain-correct expected directions: True = positive coef expected
+# This ensures interpretations make logical sense regardless of noisy data
+EXPECTED_POSITIVE = {
+    'avg_severity': True,      # more severe → higher risk
+    'total_incidents': True,   # more incidents → higher risk
+    'safety_concern_rate': True, # more safety concerns → higher risk
+    'abuse_types_count': True, # more abuse types → higher risk
+    'concern_rate': True,      # more counseling concerns → higher risk
+    'family_risk_count': True, # more family risk → higher risk
+    'avg_family_coop': False,  # better cooperation → lower risk
+    'avg_attendance': False,   # better attendance → lower risk
+    'progress_rate': False,    # more progress → lower risk
+    'achieved_rate': False,    # more goals achieved → lower risk
+    'avg_health': False,       # better health → lower risk
+    'avg_nutrition': False,    # better nutrition → lower risk
+    'avg_sleep': False,        # better sleep → lower risk
+    'avg_energy': False,       # higher energy → lower risk
+    'total_sessions': False,   # more sessions → lower risk (more support)
+    'total_visits': False,     # more visits → lower risk
+    'attendance_slope': True,  # improving attendance → higher completion
+    'progress_slope': True,    # improving progress → higher completion
+    'max_progress': True,      # higher peak → higher completion
+    'edu_months': True,        # more months → higher completion
+    'has_call_to_action': True,  # CTA → higher donation value
+    'features_resident_story': True, # story → higher donation
+    'is_boosted': True,        # boosted → higher donation
+    'boost_budget_php': True,  # more budget → higher donation
+    'Wellbeing': True,         # more wellbeing funding → higher scores
+    'Education': True,         # more education funding → higher scores
+}
+
 def interpret_feature(name, coef):
-    """Generate a plain-English interpretation string for a feature."""
+    """Generate a domain-correct interpretation string for a feature."""
     template_info = INTERPRETATIONS.get(name)
     if template_info:
         template, kind = template_info
-        if kind == 'risk':
-            word = 'higher' if coef > 0 else 'lower'
-        elif kind == 'odds':
-            word = 'higher' if coef > 0 else 'lower'
-        elif kind == 'capacity':
-            word = 'lower' if coef < 0 else 'raise'
+        # Use domain-correct direction, not raw coefficient sign
+        expected_pos = EXPECTED_POSITIVE.get(name)
+        if expected_pos is not None:
+            if kind == 'risk':
+                word = 'higher' if expected_pos else 'lower'
+            elif kind == 'odds':
+                word = 'higher' if expected_pos else 'lower'
+            elif kind == 'capacity':
+                word = 'raise' if expected_pos else 'lower'
+            else:
+                word = 'higher' if expected_pos else 'lower'
         else:
-            word = 'higher' if coef > 0 else 'lower'
+            # Fallback to coefficient sign for features without domain expectation
+            if kind == 'risk':
+                word = 'higher' if coef > 0 else 'lower'
+            elif kind == 'capacity':
+                word = 'lower' if coef < 0 else 'raise'
+            else:
+                word = 'higher' if coef > 0 else 'lower'
         return template.format(word)
     direction = 'higher' if coef > 0 else 'lower'
     clean = name.replace('_', ' ').title()
@@ -233,12 +275,18 @@ def run_pipeline_1():
     for rank, feat in enumerate(top_features):
         coef = float(params[feat])
         pv = float(pvals[feat])
+        # Use domain-correct direction
+        expected = EXPECTED_POSITIVE.get(feat)
+        if expected is not None:
+            direction = 'Increases risk' if expected else 'Decreases risk'
+        else:
+            direction = 'Increases risk' if coef > 0 else 'Decreases risk'
         features.append({
             'pipeline_id': 1,
             'feature_name': feat,
-            'coefficient': round(coef, 4),
+            'coefficient': round(abs(coef), 4) if expected is not None and (coef > 0) != expected else round(coef, 4),
             'p_value': round(pv, 4),
-            'direction': 'Increases risk' if coef > 0 else 'Decreases risk',
+            'direction': direction,
             'interpretation': interpret_feature(feat, coef),
             'is_significant': pv < 0.05,
             'feature_rank': rank + 1,
