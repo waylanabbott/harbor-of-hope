@@ -1,6 +1,5 @@
 """
-Run full ETL + inference pipeline for all prediction models.
-Populates social_media_predictions and counseling_predictions tables.
+Run full ETL + inference pipeline for all active prediction models.
 
 Usage:
   # With env vars for production DB:
@@ -26,10 +25,22 @@ def run_pipeline(name, etl_module, inference_module):
         traceback.print_exc()
 
 if __name__ == "__main__":
-    import etl_social_media, run_inference_social_media
-    import etl_counseling, run_inference_counseling
+    import etl_donor_churn, run_inference_donor_churn
+    import etl_incident_risk, run_inference_incident_risk
+    import run_inference_campaign
 
-    run_pipeline("Social Media Predictions", etl_social_media, run_inference_social_media)
-    run_pipeline("Counseling Predictions", etl_counseling, run_inference_counseling)
+    run_pipeline("Donor Churn Predictions", etl_donor_churn, run_inference_donor_churn)
+    run_pipeline("Incident Risk Predictions", etl_incident_risk, run_inference_incident_risk)
+
+    # Campaign has no separate ETL — inference script handles it
+    print(f"\n{'='*50}")
+    print(f"  Campaign Effectiveness Predictions")
+    print(f"{'='*50}")
+    try:
+        run_inference_campaign.run()
+        print(f"  Done: Campaign Effectiveness")
+    except Exception as e:
+        print(f"  FAILED: Campaign Effectiveness — {e}")
+        traceback.print_exc()
 
     print("\nAll pipelines complete.")
