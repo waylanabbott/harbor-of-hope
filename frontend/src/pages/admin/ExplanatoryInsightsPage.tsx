@@ -269,6 +269,50 @@ export default function ExplanatoryInsightsPage({ topTabBar }: ExplanatoryInsigh
     );
   }
 
+  if (pipelines.length === 0) {
+    return (
+      <Box sx={{ maxWidth: 720, mx: 'auto', mt: 2, mb: 6, px: 2 }}>
+        {topTabBar}
+        <Alert severity="info" sx={{ borderRadius: 2, textAlign: 'left' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+            No explanatory results in the database yet
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 1.5 }}>
+            The Reports → Explanatory Models tab reads PostgreSQL tables written by the Python job
+            (<code>explanatory_insights</code>, <code>explanatory_features</code>). Running the
+            <code>.ipynb</code> notebooks updates plots and files under <code>ml-pipelines/</code> but
+            does not populate those tables, so the site will stay empty until you run the job against
+            the same database the API uses.
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            From the <code>jobs</code> folder:
+          </Typography>
+          <Box
+            component="pre"
+            sx={{
+              m: 0,
+              mb: 1.5,
+              p: 1.5,
+              bgcolor: 'action.hover',
+              borderRadius: 1,
+              fontSize: '0.8rem',
+              overflow: 'auto',
+            }}
+          >
+            python run_explanatory_insights.py
+          </Box>
+          <Typography variant="body2" color="text.secondary">
+            To refresh everything (predictive + explanatory):{' '}
+            <code>python run_all_predictions.py</code>. Set <code>DB_HOST</code>, <code>DB_USER</code>,{' '}
+            <code>DB_PASS</code>, etc. to match your API connection string. On Windows PowerShell, if
+            the script errors on Unicode in the console, run{' '}
+            <code>$env:PYTHONUTF8=&apos;1&apos;</code> first.
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+
   const current = pipelines[activeTab];
   const color = PIPELINE_COLORS[activeTab] ?? '#5B8C7A';
 

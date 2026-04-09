@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: true, // listen on 0.0.0.0 so http://127.0.0.1:3000 works (not only [::1])
     port: 3000,
     proxy: {
       '/api': {
