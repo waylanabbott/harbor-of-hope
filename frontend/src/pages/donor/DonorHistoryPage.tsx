@@ -185,8 +185,9 @@ export default function DonorHistoryPage() {
                   height={60}
                 />
                 <YAxis
+                  width={70}
                   tick={{ fill: '#6B6B6B' }}
-                  tickFormatter={(v: number) => `$${v.toLocaleString()}`}
+                  tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
                 />
                 <Tooltip
                   contentStyle={{
